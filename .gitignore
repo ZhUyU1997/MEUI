@@ -1,0 +1,7 @@
+*.o
+*.s
+.*.cmd
+*.sym
+*.asm
+fixdep*
+/.vscode
