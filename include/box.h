@@ -26,6 +26,8 @@ struct Box
     TEXT_ALIGN align;
     const char *text;
     double font_size;
+    const char *background_image;
+    const char *content_image;
 };
 
 FlexRenderContextRef Flex_getRenderContext();
@@ -41,4 +43,7 @@ void Flex_setFontColor(FlexNodeRef node, struct plutovg_color c);
 void Flex_setText(FlexNodeRef node, const char *text);
 void Flex_setFontSize(FlexNodeRef node, double font_size);
 void Flex_setTextAlign(FlexNodeRef node, TEXT_ALIGN align);
+void Flex_setBackgroundImage(FlexNodeRef node, const char *background_image);
+void Flex_setContentImage(FlexNodeRef node, const char *content_image);
+
 void Flex_drawNode(FlexNodeRef node, float x, float y);

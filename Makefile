@@ -1,6 +1,6 @@
 sinclude scripts/env.mk
 
-X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb
+X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb -Wall
 
 
 X_INCDIRS	+= include

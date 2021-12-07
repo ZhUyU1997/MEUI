@@ -2,6 +2,7 @@
 
 #include <FlexLayout.h>
 #include <plutovg.h>
+#include <plutosvg.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +24,9 @@ FlexNodeRef Flex_newBox()
     FlexNodeRef node = Flex_newNode();
     struct Box *box = calloc(1, sizeof(struct Box));
     box->font_color.a = 1.0;
-    box->text = "";
+    box->text = strdup("");
+    box->background_image = strdup("");
+    box->content_image = strdup("");
     box->font_size = 16;
     box->align = TEXT_ALIGN_LEFT;
     Flex_setContext(node, box);
@@ -90,7 +93,24 @@ static void round4_rect(plutovg_t *pluto, float r[4][2], int x, int y, int w, in
     plutovg_close_path(pluto);
 }
 
-static void DrawBoxBackground(plutovg_t *pluto, float x, float y, float w, float h, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
+static void DrawImage(plutovg_t *pluto, const char *path, double x, double y, double w, double h)
+{
+    plutovg_save(pluto);
+
+    plutovg_surface_t *img = plutosvg_load_from_file(path, NULL, w, h, 96.0);
+
+    if (img)
+    {
+        plutovg_set_source_surface(pluto, img, x, y);
+        plutovg_fill_preserve(pluto);
+    }
+
+    plutovg_set_source_surface(pluto, img, x, y);
+    plutovg_fill_preserve(pluto);
+    plutovg_restore(pluto);
+}
+
+static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, float x, float y, float w, float h, float content[4], float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
 {
     float r[4][2] = {0};
 
@@ -123,11 +143,21 @@ static void DrawBoxBackground(plutovg_t *pluto, float x, float y, float w, float
     plutovg_save(pluto);
 
     round4_rect(pluto, r, x, y, w, h);
+
     plutovg_set_source_rgba(pluto, fill_color.r, fill_color.g, fill_color.b, fill_color.a);
+
     plutovg_fill_preserve(pluto);
+
+    if (box->background_image[0] != '\0')
+    {
+        DrawImage(pluto, box->background_image, x, y, w, h);
+    }
 
     if (border != NULL)
     {
+        plutovg_path_t *outer_path = plutovg_path_clone(plutovg_get_path(pluto));
+        plutovg_new_path(pluto);
+
         float border_top = border[0] < 0.0 ? 0.0 : border[0];
         float border_right = border[1] < 0.0 ? 0.0 : border[1];
         float border_bottom = border[2] < 0.0 ? 0.0 : border[2];
@@ -159,9 +189,20 @@ static void DrawBoxBackground(plutovg_t *pluto, float x, float y, float w, float
                     y + border_top,
                     w - border_right - border_left,
                     h - border_top - border_bottom);
+
+        if (box->content_image[0] != '\0')
+        {
+            DrawImage(pluto, box->content_image, content[0], content[1], content[2], content[3]);
+        }
+
+        plutovg_add_path(pluto, outer_path);
         plutovg_set_fill_rule(pluto, plutovg_fill_rule_even_odd);
+
         plutovg_set_source_rgba(pluto, border_color.r, border_color.g, border_color.b, border_color.a);
+
         plutovg_fill(pluto);
+
+        plutovg_path_destroy(outer_path);
     }
 
     plutovg_restore(pluto);
@@ -360,6 +401,8 @@ void Flex_setText(FlexNodeRef node, const char *text)
     struct Box *box = Flex_getContext(node);
     if (box)
     {
+        if (box->text)
+            free(box->text);
         box->text = strdup(text);
     }
 }
@@ -382,6 +425,28 @@ void Flex_setTextAlign(FlexNodeRef node, TEXT_ALIGN align)
     }
 }
 
+void Flex_setBackgroundImage(FlexNodeRef node, const char *background_image)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        if (box->background_image)
+            free(box->background_image);
+        box->background_image = strdup(background_image);
+    }
+}
+
+void Flex_setContentImage(FlexNodeRef node, const char *content_image)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        if (box->content_image)
+            free(box->content_image);
+        box->content_image = strdup(content_image);
+    }
+}
+
 void Flex_drawNode(FlexNodeRef node, float x, float y)
 {
     float left = Flex_getResultLeft(node);
@@ -396,11 +461,23 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
 
     struct Box *box = Flex_getContext(node);
 
+    double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
+    double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
+    double content_left = x + left + Flex_getResultPaddingLeft(node);
+    double content_top = y + top + Flex_getResultPaddingTop(node);
+
     if (box)
     {
         printf("%f %f %f %f\n", box->fill_color.a, box->fill_color.r, box->fill_color.b, box->fill_color.g);
 
-        DrawBoxBackground(Flex_getRenderContext()->pluto, x + left, y + top, width, height, box->border_radius,
+        DrawBoxBackground(box, Flex_getRenderContext()->pluto, x + left, y + top, width, height,
+                          (float[]){
+                              content_left,
+                              content_top,
+                              content_width,
+                              content_height,
+                          },
+                          box->border_radius,
                           (float[]){
                               Flex_getBorderTop(node),
                               Flex_getBorderRight(node),
@@ -408,11 +485,13 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
                               Flex_getBorderLeft(node),
                           },
                           box->fill_color, box->border_color);
-        DrawText(Flex_getRenderContext()->pluto, box->font_size, box->font_color, box->align, box->text,
-                 x + left + Flex_getResultPaddingLeft(node),
-                 y + top + Flex_getResultPaddingTop(node),
-                 width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node),
-                 height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node));
+
+        if (box->text[0] != '\0')
+            DrawText(Flex_getRenderContext()->pluto, box->font_size, box->font_color, box->align, box->text,
+                     content_left,
+                     content_top,
+                     content_width,
+                     content_height);
     }
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
