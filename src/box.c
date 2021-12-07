@@ -1,4 +1,5 @@
 #include "box.h"
+#include "image.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -9,6 +10,26 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+static const char *fileext(const char *filename)
+{
+    const char *ret = NULL;
+    const char *p;
+
+    if (filename != NULL)
+    {
+        ret = p = strchr(filename, '.');
+        while (p != NULL)
+        {
+            p = strchr(p + 1, '.');
+            if (p != NULL)
+                ret = p;
+        }
+        if (ret != NULL)
+            ret++;
+    }
+    return ret;
+}
 
 #define KAPPA90 (0.5522847493f)
 
@@ -97,7 +118,16 @@ static void DrawImage(plutovg_t *pluto, const char *path, double x, double y, do
 {
     plutovg_save(pluto);
 
-    plutovg_surface_t *img = plutosvg_load_from_file(path, NULL, w, h, 96.0);
+    plutovg_surface_t *img = NULL;
+
+    if (strcmp(fileext(path), "svg") == 0)
+    {
+        img = plutosvg_load_from_file(path, NULL, w, h, 96.0);
+    }
+    else
+    {
+        img = pluto_load_image_from_file(path, w, h);
+    }
 
     if (img)
     {
@@ -105,8 +135,6 @@ static void DrawImage(plutovg_t *pluto, const char *path, double x, double y, do
         plutovg_fill_preserve(pluto);
     }
 
-    plutovg_set_source_surface(pluto, img, x, y);
-    plutovg_fill_preserve(pluto);
     plutovg_restore(pluto);
 }
 

@@ -1,4 +1,3 @@
-#define STB_TRUETYPE_IMPLEMENTATION
 #include "plutovg-private.h"
 #include "stb_truetype.h"
 

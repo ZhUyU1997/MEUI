@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <time.h>
 
-#define WINDOW_W 400
-#define WINDOW_H 400
+#define WINDOW_W 1920
+#define WINDOW_H 1080
 
 void Flex_draw(FlexNodeRef root)
 {
@@ -49,8 +49,8 @@ void Flex_Test()
             Flex_setPaddingBottom(child1, rand() % 20);
             Flex_setPaddingLeft(child1, rand() % 20);
             Flex_setPaddingRight(child1, rand() % 20);
-            Flex_setWidth(child1, 240);
-            Flex_setHeight(child1, 140);
+            Flex_setWidth(child1, 340);
+            Flex_setHeight(child1, 240);
             Flex_addChild(child, child1);
 
             Flex_setBorderRadius(child1, 20, 20, 20, 20);
@@ -59,7 +59,7 @@ void Flex_Test()
             Flex_setFontColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             Flex_setText(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
             Flex_setTextAlign(child1, TEXT_ALIGN_CENTER);
-            Flex_setContentImage(child1, "res/img/Gradient.svg");
+            Flex_setContentImage(child1, "res/img/picture.png");
             Flex_setBackgroundImage(child1, "res/img/Gradient2.svg");
         }
     }

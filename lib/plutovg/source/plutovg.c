@@ -1,4 +1,3 @@
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "plutovg-private.h"
 #include "stb_image_write.h"
 
