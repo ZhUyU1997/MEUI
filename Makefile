@@ -4,7 +4,7 @@ X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb -Wall
 
 
 X_INCDIRS	+= include
-SRC			+= src/*.c
+SRC			+= src/*.c examples/*.c
 
 # stb
 X_INCDIRS	+= lib/stb/include
@@ -22,6 +22,13 @@ SRC			+= lib/plutosvg/source/*.c
 X_INCDIRS	+= lib/flex/include
 SRC			+= lib/flex/*.c
 
-X_LIBS		+= m
+X_CFLAGS	+= `pkg-config sdl2 --cflags`
+X_LDFLAGS	+= `pkg-config sdl2 --libs` -lm
 
 NAME		:= meui
+
+define CUSTOM_TARGET_CMD
+echo [OUTPUT] $@
+$(LD) -r -T class.lds -o $@.o $(X_OBJS)
+$(CC) -o $@ $@.o $(X_LDFLAGS)
+endef

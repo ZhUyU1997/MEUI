@@ -1,5 +1,6 @@
 #include "box.h"
 #include "image.h"
+#include "meui.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -32,13 +33,6 @@ static const char *fileext(const char *filename)
 }
 
 #define KAPPA90 (0.5522847493f)
-
-static FlexRenderContext context = {};
-
-FlexRenderContextRef Flex_getRenderContext()
-{
-    return &context;
-}
 
 FlexNodeRef Flex_newBox()
 {
@@ -369,7 +363,7 @@ static void DrawText(plutovg_t *pluto, double size, struct plutovg_color color, 
 {
     plutovg_save(pluto);
 
-    plutovg_font_t *font = plutovg_font_load_from_face(context.face, size);
+    plutovg_font_t *font = meui_get_font(meui_get_instance(), size);
 
     plutovg_set_font(pluto, font);
     double ascent = plutovg_font_get_ascent(font);
@@ -498,7 +492,9 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
     {
         printf("%f %f %f %f\n", box->fill_color.a, box->fill_color.r, box->fill_color.b, box->fill_color.g);
 
-        DrawBoxBackground(box, Flex_getRenderContext()->pluto, x + left, y + top, width, height,
+        plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
+
+        DrawBoxBackground(box, pluto, x + left, y + top, width, height,
                           (float[]){
                               content_left,
                               content_top,
@@ -515,11 +511,13 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
                           box->fill_color, box->border_color);
 
         if (box->text[0] != '\0')
-            DrawText(Flex_getRenderContext()->pluto, box->font_size, box->font_color, box->align, box->text,
+            DrawText(pluto, box->font_size, box->font_color, box->align, box->text,
                      content_left,
                      content_top,
                      content_width,
                      content_height);
+        
+        plutovg_destroy(pluto);
     }
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)

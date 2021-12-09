@@ -3,13 +3,6 @@
 #include <FlexLayout.h>
 #include <plutovg.h>
 
-typedef struct FlexRenderContext
-{
-    plutovg_font_face_t *face;
-    plutovg_surface_t *surface;
-    plutovg_t *pluto;
-} FlexRenderContext, *FlexRenderContextRef;
-
 typedef enum TEXT_ALIGN
 {
     TEXT_ALIGN_LEFT,
@@ -29,8 +22,6 @@ struct Box
     const char *background_image;
     const char *content_image;
 };
-
-FlexRenderContextRef Flex_getRenderContext();
 
 FlexNodeRef Flex_newBox();
 void Flex_freeBox(FlexNodeRef node);
