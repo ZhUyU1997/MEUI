@@ -146,7 +146,7 @@ void meui_main_loop(struct meui_t *meui)
     }
 }
 
-void meui_update_surface(struct meui_t *meui)
+void meui_flush(struct meui_t *meui)
 {
     if (!meui)
     {

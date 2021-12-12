@@ -38,7 +38,7 @@ struct meui_t *meui_start(int width, int height);
 struct meui_t *meui_get_instance();
 void meui_register_callback(struct meui_t *, enum MEUI_CALLBACK, meui_callback_t);
 void meui_main_loop(struct meui_t *);
-void meui_update_surface(struct meui_t *);
+void meui_flush(struct meui_t *);
 void meui_end(struct meui_t *);
 
 void meui_add_font_face(struct meui_t *, const char *);

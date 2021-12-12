@@ -137,7 +137,7 @@ static void meui_on_create(struct meui_t *meui)
     Flex_draw(meui_get_root_node(meui));
 
     plutovg_surface_write_to_png(meui_get_surface(meui), "output.png");
-    meui_update_surface(meui);
+    meui_flush(meui);
 }
 
 int main(int argc, char **argv)
