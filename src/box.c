@@ -553,7 +553,7 @@ void Flex_transform_origin_offset(FlexNodeRef node, double x, double y)
 
 static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect)
 {
-    double x_off, y_off;
+    double x_off = 0.0, y_off = 0.0;
     if (box->transform_origin.type == TRANSFORM_ORIGIN_TYPE_KEYWORD)
     {
         x_off = rect->w * box->transform_origin.x.keyword / 2.0;
