@@ -1,6 +1,7 @@
 #include "box.h"
 #include "image.h"
 #include "meui.h"
+#include "log.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -569,7 +570,7 @@ static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_r
     plutovg_translate(pluto, -x_off, -y_off);
 }
 
-void Flex_drawNode(FlexNodeRef node, float x, float y)
+void Flex_drawNode(plutovg_t *pluto, FlexNodeRef node, float x, float y)
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -583,32 +584,42 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
     double content_left = Flex_getResultPaddingLeft(node);
     double content_top = Flex_getResultPaddingTop(node);
 
-    if (box)
+    if (!box)
     {
-        plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
-
-        box_transform_by_origin(box, pluto, &(plutovg_rect_t){x + left, y + top, width, height});
-
-        plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
-        DrawBoxBackground(box, pluto, &(plutovg_rect_t){x, y, width, height},
-                          &content_rect,
-                          box->border_radius,
-                          (float[]){
-                              Flex_getBorderTop(node),
-                              Flex_getBorderRight(node),
-                              Flex_getBorderBottom(node),
-                              Flex_getBorderLeft(node),
-                          },
-                          box->fill_color, box->border_color);
-
-        if (box->text[0] != '\0')
-            DrawText(box, pluto, box->font_size, box->font_color, box->align, box->text, &content_rect);
-
-        plutovg_destroy(pluto);
+        LOGE("Node is not box!");
+        return;
     }
+
+    box_transform_by_origin(box, pluto, &(plutovg_rect_t){left, top, width, height});
+
+    plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
+    DrawBoxBackground(box, pluto, &(plutovg_rect_t){x, y, width, height},
+                      &content_rect,
+                      box->border_radius,
+                      (float[]){
+                          Flex_getBorderTop(node),
+                          Flex_getBorderRight(node),
+                          Flex_getBorderBottom(node),
+                          Flex_getBorderLeft(node),
+                      },
+                      box->border_color, box->fill_color);
+
+    if (box->text[0] != '\0')
+        DrawText(box, pluto, box->font_size, box->font_color, box->align, box->text, &content_rect);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
-        Flex_drawNode(Flex_getChild(node, i), x + left, y + top);
+        plutovg_save(pluto);
+        Flex_drawNode(pluto, Flex_getChild(node, i), x + left, y + top);
+        plutovg_restore(pluto);
     }
+}
+
+void Flex_draw(FlexNodeRef root)
+{
+    float left = Flex_getResultLeft(root);
+    float top = Flex_getResultTop(root);
+    plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
+    Flex_drawNode(pluto, root, left, top);
+    plutovg_destroy(pluto);
 }

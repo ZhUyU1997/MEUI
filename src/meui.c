@@ -61,7 +61,7 @@ struct meui_t *meui_start(int width, int height)
     meui->render_context.surface = plutovg_surface_reference(meui->win_surface);
     meui->width = width;
     meui->height = height;
-    meui->render_context.root = Flex_newNode();
+    meui->render_context.root = Flex_newBox();
 
 #if 0
     plutovg_t *pluto = plutovg_create(meui->render_context.surface);

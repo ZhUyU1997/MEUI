@@ -72,4 +72,5 @@ void Flex_transform_skew(FlexNodeRef node, double x, double y);
 void Flex_transform_origin_keyword(FlexNodeRef node, TRANSFORM_ORIGIN x, TRANSFORM_ORIGIN y);
 void Flex_transform_origin_offset(FlexNodeRef node, double x, double y);
 
-void Flex_drawNode(FlexNodeRef node, float x, float y);
+void Flex_drawNode(plutovg_t *pluto, FlexNodeRef node, float x, float y);
+void Flex_draw(FlexNodeRef root);

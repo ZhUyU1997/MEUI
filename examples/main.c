@@ -15,21 +15,14 @@
 #define WINDOW_W 1920
 #define WINDOW_H 1080
 
-void Flex_draw(FlexNodeRef root)
-{
-    float left = Flex_getResultLeft(root);
-    float top = Flex_getResultTop(root);
-    Flex_drawNode(root, left, top);
-}
-
 void Flex_Test2()
 {
-    FlexNodeRef root = Flex_newNode();
+    FlexNodeRef root = Flex_newBox();
     Flex_setWidth(root, WINDOW_W);
     Flex_setHeight(root, WINDOW_H);
 
     {
-        FlexNodeRef child = Flex_newNode();
+        FlexNodeRef child = Flex_newBox();
         Flex_setWrap(child, FlexWrap);
         Flex_setJustifyContent(child, FlexCenter);
         Flex_setAlignItems(child, FlexCenter);
@@ -78,7 +71,7 @@ void Flex_Test()
 
     FlexNodeRef root = meui_get_root_node(meui_get_instance());
     {
-        FlexNodeRef child = Flex_newNode();
+        FlexNodeRef child = Flex_newBox();
         Flex_setWrap(child, FlexWrap);
         Flex_setJustifyContent(child, FlexCenter);
         Flex_setAlignItems(child, FlexCenter);
@@ -87,7 +80,7 @@ void Flex_Test()
         Flex_setHeightPercent(child, 100);
         Flex_addChild(root, child);
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1; i++)
         {
             FlexNodeRef child1 = Flex_newBox();
 
@@ -112,8 +105,26 @@ void Flex_Test()
             Flex_setTextAlign(child1, TEXT_ALIGN_CENTER);
             Flex_setContentImage(child1, "res/img/picture.png");
             Flex_setBackgroundImage(child1, "res/img/Gradient2.svg");
-            Flex_transform_rotate(child1, 0.2 * 3.1415926);
+            Flex_transform_rotate(child1, 0.25 * 3.1415926);
             Flex_transform_origin_keyword(child1, TRANSFORM_ORIGIN_CENTER, TRANSFORM_ORIGIN_CENTER);
+        }
+
+        {
+            FlexNodeRef child2 = Flex_newBox();
+            Flex_setFillColor(child2, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            Flex_addChild(child, child2);
+            Flex_setWidth(child2, 340);
+            Flex_setHeight(child2, 240);
+            Flex_setFillColor(child2, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            Flex_transform_rotate(child2, 0.25 * 3.1415926);
+            {
+                FlexNodeRef child11 = Flex_newBox();
+                Flex_setFillColor(child11, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+                Flex_addChild(child2, child11);
+                Flex_setWidth(child11, 100);
+                Flex_setHeight(child11, 100);
+                Flex_transform_rotate(child11, 0.25 * 3.1415926);
+            }
         }
     }
 }
