@@ -524,7 +524,11 @@ static void blend_transformed_argb(plutovg_surface_t* surface, plutovg_operator_
             {
                 int px = CLAMP(x >> 16, 0, image_width - 1);
                 int py = CLAMP(y >> 16, 0, image_height - 1);
-                *b = ((const uint32_t*)(texture->data + py * texture->stride))[px];
+
+                if((px == (x >> 16)) && (py == (y >> 16)))
+                    *b = ((const uint32_t*)(texture->data + py * texture->stride))[px];
+                else
+                    *b = *target;
 
                 x += fdx;
                 y += fdy;
