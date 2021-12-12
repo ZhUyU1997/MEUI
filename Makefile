@@ -1,7 +1,7 @@
 sinclude scripts/env.mk
 
-X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb -Wall
-
+W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function -Werror=return-type -Wno-unused-but-set-variable -Wno-unused-variable
+X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
 SRC			+= src/*.c examples/*.c

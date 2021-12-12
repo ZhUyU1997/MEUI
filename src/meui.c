@@ -1,6 +1,7 @@
 #define _XOPEN_SOURCE 600
 
 #include <meui.h>
+#include <box.h>
 #include <log.h>
 
 #include <FlexLayout.h>
@@ -61,6 +62,15 @@ struct meui_t *meui_start(int width, int height)
     meui->width = width;
     meui->height = height;
     meui->render_context.root = Flex_newNode();
+
+#if 0
+    plutovg_t *pluto = plutovg_create(meui->render_context.surface);
+    plutovg_rect(pluto, 0, 0, width, height);
+    plutovg_set_source_rgba(pluto, 1, 1, 1, 1);
+    plutovg_fill(pluto);
+    plutovg_destroy(pluto);
+#endif
+
     Flex_setWidth(meui->render_context.root, width);
     Flex_setHeight(meui->render_context.root, height);
 
@@ -188,7 +198,7 @@ plutovg_font_t *meui_get_font(struct meui_t *meui, double size)
     if (!meui)
     {
         LOGE("meui == NULL");
-        return;
+        return NULL;
     }
 
     return plutovg_font_load_from_face(meui->render_context.face, size);
@@ -199,17 +209,17 @@ plutovg_surface_t *meui_get_surface(struct meui_t *meui)
     if (!meui)
     {
         LOGE("meui == NULL");
-        return;
+        return NULL;
     }
     return meui->render_context.surface;
 }
 
-FlexNodeRef *meui_get_root_node(struct meui_t *meui)
+FlexNodeRef meui_get_root_node(struct meui_t *meui)
 {
     if (!meui)
     {
         LOGE("meui == NULL");
-        return;
+        return NULL;
     }
     return meui->render_context.root;
 }
