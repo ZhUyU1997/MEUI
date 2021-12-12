@@ -44,6 +44,12 @@ FlexNodeRef Flex_newBox()
     box->content_image = strdup("");
     box->font_size = 16;
     box->align = TEXT_ALIGN_LEFT;
+    box->transform_origin.type = TRANSFORM_ORIGIN_TYPE_KEYWORD;
+    box->transform_origin.x.keyword = TRANSFORM_ORIGIN_CENTER;
+    box->transform_origin.y.keyword = TRANSFORM_ORIGIN_CENTER;
+
+    plutovg_matrix_init_identity(box->transform);
+
     Flex_setContext(node, box);
     return node;
 }
@@ -69,7 +75,7 @@ void Flex_freeRecursive(FlexNodeRef node)
     Flex_freeBox(node);
 }
 
-static void round4_rect(plutovg_t *pluto, float r[4][2], int x, int y, int w, int h)
+static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
 {
     const char a[4][3][2] = {
         {{0, -KAPPA90}, {1 - KAPPA90, -1}, {1, -1}},
@@ -78,37 +84,40 @@ static void round4_rect(plutovg_t *pluto, float r[4][2], int x, int y, int w, in
         {{-KAPPA90, 0}, {-1, -(1 - KAPPA90)}, {-1, -1}},
     };
 
+    plutovg_path_t *path = plutovg_path_create();
+
     int index = 0;
-    plutovg_move_to(pluto, x, y + r[index][1]);
-    plutovg_rel_cubic_to(pluto,
-                         r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
-                         r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
-                         r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
+    plutovg_path_move_to(path, x, y + r[index][1]);
+    plutovg_path_rel_cubic_to(path,
+                              r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
+                              r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
+                              r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
 
-    plutovg_rel_line_to(pluto, w - (r[index][0] + r[index + 1][0]), 0);
+    plutovg_path_rel_line_to(path, w - (r[index][0] + r[index + 1][0]), 0);
     index = 1;
-    plutovg_rel_cubic_to(pluto,
-                         r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
-                         r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
-                         r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
+    plutovg_path_rel_cubic_to(path,
+                              r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
+                              r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
+                              r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
 
-    plutovg_rel_line_to(pluto, 0, h - (r[index][1] + r[index + 1][1]));
+    plutovg_path_rel_line_to(path, 0, h - (r[index][1] + r[index + 1][1]));
     index = 2;
-    plutovg_rel_cubic_to(pluto,
-                         r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
-                         r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
-                         r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
-    plutovg_rel_line_to(pluto, -w + (r[index][0] + r[index + 1][0]), 0);
+    plutovg_path_rel_cubic_to(path,
+                              r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
+                              r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
+                              r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
+    plutovg_path_rel_line_to(path, -w + (r[index][0] + r[index + 1][0]), 0);
     index = 3;
-    plutovg_rel_cubic_to(pluto,
-                         r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
-                         r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
-                         r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
+    plutovg_path_rel_cubic_to(path,
+                              r[index][0] * a[index][0][0], r[index][1] * a[index][0][1],
+                              r[index][0] * a[index][1][0], r[index][1] * a[index][1][1],
+                              r[index][0] * a[index][2][0], r[index][1] * a[index][2][1]);
 
-    plutovg_close_path(pluto);
+    plutovg_path_close(path);
+    return path;
 }
 
-static void DrawImage(plutovg_t *pluto, const char *path, double x, double y, double w, double h)
+static void DrawImage(plutovg_t *pluto, const char *path, plutovg_rect_t *r)
 {
     plutovg_save(pluto);
 
@@ -116,25 +125,30 @@ static void DrawImage(plutovg_t *pluto, const char *path, double x, double y, do
 
     if (strcmp(fileext(path), "svg") == 0)
     {
-        img = plutosvg_load_from_file(path, NULL, w, h, 96.0);
+        img = plutosvg_load_from_file(path, NULL, r->w, r->h, 96.0);
     }
     else
     {
-        img = pluto_load_image_from_file(path, w, h);
+        img = pluto_load_image_from_file(path, r->w, r->h);
     }
 
     if (img)
     {
-        plutovg_set_source_surface(pluto, img, x, y);
+        plutovg_set_source_surface(pluto, img, r->x, r->y);
         plutovg_fill_preserve(pluto);
     }
 
     plutovg_restore(pluto);
 }
 
-static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, float x, float y, float w, float h, float content[4], float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
+static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect, plutovg_rect_t *content_rect, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
 {
     float r[4][2] = {0};
+
+    float x = rect->x;
+    float y = rect->y;
+    float w = rect->w;
+    float h = rect->h;
 
     if (radius != NULL)
     {
@@ -164,20 +178,19 @@ static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, float x, float 
 
     plutovg_save(pluto);
 
-    round4_rect(pluto, r, x, y, w, h);
-
+    plutovg_path_t *outer_path = round4_rect(r, 0, 0, w, h);
+    plutovg_add_path(pluto, outer_path);
     plutovg_set_source_rgba(pluto, fill_color.r, fill_color.g, fill_color.b, fill_color.a);
 
     plutovg_fill_preserve(pluto);
 
     if (box->background_image[0] != '\0')
     {
-        DrawImage(pluto, box->background_image, x, y, w, h);
+        DrawImage(pluto, box->background_image, rect);
     }
 
     if (border != NULL)
     {
-        plutovg_path_t *outer_path = plutovg_path_clone(plutovg_get_path(pluto));
         plutovg_new_path(pluto);
 
         float border_top = border[0] < 0.0 ? 0.0 : border[0];
@@ -206,15 +219,14 @@ static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, float x, float 
             },
         };
 
-        round4_rect(pluto, r_inner,
-                    x + border_left,
-                    y + border_top,
-                    w - border_right - border_left,
-                    h - border_top - border_bottom);
+        plutovg_path_t *inner_path = round4_rect(r_inner, border_left, border_top,
+                                                 w - border_right - border_left,
+                                                 h - border_top - border_bottom);
+        plutovg_add_path(pluto, inner_path);
 
         if (box->content_image[0] != '\0')
         {
-            DrawImage(pluto, box->content_image, content[0], content[1], content[2], content[3]);
+            DrawImage(pluto, box->content_image, content_rect);
         }
 
         plutovg_add_path(pluto, outer_path);
@@ -223,9 +235,9 @@ static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, float x, float 
         plutovg_set_source_rgba(pluto, border_color.r, border_color.g, border_color.b, border_color.a);
 
         plutovg_fill(pluto);
-
-        plutovg_path_destroy(outer_path);
+        plutovg_path_destroy(inner_path);
     }
+    plutovg_path_destroy(outer_path);
 
     plutovg_restore(pluto);
 }
@@ -359,7 +371,7 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
     return result;
 }
 
-static void DrawText(plutovg_t *pluto, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, double x, double y, double w, double h)
+static void DrawText(struct Box *box, plutovg_t *pluto, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
 {
     plutovg_save(pluto);
 
@@ -368,10 +380,13 @@ static void DrawText(plutovg_t *pluto, double size, struct plutovg_color color, 
     plutovg_set_font(pluto, font);
     double ascent = plutovg_font_get_ascent(font);
 
-    plutovg_matrix_t matrix;
-    plutovg_matrix_init_translate(&matrix, x, y + ascent);
-    plutovg_path_t *path = draw_font_get_textn_path(plutovg_get_font(pluto), align, utf8, strlen(utf8), w, h);
-    plutovg_path_add_path(plutovg_get_path(pluto), path, &matrix);
+    plutovg_matrix_t matrix[1];
+    plutovg_matrix_init_translate(matrix, rect->x, rect->y + ascent);
+
+    plutovg_path_t *path = draw_font_get_textn_path(plutovg_get_font(pluto), align, utf8, strlen(utf8), rect->w, rect->h);
+
+    plutovg_path_transform(path, matrix);
+    plutovg_add_path(pluto, path);
     plutovg_path_destroy(path);
 
     plutovg_set_source_rgba(pluto, color.r, color.g, color.b, color.a);
@@ -469,38 +484,114 @@ void Flex_setContentImage(FlexNodeRef node, const char *content_image)
     }
 }
 
+void Flex_transform_matrix(FlexNodeRef node, double m00, double m10, double m01, double m11, double m02, double m12)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        plutovg_matrix_t m;
+        plutovg_matrix_init(&m, m00, m10, m01, m11, m02, m12);
+        plutovg_matrix_multiply(box->transform, &m, box->transform);
+    }
+}
+
+void Flex_transform_translate(FlexNodeRef node, double x, double y)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        plutovg_matrix_t m;
+        plutovg_matrix_init_translate(&m, x, y);
+        plutovg_matrix_multiply(box->transform, &m, box->transform);
+    }
+}
+
+void Flex_transform_rotate(FlexNodeRef node, double radians)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        plutovg_matrix_t m;
+        plutovg_matrix_init_rotate(&m, radians);
+        plutovg_matrix_multiply(box->transform, &m, box->transform);
+    }
+}
+
+void Flex_transform_skew(FlexNodeRef node, double x, double y)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        plutovg_matrix_t m;
+        plutovg_matrix_init_shear(&m, x, y);
+        plutovg_matrix_multiply(box->transform, &m, box->transform);
+    }
+}
+
+void Flex_transform_origin_keyword(FlexNodeRef node, TRANSFORM_ORIGIN x, TRANSFORM_ORIGIN y)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        box->transform_origin.type = TRANSFORM_ORIGIN_TYPE_KEYWORD;
+        box->transform_origin.x.keyword = x;
+        box->transform_origin.y.keyword = y;
+    }
+}
+
+void Flex_transform_origin_offset(FlexNodeRef node, double x, double y)
+{
+    struct Box *box = Flex_getContext(node);
+    if (box)
+    {
+        box->transform_origin.type = TRANSFORM_ORIGIN_TYPE_OFFSET;
+        box->transform_origin.x.offset = x;
+        box->transform_origin.y.offset = y;
+    }
+}
+
+static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect)
+{
+    double x_off, y_off;
+    if (box->transform_origin.type == TRANSFORM_ORIGIN_TYPE_KEYWORD)
+    {
+        x_off = rect->w * box->transform_origin.x.keyword / 2.0;
+        y_off = rect->h * box->transform_origin.y.keyword / 2.0;
+    }
+    else if (box->transform_origin.type == TRANSFORM_ORIGIN_TYPE_OFFSET)
+    {
+        x_off = box->transform_origin.x.offset;
+        y_off = box->transform_origin.y.offset;
+    }
+
+    plutovg_translate(pluto, rect->x + x_off, rect->y + y_off);
+    plutovg_transform(pluto, box->transform);
+    plutovg_translate(pluto, -x_off, -y_off);
+}
+
 void Flex_drawNode(FlexNodeRef node, float x, float y)
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
-    printf("# %f %f %f %f ", left, top, width, height);
-    printf("border %f %f %f %f\n", Flex_getBorderTop(node),
-           Flex_getBorderRight(node),
-           Flex_getBorderBottom(node),
-           Flex_getBorderLeft(node));
 
     struct Box *box = Flex_getContext(node);
 
     double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
     double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
-    double content_left = x + left + Flex_getResultPaddingLeft(node);
-    double content_top = y + top + Flex_getResultPaddingTop(node);
+    double content_left = Flex_getResultPaddingLeft(node);
+    double content_top = Flex_getResultPaddingTop(node);
 
     if (box)
     {
-        printf("%f %f %f %f\n", box->fill_color.a, box->fill_color.r, box->fill_color.b, box->fill_color.g);
-
         plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
 
-        DrawBoxBackground(box, pluto, x + left, y + top, width, height,
-                          (float[]){
-                              content_left,
-                              content_top,
-                              content_width,
-                              content_height,
-                          },
+        box_transform_by_origin(box, pluto, &(plutovg_rect_t){x + left, y + top, width, height});
+
+        plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
+        DrawBoxBackground(box, pluto, &(plutovg_rect_t){x, y, width, height},
+                          &content_rect,
                           box->border_radius,
                           (float[]){
                               Flex_getBorderTop(node),
@@ -511,12 +602,8 @@ void Flex_drawNode(FlexNodeRef node, float x, float y)
                           box->fill_color, box->border_color);
 
         if (box->text[0] != '\0')
-            DrawText(pluto, box->font_size, box->font_color, box->align, box->text,
-                     content_left,
-                     content_top,
-                     content_width,
-                     content_height);
-        
+            DrawText(box, pluto, box->font_size, box->font_color, box->align, box->text, &content_rect);
+
         plutovg_destroy(pluto);
     }
 

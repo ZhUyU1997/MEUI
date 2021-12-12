@@ -112,6 +112,8 @@ void Flex_Test()
             Flex_setTextAlign(child1, TEXT_ALIGN_CENTER);
             Flex_setContentImage(child1, "res/img/picture.png");
             Flex_setBackgroundImage(child1, "res/img/Gradient2.svg");
+            Flex_transform_rotate(child1, 0.2 * 3.1415926);
+            Flex_transform_origin_keyword(child1, TRANSFORM_ORIGIN_CENTER, TRANSFORM_ORIGIN_CENTER);
         }
     }
 }
@@ -123,7 +125,7 @@ static void meui_on_create(struct meui_t *meui)
     // Flex_print(meui_get_root_node(meui), FlexPrintDefault);
     Flex_draw(meui_get_root_node(meui));
 
-    plutovg_surface_write_to_png(meui->render_context.surface, "output.png");
+    plutovg_surface_write_to_png(meui_get_surface(meui), "output.png");
     meui_update_surface(meui);
 }
 

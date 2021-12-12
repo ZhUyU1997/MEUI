@@ -44,4 +44,4 @@ void meui_end(struct meui_t *);
 void meui_add_font_face(struct meui_t *, const char *);
 plutovg_font_t *meui_get_font(struct meui_t *, double);
 plutovg_surface_t *meui_get_surface(struct meui_t *);
-FlexNodeRef *meui_get_root_node(struct meui_t *);
+FlexNodeRef meui_get_root_node(struct meui_t *);
