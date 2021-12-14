@@ -520,22 +520,29 @@ static void blend_transformed_argb(plutovg_surface_t* surface, plutovg_operator_
             int l = MIN(length, BUFFER_SIZE);
             const uint32_t* end = buffer + l;
             uint32_t* b = buffer;
+
+            int start = 0;
+            int clip_length = 0;
+
             while(b < end)
             {
-                int px = CLAMP(x >> 16, 0, image_width - 1);
-                int py = CLAMP(y >> 16, 0, image_height - 1);
+                int px = x >> 16;
+                int py = y >> 16;
 
-                if((px == (x >> 16)) && (py == (y >> 16)))
-                    *b = ((const uint32_t*)(texture->data + py * texture->stride))[px];
-                else
-                    *b = *target;
+                // quick range check
+                if (((unsigned int)px < (unsigned int)image_width) && ((unsigned int)py < (unsigned int)image_height))
+                {
+                    clip_length++;
+                    *b = ((const uint32_t *)(texture->data + py * texture->stride))[px];
+                }
 
                 x += fdx;
                 y += fdy;
                 ++b;
+                start += clip_length == 0;
             }
 
-            func(target, l, buffer, coverage);
+            func(target + start, clip_length , buffer + start, coverage);
             target += l;
             length -= l;
         }
