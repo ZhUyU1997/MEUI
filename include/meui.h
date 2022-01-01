@@ -3,6 +3,8 @@
 #include <time.h>
 #include <plutovg.h>
 #include <FlexLayout.h>
+#include <meui/event.h>
+#include <box.h>
 
 struct meui_t;
 
@@ -19,7 +21,7 @@ struct meui_render_context_t
 {
     plutovg_font_face_t *face;
     plutovg_surface_t *surface;
-    FlexNodeRef root;
+    box_t root;
 };
 
 typedef struct meui_render_context_t meui_render_context_t;
@@ -39,9 +41,10 @@ struct meui_t *meui_get_instance();
 void meui_register_callback(struct meui_t *, enum MEUI_CALLBACK, meui_callback_t);
 void meui_main_loop(struct meui_t *);
 void meui_flush(struct meui_t *);
+void meui_update(struct meui_t *);
 void meui_end(struct meui_t *);
 
 void meui_add_font_face(struct meui_t *, const char *);
 plutovg_font_t *meui_get_font(struct meui_t *, double);
 plutovg_surface_t *meui_get_surface(struct meui_t *);
-FlexNodeRef meui_get_root_node(struct meui_t *);
+box_t meui_get_root_node(struct meui_t *);

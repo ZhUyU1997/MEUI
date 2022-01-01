@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <defines.h>
 
 /*
  * Simple doubly linked list implementation.

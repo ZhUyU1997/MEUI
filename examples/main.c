@@ -1,4 +1,5 @@
 #include "box.h"
+#include <macro/function.h>
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -17,12 +18,12 @@
 
 void Flex_Test2()
 {
-    FlexNodeRef root = Flex_newBox();
+    box_t root = box_new();
     Flex_setWidth(root, WINDOW_W);
     Flex_setHeight(root, WINDOW_H);
 
     {
-        FlexNodeRef child = Flex_newBox();
+        box_t child = box_new();
         Flex_setWrap(child, FlexWrap);
         Flex_setJustifyContent(child, FlexCenter);
         Flex_setAlignItems(child, FlexCenter);
@@ -33,7 +34,7 @@ void Flex_Test2()
 
         for (int i = 0; i < 10; i++)
         {
-            FlexNodeRef child1 = Flex_newBox();
+            box_t child1 = box_new();
 
             Flex_setBorderTop(child1, rand() % 20);
             Flex_setBorderBottom(child1, rand() % 20);
@@ -48,30 +49,30 @@ void Flex_Test2()
             Flex_setHeight(child1, 240);
             Flex_addChild(child, child1);
 
-            Flex_setBorderRadius(child1, 20, 20, 20, 20);
-            Flex_setBorderColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setFillColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setFontColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setText(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
-            Flex_setTextAlign(child1, TEXT_ALIGN_CENTER);
-            Flex_setContentImage(child1, "res/img/picture.png");
-            Flex_setBackgroundImage(child1, "res/img/Gradient2.svg");
+            box_default_style_border_radius(child1, 20, 20, 20, 20);
+            box_default_style_border_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_fill_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_font_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER);
+            box_default_style_content_image(child1, "res/img/picture.png");
+            box_default_style_background_image(child1, "res/img/Gradient2.svg");
         }
     }
 
     Flex_layout(root, FlexUndefined, FlexUndefined, 1);
     Flex_print(root, FlexPrintDefault);
-    Flex_draw(root);
-    Flex_freeRecursive(root);
+    box_draw(root);
+    box_freeRecursive(root);
 }
 
 void Flex_Test()
 {
     srand((unsigned)time(NULL));
 
-    FlexNodeRef root = meui_get_root_node(meui_get_instance());
+    box_t root = meui_get_root_node(meui_get_instance());
     {
-        FlexNodeRef child = Flex_newBox();
+        box_t child = box_new();
         Flex_setWrap(child, FlexWrap);
         Flex_setJustifyContent(child, FlexCenter);
         Flex_setAlignItems(child, FlexCenter);
@@ -80,9 +81,9 @@ void Flex_Test()
         Flex_setHeightPercent(child, 100);
         Flex_addChild(root, child);
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 10; i++)
         {
-            FlexNodeRef child1 = Flex_newBox();
+            box_t child1 = box_new();
 
             Flex_setBorderTop(child1, rand() % 20);
             Flex_setBorderBottom(child1, rand() % 20);
@@ -97,33 +98,43 @@ void Flex_Test()
             Flex_setHeight(child1, 240);
             Flex_addChild(child, child1);
 
-            Flex_setBorderRadius(child1, 20, 20, 20, 20);
-            Flex_setBorderColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setFillColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setFontColor(child1, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_setText(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
-            Flex_setTextAlign(child1, TEXT_ALIGN_CENTER);
-            Flex_setContentImage(child1, "res/img/picture.png");
-            Flex_setBackgroundImage(child1, "res/img/Gradient2.svg");
-            Flex_transform_rotate(child1, 0.25 * 3.1415926);
-            Flex_transform_origin_keyword(child1, TRANSFORM_ORIGIN_CENTER, TRANSFORM_ORIGIN_CENTER);
+            box_default_style_border_radius(child1, 20, 20, 20, 20);
+            box_default_style_border_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_fill_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_font_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER);
+            box_default_style_content_image(child1, "res/img/picture.png");
+            box_default_style_background_image(child1, "res/img/Gradient2.svg");
+            box_default_style_transform_rotate(child1, 0.25 * 3.1415926);
+            box_default_style_transform_origin_keyword(child1, TRANSFORM_ORIGIN_CENTER, TRANSFORM_ORIGIN_CENTER);
         }
 
         {
-            FlexNodeRef child2 = Flex_newBox();
-            Flex_setFillColor(child2, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_t child2 = box_new();
+            box_default_style_fill_color(child2, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             Flex_addChild(child, child2);
             Flex_setWidth(child2, 340);
             Flex_setHeight(child2, 240);
-            Flex_setFillColor(child2, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
-            Flex_transform_rotate(child2, 0.25 * 3.1415926);
+            box_default_style_fill_color(child2, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+            box_default_style_transform_rotate(child2, 0.25 * 3.1415926);
             {
-                FlexNodeRef child11 = Flex_newBox();
-                Flex_setFillColor(child11, (struct plutovg_color){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+                box_t child11 = box_new();
+                box_default_style_fill_color(child11, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
                 Flex_addChild(child2, child11);
                 Flex_setWidth(child11, 100);
                 Flex_setHeight(child11, 100);
-                Flex_transform_rotate(child11, 0.25 * 3.1415926);
+                box_default_style_transform_rotate(child11, 0.25 * 3.1415926);
+            }
+            {
+                box_t child11 = box_new();
+                box_default_style_fill_color(child11, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+                Flex_addChild(child2, child11);
+                Flex_setWidth(child11, 100);
+                Flex_setHeight(child11, 100);
+                box_default_style_transform_rotate(child11, 0.25 * 3.1415926);
+
+                box_add_event_listener(child11, MEUI_EVENT_MOUSE_DOWN, function(void, (box_event_t * e)(printf("MOUSE_DOWN\n"); box_default_style_transform_scale(e->target, 1.2, 1.2);)));
             }
         }
     }
@@ -134,7 +145,7 @@ static void meui_on_create(struct meui_t *meui)
     Flex_Test();
     Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
     // Flex_print(meui_get_root_node(meui), FlexPrintDefault);
-    Flex_draw(meui_get_root_node(meui));
+    box_draw(meui_get_root_node(meui));
 
     plutovg_surface_write_to_png(meui_get_surface(meui), "output.png");
     meui_flush(meui);

@@ -23,7 +23,7 @@ X_INCDIRS	+= lib/flex/include
 SRC			+= lib/flex/*.c
 
 X_CFLAGS	+= `pkg-config sdl2 --cflags`
-X_LDFLAGS	+= `pkg-config sdl2 --libs` -lm
+X_LDFLAGS	+= `pkg-config sdl2 --libs` -lm -lprofiler
 
 NAME		:= meui
 
