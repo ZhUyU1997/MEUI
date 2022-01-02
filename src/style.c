@@ -2,17 +2,18 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-static void assign_text(char **text, char *new_text)
+static void assign_text(char **text, const char *new_text)
 {
     if (*text)
         free(*text);
     *text = strdup(new_text);
 }
 
-void box_style_init(box_style_t *style)
+box_style_t *box_style_new()
 {
-    *style = (box_style_t){};
+    box_style_t *style = calloc(1, sizeof(box_style_t));
     style->font_color.a = 1.0;
     style->text = strdup("");
     style->background_image = strdup("");
@@ -23,6 +24,20 @@ void box_style_init(box_style_t *style)
     style->transform_origin.x.keyword = TRANSFORM_ORIGIN_CENTER;
     style->transform_origin.y.keyword = TRANSFORM_ORIGIN_CENTER;
     plutovg_matrix_init_identity(style->transform);
+    return style;
+}
+
+void box_style_free(box_style_t *style)
+{
+    assert(style);
+
+    if (style->text)
+        free(style->text);
+    if (style->background_image)
+        free(style->text);
+    if (style->content_image)
+        free(style->text);
+    free(style);
 }
 
 void box_merge_styles(box_style_t *dst, box_style_t *src)

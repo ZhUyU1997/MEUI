@@ -3,6 +3,7 @@
 #include <meui.h>
 #include <box.h>
 #include <log.h>
+#include <macro/function.h>
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -22,6 +23,8 @@ struct meui_platform_t
 {
     SDL_Window *window;
     SDL_Surface *surface;
+    unsigned int frame;
+    unsigned int start_ticks;
 };
 
 static struct meui_t *meui_instance = NULL;
@@ -91,6 +94,31 @@ exit0:
     return NULL;
 }
 
+void meui_platform_fps(struct meui_t *meui)
+{
+    struct meui_platform_t *platform = meui->platform_data;
+    platform->frame++;
+
+    if (platform->start_ticks == 0)
+    {
+        platform->start_ticks = SDL_GetTicks();
+    }
+    else
+    {
+        unsigned int ticks = SDL_GetTicks() - platform->start_ticks;
+
+        if (ticks >= 1000)
+        {
+            char buf[128] = {0};
+            snprintf(buf, 128, "FPS: %f", (double)platform->frame * 1000.0 / ticks);
+
+            SDL_SetWindowTitle(platform->window, buf);
+            platform->frame = 0;
+            platform->start_ticks = SDL_GetTicks();
+        }
+    }
+}
+
 struct meui_t *meui_get_instance()
 {
     return meui_instance;
@@ -117,7 +145,7 @@ void meui_register_callback(struct meui_t *meui, enum MEUI_CALLBACK type, meui_c
     meui->callback[type] = cb;
 }
 
-static box_t search_hit_node(struct meui_t *meui, box_t node, plutovg_point_t *point)
+static box_t search_node(struct meui_t *meui, box_t node, plutovg_point_t *point, void (*cb)(box_t node, bool hit))
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -144,24 +172,39 @@ static box_t search_hit_node(struct meui_t *meui, box_t node, plutovg_point_t *p
         target = node;
     }
 
+    if (cb)
+        cb(node, target == node);
+
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
-        box_t ret = search_hit_node(meui, Flex_getChild(node, i), point);
+        box_t ret = search_node(meui, Flex_getChild(node, i), point, cb);
         target = ret ? ret : target;
     }
 
     return target;
 }
 
-static void dispatch_event(struct meui_t *meui, struct meui_event_t *event)
+static void handle_event(struct meui_t *meui, struct meui_event_t *event)
 {
+    plutovg_point_t point = {-1, -1};
     if (event->type == MEUI_EVENT_MOUSE_DOWN)
     {
-        plutovg_point_t point = {event->MOUSE_DOWN.x, event->MOUSE_DOWN.y};
+        point = (plutovg_point_t){event->MOUSE_DOWN.x, event->MOUSE_DOWN.y};
+    }
+    else if (event->type == MEUI_EVENT_MOUSE_UP)
+    {
+        point = (plutovg_point_t){event->MOUSE_UP.x, event->MOUSE_UP.y};
+    }
+    else if (event->type == MEUI_EVENT_MOUSE_MOVE)
+    {
+        point = (plutovg_point_t){event->MOUSE_MOVE.x, event->MOUSE_MOVE.y};
+    }
 
-        box_t node = search_hit_node(meui, meui_get_root_node(meui), &point);
+    if (point.x >= 0 && point.y >= 0)
+    {
+        box_t node = search_node(meui, meui_get_root_node(meui), &point, function(void, (box_t node, bool hit)(box_set_state(node, hit ? BOX_STATE_HOVER : BOX_STATE_DEFAULT);)));
 
-        if (node)
+        if (node && event->type == MEUI_EVENT_MOUSE_DOWN)
         {
             box_dispatch_event(node, event->type, event);
         }
@@ -198,13 +241,13 @@ void meui_main_loop(struct meui_t *meui)
                 running = false;
                 break;
             case SDL_MOUSEMOTION:
-                dispatch_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_MOVE, .MOUSE_MOVE = {e.button.x, e.button.y}});
+                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_MOVE, .MOUSE_MOVE = {e.button.x, e.button.y}});
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                dispatch_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_DOWN, .MOUSE_DOWN = {e.button.x, e.button.y}});
+                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_DOWN, .MOUSE_DOWN = {e.button.x, e.button.y}});
                 break;
             case SDL_MOUSEBUTTONUP:
-                dispatch_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_UP, .MOUSE_UP = {e.button.x, e.button.y}});
+                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_UP, .MOUSE_UP = {e.button.x, e.button.y}});
                 break;
             }
         }
@@ -240,6 +283,8 @@ void meui_update(struct meui_t *meui)
     Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
     box_draw(meui_get_root_node(meui));
     meui_flush(meui);
+
+    meui_platform_fps(meui);
 }
 
 void meui_end(struct meui_t *meui)
@@ -250,7 +295,7 @@ void meui_end(struct meui_t *meui)
         return;
     }
 
-    box_freeRecursive(meui->render_context.root);
+    box_free_recursive(meui->render_context.root);
     plutovg_surface_destroy(meui->render_context.surface);
     plutovg_surface_destroy(meui->win_surface);
 

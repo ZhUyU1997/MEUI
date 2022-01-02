@@ -13,6 +13,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 
 static const char *fileext(const char *filename)
 {
@@ -40,9 +41,7 @@ box_t box_new()
 {
     box_t node = Flex_newNode();
     struct Box *box = calloc(1, sizeof(struct Box));
-    box->style_array[BOX_STATE_DEFAULT] = malloc(sizeof(box_style_t));
-
-    box_style_init(box->style_array[BOX_STATE_DEFAULT]);
+    box->style_array[BOX_STATE_DEFAULT] = box_style_new();
 
     init_list_head(&box->event_list);
 
@@ -62,13 +61,27 @@ void box_free(box_t node)
     Flex_freeNode(node);
 }
 
-void box_freeRecursive(box_t node)
+void box_free_recursive(box_t node)
 {
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
-        box_freeRecursive(Flex_getChild(node, i));
+        box_free_recursive(Flex_getChild(node, i));
     }
     box_free(node);
+}
+
+void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
+{
+    assert(node && style);
+
+    struct Box *box = Flex_getContext(node);
+    box->style_array[state] = style;
+}
+
+void box_set_state(box_t node, enum BOX_STATE state)
+{
+    struct Box *box = Flex_getContext(node);
+    box->state = state;
 }
 
 void box_default_style_border_radius(box_t node, float tl, float tr, float br, float bl)
@@ -218,7 +231,7 @@ static void draw_image(plutovg_t *pluto, const char *path, plutovg_rect_t *r)
     plutovg_restore(pluto);
 }
 
-static void DrawBoxBackground(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect, plutovg_rect_t *content_rect, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
+static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect, plutovg_rect_t *content_rect, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
 {
     float r[4][2] = {0};
 
@@ -406,7 +419,7 @@ static plutovg_path_t *draw_font_get_textn_oneline_path(const plutovg_font_t *fo
     return result;
 }
 
-static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
+static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h, double *text_h)
 {
     plutovg_path_t *result = plutovg_path_create();
     double advance = 0;
@@ -418,30 +431,33 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
     double line_gap = plutovg_font_get_line_gap(font);
     double leading = plutovg_font_get_leading(font);
 
-    double y = 0.0;
+    double y = 0;
 
     while (utf8 < end)
     {
         if (y + ascent > h)
             break;
 
+        y += ascent;
+
         double line_width = 0;
         plutovg_path_t *line_path = draw_font_get_textn_oneline_path(font, &utf8, end, w, &line_width);
 
         plutovg_matrix_t matrix;
 
-        if (align == TEXT_ALIGN_LEFT)
+        if (align & TEXT_ALIGN_LEFT)
             plutovg_matrix_init_translate(&matrix, 0, y);
-        else if (align == TEXT_ALIGN_RIGHT)
+        else if (align & TEXT_ALIGN_RIGHT)
             plutovg_matrix_init_translate(&matrix, w - line_width, y);
-        else if (align == TEXT_ALIGN_CENTER)
+        else if (align & TEXT_ALIGN_CENTER_H)
             plutovg_matrix_init_translate(&matrix, (w - line_width) / 2.0, y);
 
         plutovg_path_add_path(result, line_path, &matrix);
         plutovg_path_destroy(line_path);
 
-        y += ascent;
     }
+
+    *text_h = y - descent;
 
     return result;
 }
@@ -454,11 +470,18 @@ static void draw_text(struct Box *box, plutovg_t *pluto, double size, struct plu
 
     plutovg_set_font(pluto, font);
     double ascent = plutovg_font_get_ascent(font);
+    double text_h = 0.0;
+
+    plutovg_path_t *path = draw_font_get_textn_path(plutovg_get_font(pluto), align, utf8, strlen(utf8), rect->w, rect->h, &text_h);
 
     plutovg_matrix_t matrix[1];
-    plutovg_matrix_init_translate(matrix, rect->x, rect->y + ascent);
-
-    plutovg_path_t *path = draw_font_get_textn_path(plutovg_get_font(pluto), align, utf8, strlen(utf8), rect->w, rect->h);
+    // LOGI($(rect->w) " "$(text_h));
+    if (align & TEXT_ALIGN_TOP)
+        plutovg_matrix_init_translate(matrix, rect->x, rect->y);
+    else if (align & TEXT_ALIGN_BOTTOM)
+        plutovg_matrix_init_translate(matrix, rect->x, text_h >= rect->h ? rect->y : rect->y + rect->h - text_h);
+    else if (align & TEXT_ALIGN_CENTER_V)
+        plutovg_matrix_init_translate(matrix, rect->x, text_h >= rect->h ? rect->y : rect->y + (rect->h - text_h) / 2.0);
 
     plutovg_path_transform(path, matrix);
     plutovg_add_path(pluto, path);
@@ -535,10 +558,10 @@ static void merge_styles(struct Box *box)
 
     if (box->state != BOX_STATE_DEFAULT)
     {
-        box_style_t *src = box->style_array[BOX_STATE_DEFAULT];
+        box_style_t *src = box->style_array[box->state];
         box_style_t *dst = &box->style;
-
-        box_merge_styles(dst, src);
+        if (src)
+            box_merge_styles(dst, src);
     }
 }
 void box_drawRecursive(plutovg_t *pluto, box_t node)
@@ -568,16 +591,16 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
     plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
 
     plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
-    DrawBoxBackground(box, pluto, &(plutovg_rect_t){0, 0, width, height},
-                      &content_rect,
-                      box->style.border_radius,
-                      (float[]){
-                          Flex_getBorderTop(node),
-                          Flex_getBorderRight(node),
-                          Flex_getBorderBottom(node),
-                          Flex_getBorderLeft(node),
-                      },
-                      box->style.border_color, box->style.fill_color);
+    draw_box_background(box, pluto, &(plutovg_rect_t){0, 0, width, height},
+                        &content_rect,
+                        box->style.border_radius,
+                        (float[]){
+                            Flex_getBorderTop(node),
+                            Flex_getBorderRight(node),
+                            Flex_getBorderBottom(node),
+                            Flex_getBorderLeft(node),
+                        },
+                        box->style.border_color, box->style.fill_color);
 
     if (box->style.text[0] != '\0')
 

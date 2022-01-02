@@ -10,9 +10,24 @@ typedef FlexNodeRef box_t;
 
 typedef enum TEXT_ALIGN
 {
-    TEXT_ALIGN_LEFT,
-    TEXT_ALIGN_RIGHT,
-    TEXT_ALIGN_CENTER,
+    // private
+    TEXT_ALIGN_LEFT = 1 << 0,
+    TEXT_ALIGN_RIGHT = 1 << 1,
+    TEXT_ALIGN_CENTER_H = 1 << 2,
+    TEXT_ALIGN_TOP = 1 << 3,
+    TEXT_ALIGN_BOTTOM = 1 << 4,
+    TEXT_ALIGN_CENTER_V = 1 << 5,
+
+    // public
+    TEXT_ALIGN_CENTER_LEFT = TEXT_ALIGN_CENTER_V | TEXT_ALIGN_LEFT,
+    TEXT_ALIGN_CENTER_RIGHT = TEXT_ALIGN_CENTER_V | TEXT_ALIGN_RIGHT,
+    TEXT_ALIGN_CENTER_CENTER = TEXT_ALIGN_CENTER_V | TEXT_ALIGN_CENTER_H,
+    TEXT_ALIGN_TOP_LEFT = TEXT_ALIGN_TOP | TEXT_ALIGN_LEFT,
+    TEXT_ALIGN_TOP_RIGHT = TEXT_ALIGN_TOP | TEXT_ALIGN_RIGHT,
+    TEXT_ALIGN_TOP_CENTER = TEXT_ALIGN_TOP | TEXT_ALIGN_CENTER_H,
+    TEXT_ALIGN_BOTTOM_LEFT = TEXT_ALIGN_BOTTOM | TEXT_ALIGN_LEFT,
+    TEXT_ALIGN_BOTTOM_RIGHT = TEXT_ALIGN_BOTTOM | TEXT_ALIGN_RIGHT,
+    TEXT_ALIGN_BOTTOM_CENTER = TEXT_ALIGN_BOTTOM | TEXT_ALIGN_CENTER_H,
 } TEXT_ALIGN;
 
 typedef enum TRANSFORM_ORIGIN_TYPE
@@ -67,17 +82,18 @@ typedef struct box_event_dsc_t
     }
 
 #define NULLABLE_ASSIGN(name, value, arr...) \
-    ({                                       \
-        name##_flags = 1;                    \
-        name arr = value;                    \
-    })
+    (                                        \
+        {                                    \
+            name##_flags = 1;                \
+            name arr = value;                \
+        })
 
 #define NULLABLE_FLAG(name) \
     ({                      \
         name##_flags = 1;   \
     })
 
-#define ISNULL(name) (name##_flags == 1)
+#define ISNULL(name) (name##_flags == 0)
 
 typedef struct box_style_t
 {
@@ -98,7 +114,7 @@ enum BOX_STATE
 {
     BOX_STATE_DEFAULT,
     BOX_STATE_FOCUS,
-
+    BOX_STATE_HOVER,
     BOX_STATE_SELECT,
     BOX_STATE_DISABLE,
     BOX_STATE_CHECK,
@@ -121,7 +137,10 @@ struct Box
 
 box_t box_new();
 void box_free(box_t node);
-void box_freeRecursive(box_t node);
+void box_free_recursive(box_t node);
+
+void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
+void box_set_state(box_t node, enum BOX_STATE state);
 
 void box_default_style_border_radius(box_t node, float tl, float tr, float br, float bl);
 void box_default_style_border_color(box_t node, plutovg_color_t c);
@@ -142,7 +161,9 @@ void box_default_style_transform_origin_offset(box_t node, double x, double y);
 
 void box_merge_styles(box_style_t *dst, box_style_t *src);
 
-void box_style_init(box_style_t *style);
+box_style_t *box_style_new();
+void box_style_free(box_style_t *style);
+
 void box_style_border_radius(box_style_t *style, float tl, float tr, float br, float bl);
 void box_style_border_color(box_style_t *style, plutovg_color_t c);
 void box_style_fill_color(box_style_t *style, plutovg_color_t c);

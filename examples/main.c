@@ -54,7 +54,7 @@ void Flex_Test2()
             box_default_style_fill_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             box_default_style_font_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
-            box_default_style_text_align(child1, TEXT_ALIGN_CENTER);
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER_CENTER);
             box_default_style_content_image(child1, "res/img/picture.png");
             box_default_style_background_image(child1, "res/img/Gradient2.svg");
         }
@@ -63,7 +63,7 @@ void Flex_Test2()
     Flex_layout(root, FlexUndefined, FlexUndefined, 1);
     Flex_print(root, FlexPrintDefault);
     box_draw(root);
-    box_freeRecursive(root);
+    box_free_recursive(root);
 }
 
 void Flex_Test()
@@ -103,7 +103,7 @@ void Flex_Test()
             box_default_style_fill_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             box_default_style_font_color(child1, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
             box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
-            box_default_style_text_align(child1, TEXT_ALIGN_CENTER);
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER_CENTER);
             box_default_style_content_image(child1, "res/img/picture.png");
             box_default_style_background_image(child1, "res/img/Gradient2.svg");
             box_default_style_transform_rotate(child1, 0.25 * 3.1415926);
@@ -140,9 +140,105 @@ void Flex_Test()
     }
 }
 
+void Flex_Test_Text_Align()
+{
+    srand((unsigned)time(NULL));
+
+    box_t root = meui_get_root_node(meui_get_instance());
+    box_default_style_fill_color(root, (plutovg_color_t){1, 1, 1, 1});
+
+    {
+        box_t child = box_new();
+        Flex_setWrap(child, FlexWrap);
+        Flex_setDirection(child, FlexVertical);
+        Flex_setJustifyContent(child, FlexCenter);
+        Flex_setAlignItems(child, FlexCenter);
+        Flex_setAlignContent(child, FlexCenter);
+        Flex_setWidthPercent(child, 100);
+        Flex_setHeightPercent(child, 100);
+        Flex_addChild(root, child);
+
+        static int text_align[] = {
+            TEXT_ALIGN_CENTER_LEFT,
+            TEXT_ALIGN_CENTER_RIGHT,
+            TEXT_ALIGN_CENTER_CENTER,
+            TEXT_ALIGN_TOP_LEFT,
+            TEXT_ALIGN_TOP_RIGHT,
+            TEXT_ALIGN_TOP_CENTER,
+            TEXT_ALIGN_BOTTOM_LEFT,
+            TEXT_ALIGN_BOTTOM_RIGHT,
+            TEXT_ALIGN_BOTTOM_CENTER,
+        };
+
+        for (int i = 0; i < 9; i++)
+        {
+            box_t child1 = box_new();
+
+            Flex_setWidth(child1, 340);
+            Flex_setHeight(child1, 80);
+            Flex_addChild(child, child1);
+            Flex_setBorderLeft(child1, 1);
+            Flex_setBorderRight(child1, 1);
+            Flex_setBorderTop(child1, 1);
+            Flex_setBorderBottom(child1, 1);
+            box_default_style_border_color(child1, (plutovg_color_t){0, 0, 0, 1.0});
+            box_default_style_fill_color(child1, (plutovg_color_t){0x18 / 255.0, 0x80 / 255.0, 1, 1.0});
+            box_default_style_font_color(child1, (plutovg_color_t){0, 0, 0, 1});
+            box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
+            box_default_style_text_align(child1, text_align[i]);
+        }
+    }
+}
+
+void Flex_Test_State()
+{
+    srand((unsigned)time(NULL));
+
+    box_t root = meui_get_root_node(meui_get_instance());
+    box_default_style_fill_color(root, (plutovg_color_t){1, 1, 1, 1});
+
+    {
+        box_t child = box_new();
+        Flex_setWrap(child, FlexWrap);
+        Flex_setDirection(child, FlexVertical);
+        Flex_setJustifyContent(child, FlexCenter);
+        Flex_setAlignItems(child, FlexCenter);
+        Flex_setAlignContent(child, FlexCenter);
+        Flex_setWidthPercent(child, 100);
+        Flex_setHeightPercent(child, 100);
+        Flex_addChild(root, child);
+
+        for (int i = 0; i < 10; i++)
+        {
+            box_t child1 = box_new();
+
+            Flex_setWidth(child1, 340);
+            Flex_setHeight(child1, 80);
+            Flex_addChild(child, child1);
+            Flex_setMarginBottom(child1, 10);
+            Flex_setBorderLeft(child1, 2);
+            Flex_setBorderRight(child1, 2);
+            Flex_setBorderTop(child1, 2);
+            Flex_setBorderBottom(child1, 2);
+
+            box_default_style_border_radius(child1, 20, 20, 20, 20);
+            box_default_style_fill_color(child1, (plutovg_color_t){0x18 / 255.0, 0x80 / 255.0, 1, 1.0});
+            box_default_style_font_color(child1, (plutovg_color_t){0, 0, 0, 1});
+            box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER_CENTER);
+
+            box_style_t *style = box_style_new();
+            box_style_fill_color(style, (plutovg_color_t){0x40 / 255.0, 0xA9 / 255.0, 1, 1.0});
+            box_style_border_color(style, (plutovg_color_t){1, 0, 0, 1});
+            box_style_text(style, "Box State: Hover");
+            box_set_style(child1, style, BOX_STATE_HOVER);
+        }
+    }
+}
+
 static void meui_on_create(struct meui_t *meui)
 {
-    Flex_Test();
+    Flex_Test_State();
     Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
     // Flex_print(meui_get_root_node(meui), FlexPrintDefault);
     box_draw(meui_get_root_node(meui));
