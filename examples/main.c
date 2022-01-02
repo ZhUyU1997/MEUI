@@ -207,8 +207,32 @@ void Flex_Test_State()
         Flex_setWidthPercent(child, 100);
         Flex_setHeightPercent(child, 100);
         Flex_addChild(root, child);
-
-        for (int i = 0; i < 10; i++)
+        static const char *style_name[8] = {"primary", "secondary", "success", "info", "warning", "danger", "light", "dark"};
+        static unsigned int style_color[8][3][3] = {{{0x536de6ff, 0xffffffff, 0x00000000},
+                                                 {0x3a57e2ff, 0xffffffff, 0x00000000},
+                                                 {0x2647e0ff, 0xffffffff, 0x536de660}},
+                                                {{0x6c757dff, 0xffffffff, 0x00000000},
+                                                 {0x5a6268ff, 0xffffffff, 0x00000000},
+                                                 {0x545b62ff, 0xffffffff, 0x6c757d60}},
+                                                {{0x10c469ff, 0xffffffff, 0x00000000},
+                                                 {0x0da156ff, 0xffffffff, 0x00000000},
+                                                 {0x0c9550ff, 0xffffffff, 0x10c46960}},
+                                                {{0x35b8e0ff, 0xffffffff, 0x00000000},
+                                                 {0x20a6cfff, 0xffffffff, 0x00000000},
+                                                 {0x1e9dc4ff, 0xffffffff, 0x35b8e060}},
+                                                {{0xf9c851ff, 0xffffffff, 0x00000000},
+                                                 {0xf8bc2cff, 0xffffffff, 0x00000000},
+                                                 {0xf7b820ff, 0xffffffff, 0xf9c85160}},
+                                                {{0xff5b5bff, 0xffffffff, 0x00000000},
+                                                 {0xff3535ff, 0xffffffff, 0x00000000},
+                                                 {0xff2828ff, 0xffffffff, 0xff5b5b60}},
+                                                {{0xeef2f7ff, 0x323a46ff, 0x00000000},
+                                                 {0xd4deebff, 0x323a46ff, 0x00000000},
+                                                 {0xcbd7e7ff, 0x323a46ff, 0xeef2f760}},
+                                                {{0x323a46ff, 0xffffffff, 0x00000000},
+                                                 {0x222830ff, 0xffffffff, 0x00000000},
+                                                 {0x1d2128ff, 0xffffffff, 0x323a4660}}};
+        for (int i = 0; i < 8; i++)
         {
             box_t child1 = box_new();
 
@@ -221,17 +245,32 @@ void Flex_Test_State()
             Flex_setBorderTop(child1, 2);
             Flex_setBorderBottom(child1, 2);
 
-            box_default_style_border_radius(child1, 20, 20, 20, 20);
-            box_default_style_fill_color(child1, (plutovg_color_t){0x18 / 255.0, 0x80 / 255.0, 1, 1.0});
-            box_default_style_font_color(child1, (plutovg_color_t){0, 0, 0, 1});
-            box_default_style_text(child1, "MEUI\nModern embedded UI\n现代化嵌入式用户界面");
-            box_default_style_text_align(child1, TEXT_ALIGN_CENTER_CENTER);
+#define HEX(c) (plutovg_color_t){((c >> 24) & 0xff) / 255.0, ((c >> 16) & 0xff) / 255.0, ((c >> 8) & 0xff) / 255.0, ((c)&0xff) / 255.0}
 
-            box_style_t *style = box_style_new();
-            box_style_fill_color(style, (plutovg_color_t){0x40 / 255.0, 0xA9 / 255.0, 1, 1.0});
-            box_style_border_color(style, (plutovg_color_t){1, 0, 0, 1});
-            box_style_text(style, "Box State: Hover");
-            box_set_style(child1, style, BOX_STATE_HOVER);
+            box_default_style_border_radius(child1, 20, 20, 20, 20);
+            box_default_style_fill_color(child1, HEX(style_color[i][0][0]));
+            box_default_style_font_color(child1, HEX(style_color[i][0][1]));
+            box_default_style_border_color(child1, HEX(style_color[i][0][2]));
+
+            box_default_style_text(child1, style_name[i]);
+            box_default_style_text_align(child1, TEXT_ALIGN_CENTER_CENTER);
+            {
+                box_style_t *style = box_style_new();
+                box_style_fill_color(style, HEX(style_color[i][1][0]));
+                box_style_font_color(style, HEX(style_color[i][1][1]));
+                box_style_border_color(style, HEX(style_color[i][1][2]));
+                box_style_text(style, "Box State: Hover");
+                box_set_style(child1, style, BOX_STATE_HOVER);
+            }
+
+            {
+                box_style_t *style = box_style_new();
+                box_style_fill_color(style, HEX(style_color[i][2][0]));
+                box_style_font_color(style, HEX(style_color[i][2][1]));
+                box_style_border_color(style, HEX(style_color[i][2][2]));
+                box_style_text(style, "Box State: Active");
+                box_set_style(child1, style, BOX_STATE_ACTIVE);
+            }
         }
     }
 }

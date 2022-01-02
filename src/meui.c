@@ -206,6 +206,7 @@ static void handle_event(struct meui_t *meui, struct meui_event_t *event)
 
         if (node && event->type == MEUI_EVENT_MOUSE_DOWN)
         {
+            box_set_state(node, BOX_STATE_ACTIVE);
             box_dispatch_event(node, event->type, event);
         }
     }
