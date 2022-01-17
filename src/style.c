@@ -19,7 +19,7 @@ box_style_t *box_style_new()
     style->background_image = strdup("");
     style->content_image = strdup("");
     style->font_size = 16;
-    style->align = TEXT_ALIGN_LEFT;
+    style->align = TEXT_ALIGN_CENTER_LEFT;
     style->transform_origin.type = TRANSFORM_ORIGIN_TYPE_KEYWORD;
     style->transform_origin.x.keyword = TRANSFORM_ORIGIN_CENTER;
     style->transform_origin.y.keyword = TRANSFORM_ORIGIN_CENTER;

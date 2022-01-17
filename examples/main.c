@@ -209,29 +209,29 @@ void Flex_Test_State()
         Flex_addChild(root, child);
         static const char *style_name[8] = {"primary", "secondary", "success", "info", "warning", "danger", "light", "dark"};
         static unsigned int style_color[8][3][3] = {{{0x536de6ff, 0xffffffff, 0x00000000},
-                                                 {0x3a57e2ff, 0xffffffff, 0x00000000},
-                                                 {0x2647e0ff, 0xffffffff, 0x536de660}},
-                                                {{0x6c757dff, 0xffffffff, 0x00000000},
-                                                 {0x5a6268ff, 0xffffffff, 0x00000000},
-                                                 {0x545b62ff, 0xffffffff, 0x6c757d60}},
-                                                {{0x10c469ff, 0xffffffff, 0x00000000},
-                                                 {0x0da156ff, 0xffffffff, 0x00000000},
-                                                 {0x0c9550ff, 0xffffffff, 0x10c46960}},
-                                                {{0x35b8e0ff, 0xffffffff, 0x00000000},
-                                                 {0x20a6cfff, 0xffffffff, 0x00000000},
-                                                 {0x1e9dc4ff, 0xffffffff, 0x35b8e060}},
-                                                {{0xf9c851ff, 0xffffffff, 0x00000000},
-                                                 {0xf8bc2cff, 0xffffffff, 0x00000000},
-                                                 {0xf7b820ff, 0xffffffff, 0xf9c85160}},
-                                                {{0xff5b5bff, 0xffffffff, 0x00000000},
-                                                 {0xff3535ff, 0xffffffff, 0x00000000},
-                                                 {0xff2828ff, 0xffffffff, 0xff5b5b60}},
-                                                {{0xeef2f7ff, 0x323a46ff, 0x00000000},
-                                                 {0xd4deebff, 0x323a46ff, 0x00000000},
-                                                 {0xcbd7e7ff, 0x323a46ff, 0xeef2f760}},
-                                                {{0x323a46ff, 0xffffffff, 0x00000000},
-                                                 {0x222830ff, 0xffffffff, 0x00000000},
-                                                 {0x1d2128ff, 0xffffffff, 0x323a4660}}};
+                                                     {0x3a57e2ff, 0xffffffff, 0x00000000},
+                                                     {0x2647e0ff, 0xffffffff, 0x536de660}},
+                                                    {{0x6c757dff, 0xffffffff, 0x00000000},
+                                                     {0x5a6268ff, 0xffffffff, 0x00000000},
+                                                     {0x545b62ff, 0xffffffff, 0x6c757d60}},
+                                                    {{0x10c469ff, 0xffffffff, 0x00000000},
+                                                     {0x0da156ff, 0xffffffff, 0x00000000},
+                                                     {0x0c9550ff, 0xffffffff, 0x10c46960}},
+                                                    {{0x35b8e0ff, 0xffffffff, 0x00000000},
+                                                     {0x20a6cfff, 0xffffffff, 0x00000000},
+                                                     {0x1e9dc4ff, 0xffffffff, 0x35b8e060}},
+                                                    {{0xf9c851ff, 0xffffffff, 0x00000000},
+                                                     {0xf8bc2cff, 0xffffffff, 0x00000000},
+                                                     {0xf7b820ff, 0xffffffff, 0xf9c85160}},
+                                                    {{0xff5b5bff, 0xffffffff, 0x00000000},
+                                                     {0xff3535ff, 0xffffffff, 0x00000000},
+                                                     {0xff2828ff, 0xffffffff, 0xff5b5b60}},
+                                                    {{0xeef2f7ff, 0x323a46ff, 0x00000000},
+                                                     {0xd4deebff, 0x323a46ff, 0x00000000},
+                                                     {0xcbd7e7ff, 0x323a46ff, 0xeef2f760}},
+                                                    {{0x323a46ff, 0xffffffff, 0x00000000},
+                                                     {0x222830ff, 0xffffffff, 0x00000000},
+                                                     {0x1d2128ff, 0xffffffff, 0x323a4660}}};
         for (int i = 0; i < 8; i++)
         {
             box_t child1 = box_new();
@@ -240,10 +240,10 @@ void Flex_Test_State()
             Flex_setHeight(child1, 80);
             Flex_addChild(child, child1);
             Flex_setMarginBottom(child1, 10);
-            Flex_setBorderLeft(child1, 2);
-            Flex_setBorderRight(child1, 2);
-            Flex_setBorderTop(child1, 2);
-            Flex_setBorderBottom(child1, 2);
+            Flex_setBorderLeft(child1, 1);
+            Flex_setBorderRight(child1, 1);
+            Flex_setBorderTop(child1, 1);
+            Flex_setBorderBottom(child1, 1);
 
 #define HEX(c) (plutovg_color_t){((c >> 24) & 0xff) / 255.0, ((c >> 16) & 0xff) / 255.0, ((c >> 8) & 0xff) / 255.0, ((c)&0xff) / 255.0}
 
@@ -275,9 +275,325 @@ void Flex_Test_State()
     }
 }
 
+void Flex_Test_App()
+{
+    srand((unsigned)time(NULL));
+#define HEX(c) (plutovg_color_t){((c >> 24) & 0xff) / 255.0, ((c >> 16) & 0xff) / 255.0, ((c >> 8) & 0xff) / 255.0, ((c)&0xff) / 255.0}
+
+    box_t root = meui_get_root_node(meui_get_instance());
+    box_default_style_fill_color(root, HEX(0x0D0F12FF));
+    Flex_setJustifyContent(root, FlexCenter);
+    Flex_setAlignItems(root, FlexCenter);
+    Flex_setAlignContent(root, FlexCenter);
+    {
+        box_t win = box_new();
+        Flex_setWrap(win, FlexWrap);
+        Flex_setDirection(win, FlexVertical);
+        Flex_setJustifyContent(win, FlexCenter);
+        Flex_setAlignItems(win, FlexCenter);
+        Flex_setAlignContent(win, FlexCenter);
+        Flex_setPaddingLeft(win, 25);
+        Flex_setPaddingRight(win, 25);
+
+        Flex_setWidth(win, 680);
+        Flex_setHeight(win, 480);
+        box_default_style_fill_color(win, HEX(0x31353DFF));
+        box_default_style_border_radius(win, 15, 15, 15, 15);
+        Flex_addChild(root, win);
+
+        {
+            box_t head = box_new();
+            Flex_setWidthPercent(head, 100);
+            Flex_setHeight(head, 60);
+            Flex_setAlignItems(head, FlexCenter);
+            Flex_setAlignContent(head, FlexCenter);
+            Flex_addChild(win, head);
+
+            {
+                box_t circle = box_new();
+                Flex_setWidth(circle, 20);
+                Flex_setHeight(circle, 20);
+                Flex_setMarginRight(circle, 20);
+                Flex_addChild(head, circle);
+                box_default_style_fill_color(circle, HEX(0xDF491AFF));
+                box_default_style_border_radius(circle, 10, 10, 10, 10);
+            }
+            {
+                box_t circle = box_new();
+                Flex_setWidth(circle, 20);
+                Flex_setHeight(circle, 20);
+                Flex_setMarginRight(circle, 20);
+
+                Flex_addChild(head, circle);
+                box_default_style_fill_color(circle, HEX(0xFFCC0EFF));
+                box_default_style_border_radius(circle, 10, 10, 10, 10);
+            }
+            {
+                box_t circle = box_new();
+                Flex_setWidth(circle, 20);
+                Flex_setHeight(circle, 20);
+                Flex_setMarginRight(circle, 20);
+
+                Flex_addChild(head, circle);
+                box_default_style_fill_color(circle, HEX(0x19DF74FF));
+                box_default_style_border_radius(circle, 10, 10, 10, 10);
+            }
+        }
+        {
+            box_t bar = box_new();
+            Flex_setWidthPercent(bar, 100);
+            Flex_setAlignItems(bar, FlexCenter);
+
+            Flex_setHeight(bar, 60);
+            Flex_addChild(win, bar);
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 50);
+                Flex_setHeight(icon, 50);
+                Flex_addChild(bar, icon);
+                Flex_setPaddingRight(icon, 12.5);
+                Flex_setPaddingTop(icon, 12.5);
+                Flex_setPaddingLeft(icon, 12.5);
+                Flex_setPaddingBottom(icon, 12.5);
+
+                box_default_style_content_image(icon, "examples/left.svg");
+                box_default_style_fill_color(icon, HEX(0x555A64FF));
+                box_default_style_border_radius(icon, 7, 7, 7, 7);
+            }
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 50);
+                Flex_setHeight(icon, 50);
+                Flex_addChild(bar, icon);
+                Flex_setPaddingRight(icon, 12.5);
+                Flex_setPaddingTop(icon, 12.5);
+                Flex_setPaddingLeft(icon, 12.5);
+                Flex_setPaddingBottom(icon, 12.5);
+                box_default_style_content_image(icon, "examples/right.svg");
+            }
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 50);
+                Flex_setHeight(icon, 50);
+                Flex_addChild(bar, icon);
+                Flex_setMarginLeft(icon, 110);
+                Flex_setPaddingRight(icon, 12.5);
+                Flex_setPaddingTop(icon, 12.5);
+                Flex_setPaddingLeft(icon, 12.5);
+                Flex_setPaddingBottom(icon, 12.5);
+                box_default_style_fill_color(icon, HEX(0x555A64FF));
+                box_default_style_border_radius(icon, 7, 0, 0, 7);
+                box_default_style_content_image(icon, "examples/small-icon-normal.svg");
+            }
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 50);
+                Flex_setHeight(icon, 50);
+                Flex_addChild(bar, icon);
+                Flex_setPaddingRight(icon, 12.5);
+                Flex_setPaddingTop(icon, 12.5);
+                Flex_setPaddingLeft(icon, 12.5);
+                Flex_setPaddingBottom(icon, 12.5);
+                box_default_style_fill_color(icon, HEX(0xFFFFFFFF));
+                box_default_style_content_image(icon, "examples/list-select.svg");
+            }
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 50);
+                Flex_setHeight(icon, 50);
+                Flex_addChild(bar, icon);
+                Flex_setPaddingRight(icon, 12.5);
+                Flex_setPaddingTop(icon, 12.5);
+                Flex_setPaddingLeft(icon, 12.5);
+                Flex_setPaddingBottom(icon, 12.5);
+                box_default_style_fill_color(icon, HEX(0x555A64FF));
+                box_default_style_border_radius(icon, 0, 7, 7, 0);
+                box_default_style_content_image(icon, "examples/card-normal.svg");
+            }
+            {
+                box_t icon = box_new();
+                Flex_setWidth(icon, 225);
+                Flex_setHeight(icon, 50);
+                Flex_setMarginLeft(icon, 50);
+                Flex_addChild(bar, icon);
+
+                box_default_style_fill_color(icon, HEX(0x555A64FF));
+                box_default_style_border_radius(icon, 25, 25, 25, 25);
+
+                {
+                    box_t search_icon = box_new();
+                    Flex_setDirection(search_icon, FlexHorizontal);
+
+                    Flex_setWidth(search_icon, 50);
+                    Flex_setHeight(search_icon, 50);
+                    Flex_addChild(icon, search_icon);
+                    Flex_setPaddingRight(search_icon, 12.5);
+                    Flex_setPaddingTop(search_icon, 12.5);
+                    Flex_setPaddingLeft(search_icon, 12.5);
+                    Flex_setPaddingBottom(search_icon, 12.5);
+                    box_default_style_content_image(search_icon, "examples/search.svg");
+                }
+            }
+        }
+
+        {
+            box_t body = box_new();
+            Flex_setWidthPercent(body, 100);
+            Flex_setHeight(body, 360);
+            Flex_setPaddingTop(body, 30);
+            Flex_setPaddingBottom(body, 30);
+
+            Flex_setDirection(body, FlexHorizontal);
+
+            Flex_addChild(win, body);
+            {
+                box_t menu = box_new();
+                Flex_setWidth(menu, 212);
+                Flex_setHeightPercent(menu, 100);
+                Flex_setDirection(menu, FlexVertical);
+                Flex_addChild(body, menu);
+
+                const char *text[4] = {"Desktop", "Dribbble", "Images", "Downloads"};
+                for (int i = 0; i < 4; i++)
+                {
+                    box_t item = box_new();
+                    Flex_setWidth(item, 200);
+                    Flex_setHeight(item, 55);
+                    Flex_addChild(menu, item);
+                    Flex_setAlignItems(item, FlexCenter);
+
+                    {
+                        box_style_t *style = box_style_new();
+                        box_style_fill_color(style, HEX(0x41464EFF));
+                        // box_style_border_radius(style, 7, 7, 7, 7);
+
+                        box_set_style(item, style, BOX_STATE_HOVER);
+                    }
+
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 38);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        box_default_style_content_image(icon, "examples/file.svg");
+                    }
+
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 145);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        Flex_setMarginLeft(icon, 18);
+                        box_default_style_text(icon, text[i]);
+                        box_default_style_font_color(icon, HEX(0xABAFB7FF));
+                        box_default_style_font_size(icon, 24);
+                    }
+                }
+            }
+
+            {
+                box_t list = box_new();
+                Flex_setWidth(list, 422);
+                Flex_setHeightPercent(list, 100);
+                Flex_setDirection(list, FlexVertical);
+
+                Flex_addChild(body, list);
+
+                const char *text[6][3] = {
+                    {"ab.png", "3h", "1MB"},
+                    {"cd.png", "4h", "4MB"},
+                    {"ef.png", "9h", "1MB"},
+                    {"gh.png", "1d", "3MB"},
+                    {"ij.png", "1d", "5MB"},
+                    {"kl.png", "2d", "2MB"},
+                };
+                for (int i = 0; i < 6; i++)
+                {
+                    box_t item = box_new();
+                    Flex_setWidthPercent(item, 100);
+                    Flex_setHeight(item, 55);
+                    Flex_addChild(list, item);
+                    Flex_setPaddingLeft(item, 7);
+                    Flex_setPaddingTop(item, 7);
+                    Flex_setPaddingBottom(item, 7);
+                    Flex_setPaddingRight(item, 7);
+
+                    {
+                        box_style_t *style = box_style_new();
+                        box_style_fill_color(style, HEX(0x41464EFF));
+                        box_style_border_radius(style, 7, 7, 7, 7);
+
+                        box_set_style(item, style, BOX_STATE_HOVER);
+                    }
+                    {
+                        box_style_t *style = box_style_new();
+                        box_style_fill_color(style, HEX(0x32C1FFFF));
+                        box_style_border_radius(style, 7, 7, 7, 7);
+                        box_set_style(item, style, BOX_STATE_ACTIVE);
+                    }
+
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 38);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        box_default_style_fill_color(icon, (plutovg_color_t){rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0, 1.0});
+                    }
+
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 180);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        Flex_setMarginLeft(icon, 16);
+                        box_default_style_text(icon, text[i][0]);
+                        box_default_style_font_color(icon, HEX(0xDDDDDFFF));
+                        box_default_style_font_size(icon, 20);
+                        {
+                            box_style_t *style = box_style_new();
+                            box_style_font_color(style, HEX(0xFFFFFFFF));
+                            box_set_style(icon, style, BOX_STATE_ACTIVE);
+                        }
+                    }
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 50);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        box_default_style_text(icon, text[i][1]);
+                        box_default_style_font_color(icon, HEX(0xDDDDDFFF));
+                        box_default_style_font_size(icon, 20);
+                        box_default_style_text_align(icon, TEXT_ALIGN_CENTER_RIGHT);
+                        {
+                            box_style_t *style = box_style_new();
+                            box_style_font_color(style, HEX(0xFFFFFFFF));
+                            box_set_style(icon, style, BOX_STATE_ACTIVE);
+                        }
+                    }
+                    {
+                        box_t icon = box_new();
+                        Flex_setWidth(icon, 110);
+                        Flex_setHeight(icon, 38);
+                        Flex_addChild(item, icon);
+                        box_default_style_text(icon, text[i][2]);
+                        box_default_style_font_color(icon, HEX(0xDDDDDFFF));
+                        box_default_style_font_size(icon, 20);
+                        box_default_style_text_align(icon, TEXT_ALIGN_CENTER_RIGHT);
+                        {
+                            box_style_t *style = box_style_new();
+                            box_style_font_color(style, HEX(0xFFFFFFFF));
+                            box_set_style(icon, style, BOX_STATE_ACTIVE);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 static void meui_on_create(struct meui_t *meui)
 {
-    Flex_Test_State();
+    Flex_Test_App();
     Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
     // Flex_print(meui_get_root_node(meui), FlexPrintDefault);
     box_draw(meui_get_root_node(meui));
