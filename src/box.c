@@ -70,6 +70,14 @@ void box_free_recursive(box_t node)
     box_free(node);
 }
 
+box_style_t *box_get_style(box_t node, enum BOX_STATE state)
+{
+    assert(node);
+
+    struct Box *box = Flex_getContext(node);
+    return box->style_array[state];
+}
+
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
 {
     assert(node && style);
@@ -82,87 +90,6 @@ void box_set_state(box_t node, enum BOX_STATE state)
 {
     struct Box *box = Flex_getContext(node);
     box->state = state;
-}
-
-void box_default_style_border_radius(box_t node, float tl, float tr, float br, float bl)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_border_radius(box->style_array[BOX_STATE_DEFAULT], tl, tr, br, bl);
-}
-void box_default_style_border_color(box_t node, plutovg_color_t c)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_border_color(box->style_array[BOX_STATE_DEFAULT], c);
-}
-void box_default_style_fill_color(box_t node, plutovg_color_t c)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_fill_color(box->style_array[BOX_STATE_DEFAULT], c);
-}
-void box_default_style_font_color(box_t node, plutovg_color_t c)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_font_color(box->style_array[BOX_STATE_DEFAULT], c);
-}
-void box_default_style_text(box_t node, const char *text)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_text(box->style_array[BOX_STATE_DEFAULT], text);
-}
-void box_default_style_font_size(box_t node, double font_size)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_font_size(box->style_array[BOX_STATE_DEFAULT], font_size);
-}
-void box_default_style_text_align(box_t node, TEXT_ALIGN align)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_text_align(box->style_array[BOX_STATE_DEFAULT], align);
-}
-void box_default_style_background_image(box_t node, const char *background_image)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_background_image(box->style_array[BOX_STATE_DEFAULT], background_image);
-}
-void box_default_style_content_image(box_t node, const char *content_image)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_content_image(box->style_array[BOX_STATE_DEFAULT], content_image);
-}
-void box_default_style_transform_matrix(box_t node, double m00, double m10, double m01, double m11, double m02, double m12)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_matrix(box->style_array[BOX_STATE_DEFAULT], m00, m10, m01, m11, m02, m12);
-}
-void box_default_style_transform_translate(box_t node, double x, double y)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_translate(box->style_array[BOX_STATE_DEFAULT], x, y);
-}
-void box_default_style_transform_rotate(box_t node, double radians)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_rotate(box->style_array[BOX_STATE_DEFAULT], radians);
-}
-void box_default_style_transform_scale(box_t node, double x, double y)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_scale(box->style_array[BOX_STATE_DEFAULT], x, y);
-}
-void box_default_style_transform_skew(box_t node, double x, double y)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_skew(box->style_array[BOX_STATE_DEFAULT], x, y);
-}
-void box_default_style_transform_origin_keyword(box_t node, TRANSFORM_ORIGIN x, TRANSFORM_ORIGIN y)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_origin_keyword(box->style_array[BOX_STATE_DEFAULT], x, y);
-}
-void box_default_style_transform_origin_offset(box_t node, double x, double y)
-{
-    struct Box *box = Flex_getContext(node);
-    box_style_transform_origin_offset(box->style_array[BOX_STATE_DEFAULT], x, y);
 }
 
 static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
@@ -272,9 +199,9 @@ static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_
 
     plutovg_fill_preserve(pluto);
 
-    if (box->style.background_image[0] != '\0')
+    if (box->style.backgroundImage && box->style.backgroundImage[0] != '\0')
     {
-        draw_image(pluto, box->style.background_image, rect);
+        draw_image(pluto, box->style.backgroundImage, rect);
     }
 
     if (border != NULL)
@@ -312,9 +239,9 @@ static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_
                                                  h - border_top - border_bottom);
         plutovg_add_path(pluto, inner_path);
 
-        if (box->style.content_image[0] != '\0')
+        if (box->style.contentImage && box->style.contentImage[0] != '\0')
         {
-            draw_image(pluto, box->style.content_image, content_rect);
+            draw_image(pluto, box->style.contentImage, content_rect);
         }
 
         plutovg_add_path(pluto, outer_path);
@@ -454,7 +381,6 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
 
         plutovg_path_add_path(result, line_path, &matrix);
         plutovg_path_destroy(line_path);
-
     }
 
     *text_h = y - descent;
@@ -536,34 +462,55 @@ void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e)
 static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect)
 {
     double x_off = 0.0, y_off = 0.0;
-    if (box->style.transform_origin.type == TRANSFORM_ORIGIN_TYPE_KEYWORD)
+    if (box->style.transformOrigin.type == TRANSFORM_ORIGIN_TYPE_KEYWORD)
     {
-        x_off = rect->w * box->style.transform_origin.x.keyword / 2.0;
-        y_off = rect->h * box->style.transform_origin.y.keyword / 2.0;
+        x_off = rect->w * box->style.transformOrigin.x.keyword / 2.0;
+        y_off = rect->h * box->style.transformOrigin.y.keyword / 2.0;
     }
-    else if (box->style.transform_origin.type == TRANSFORM_ORIGIN_TYPE_OFFSET)
+    else if (box->style.transformOrigin.type == TRANSFORM_ORIGIN_TYPE_OFFSET)
     {
-        x_off = box->style.transform_origin.x.offset;
-        y_off = box->style.transform_origin.y.offset;
+        x_off = box->style.transformOrigin.x.offset;
+        y_off = box->style.transformOrigin.y.offset;
     }
 
     plutovg_translate(pluto, rect->x + x_off, rect->y + y_off);
-    plutovg_transform(pluto, box->style.transform);
+    plutovg_transform(pluto, &box->style.transform);
     plutovg_translate(pluto, -x_off, -y_off);
 }
 
 static void merge_styles(struct Box *box)
 {
-    box->style = *(box->style_array[BOX_STATE_DEFAULT]);
+    box_style_clear(&box->style);
+    box_style_merge(&box->style, box_default_style());
+    box_style_merge(&box->style, box->style_array[BOX_STATE_DEFAULT]);
 
     if (box->state != BOX_STATE_DEFAULT)
     {
         box_style_t *src = box->style_array[box->state];
-        box_style_t *dst = &box->style;
         if (src)
-            box_merge_styles(dst, src);
+            box_style_merge(&box->style, src);
     }
 }
+
+void box_updateStyleRecursive(box_t node)
+{
+
+    struct Box *box = Flex_getContext(node);
+    if (!box)
+    {
+        LOGE("Node is not box!");
+        return;
+    }
+
+    merge_styles(box);
+    box_style_to_flex(&box->style, node);
+
+    for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
+    {
+        box_updateStyleRecursive(Flex_getChild(node, i));
+    }
+}
+
 void box_drawRecursive(plutovg_t *pluto, box_t node)
 {
     float left = Flex_getResultLeft(node);
@@ -584,8 +531,6 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
         return;
     }
 
-    merge_styles(box);
-
     box_transform_by_origin(box, pluto, &(plutovg_rect_t){left, top, width, height});
 
     plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
@@ -593,18 +538,22 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
     plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
     draw_box_background(box, pluto, &(plutovg_rect_t){0, 0, width, height},
                         &content_rect,
-                        box->style.border_radius,
+                        (float[]){
+                            box->style.borderTopLeftRadius,
+                            box->style.borderTopRightRadius,
+                            box->style.borderBottomRightRadius,
+                            box->style.borderBottomLeftRadius,
+                        },
                         (float[]){
                             Flex_getBorderTop(node),
                             Flex_getBorderRight(node),
                             Flex_getBorderBottom(node),
                             Flex_getBorderLeft(node),
                         },
-                        box->style.border_color, box->style.fill_color);
+                        box->style.borderColor, box->style.backgroundColor);
 
-    if (box->style.text[0] != '\0')
-
-        draw_text(box, pluto, box->style.font_size, box->style.font_color, box->style.align, box->style.text, &content_rect);
+    if (box->style.text && box->style.text[0] != '\0')
+        draw_text(box, pluto, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {

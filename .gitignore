@@ -6,3 +6,4 @@
 fixdep*
 /meui*
 /.vscode
+/node_modules

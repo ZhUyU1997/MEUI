@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev" : "babel examples.js -o compiled.js && make  && ./meui  compiled.js",
+    "gen" : "./style-gen.py"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-react-jsx": "^7.16.7",
+    "@babel/cli": "^7.0.0"
+  }
+}

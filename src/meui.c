@@ -84,7 +84,9 @@ struct meui_t *meui_start(int width, int height)
         goto exit2;
 
     meui->platform_data = platform;
+    meui_instance = meui;
 
+    box_default_style_init();
     return meui;
 exit2:
     free(meui);
@@ -221,7 +223,7 @@ static void handle_event(struct meui_t *meui, struct meui_event_t *event)
     }
 }
 
-void meui_main_loop(struct meui_t *meui)
+void meui_render(struct meui_t *meui, box_t box)
 {
     if (!meui)
     {
@@ -229,7 +231,17 @@ void meui_main_loop(struct meui_t *meui)
         return;
     }
 
-    meui_instance = meui;
+    box_t root = meui_get_root_node(meui);
+    Flex_addChild(root, box);
+}
+
+void meui_main_loop(struct meui_t *meui)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return;
+    }
 
     if (meui->callback[MEUI_CB_ON_CREATE])
     {
@@ -286,10 +298,11 @@ void meui_update(struct meui_t *meui)
 
     plutovg_t *pluto = plutovg_create(meui_get_surface(meui));
     plutovg_rect(pluto, 0, 0, meui->width, meui->height);
-    plutovg_set_source_rgba(pluto, 0, 0, 0, 0);
+    plutovg_set_source_rgba(pluto, 0, 0, 0, 1);
     plutovg_fill(pluto);
     plutovg_destroy(pluto);
 
+    box_updateStyleRecursive(meui_get_root_node(meui));
     Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
     box_draw(meui_get_root_node(meui));
     meui_flush(meui);
