@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev" : "babel examples.js -o compiled.js && make  && ./meui  compiled.js",
+    "dev" : "babel examples.js -o compiled.js && make -j16 && ./meui compiled.js",
     "gen" : "./style-gen.py"
   },
   "devDependencies": {
