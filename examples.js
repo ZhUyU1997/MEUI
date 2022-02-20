@@ -1,4 +1,5 @@
 import { MEUI, Box, BOX_STATE, createBoxStyle } from "MEUI"
+import * as os from "os"
 
 function HEX(color) {
     const c = [(color >> 24) & 0xff, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff]
@@ -125,7 +126,12 @@ function render(root) {
     const meui = new MEUI(1920, 1080)
     meui.addFontFace("res/font/Droid-Sans-Fallback.ttf")
     meui.render(root)
-    meui.mainLoop()
+    os.setReadHandler(meui.getConnectNumber(), () => {
+        while (meui.pending() > 0) {
+            const event = meui.nextEvent();
+            console.log(JSON.stringify(event))
+        }
+    })
 }
 
 function Flex_Test() {

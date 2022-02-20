@@ -31,22 +31,13 @@ static JSValue js_render(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
-static JSValue js_main_loop(JSContext *ctx, JSValueConst this_val,
-                            int argc, JSValueConst *argv)
-{
-    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
-    if (!meui)
-        return JS_EXCEPTION;
-    meui_main_loop(meui);
-    return JS_TRUE;
-}
-
 static JSValue js_flush(JSContext *ctx, JSValueConst this_val,
                         int argc, JSValueConst *argv)
 {
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
         return JS_EXCEPTION;
+    meui_flush(meui);
     return JS_UNDEFINED;
 }
 static JSValue js_update(JSContext *ctx, JSValueConst this_val,
@@ -55,6 +46,7 @@ static JSValue js_update(JSContext *ctx, JSValueConst this_val,
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
         return JS_EXCEPTION;
+    meui_update(meui);
     return JS_UNDEFINED;
 }
 static JSValue js_end(JSContext *ctx, JSValueConst this_val,
@@ -63,6 +55,7 @@ static JSValue js_end(JSContext *ctx, JSValueConst this_val,
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
         return JS_EXCEPTION;
+    printf("js_end: Not implemented");
     return JS_UNDEFINED;
 }
 static JSValue js_add_font_face(JSContext *ctx, JSValueConst this_val,
@@ -78,8 +71,73 @@ static JSValue js_add_font_face(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_get_connect_number(JSContext *ctx, JSValueConst this_val,
+                                     int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (!s)
+        return JS_EXCEPTION;
+    int fd = meui_get_connect_number(meui);
+    return JS_NewInt32(ctx, fd);
+}
+
+static JSValue js_pending(JSContext *ctx, JSValueConst this_val,
+                          int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, meui_pending(meui));
+}
+
+static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
+                             int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+
+    struct meui_event_t event;
+    meui_next_event(meui, &event);
+    if (event.type == MEUI_EVENT_NULL)
+    {
+        return JS_NULL;
+    }
+    else
+    {
+        JSValue obj = JS_NewObject(ctx);
+
+        if (event.type == MEUI_EVENT_MOUSE_DOWN)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousedown"));
+            JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_DOWN.x));
+            JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_DOWN.y));
+        }
+        else if (event.type == MEUI_EVENT_MOUSE_UP)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mouseup"));
+            JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_UP.x));
+            JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_UP.y));
+        }
+        else if (event.type == MEUI_EVENT_MOUSE_MOVE)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousemove"));
+            JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_MOVE.x));
+            JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_MOVE.y));
+        }
+        return obj;
+    }
+
+    return JS_EXCEPTION;
+}
+
 static void js_meui_finalizer(JSRuntime *rt, JSValue val)
 {
+    printf("js_meui_finalizer is called!\n");
+
     struct meui_t *meui = JS_GetOpaque(val, js_meui_class_id);
     /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
     meui_end(meui);
@@ -125,10 +183,12 @@ fail:
 static const JSCFunctionListEntry js_meui_proto_funcs[] = {
     JS_CFUNC_DEF("registerCallback", 2, js_register_callback),
     JS_CFUNC_DEF("render", 1, js_render),
-    JS_CFUNC_DEF("mainLoop", 0, js_main_loop),
     JS_CFUNC_DEF("flush", 0, js_flush),
     JS_CFUNC_DEF("update", 0, js_update),
     JS_CFUNC_DEF("addFontFace", 1, js_add_font_face),
+    JS_CFUNC_DEF("getConnectNumber", 0, js_get_connect_number),
+    JS_CFUNC_DEF("pending", 0, js_pending),
+    JS_CFUNC_DEF("nextEvent", 0, js_next_event),
 };
 
 static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)

@@ -4,7 +4,7 @@ W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function -Wer
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
-SRC			+= src/*.c src/bind/*.c  examples/*.c
+SRC			+= src/*.c src/platform/*.c src/bind/*.c  examples/*.c
 
 # stb
 X_INCDIRS	+= lib/stb/include
@@ -27,8 +27,8 @@ X_INCDIRS	+= lib/QuickJS
 SRC			+= lib/QuickJS/
 
 
-X_CFLAGS	+= `pkg-config sdl2 --cflags`
-X_LDFLAGS	+= `pkg-config sdl2 --libs` -lm -lprofiler -ldl -lpthread
+X_CFLAGS	+=
+X_LDFLAGS	+= -lm -lprofiler -ldl -lpthread -lX11
 
 NAME		:= meui
 

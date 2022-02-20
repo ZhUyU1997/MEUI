@@ -8,8 +8,9 @@
 #include <FlexLayout.h>
 #include <plutovg.h>
 
-#include <SDL2/SDL.h>
+#include <platform/window.h>
 #include <time.h>
+#include <stdlib.h>
 
 #define PROFILE
 
@@ -21,10 +22,9 @@
 
 struct meui_platform_t
 {
-    SDL_Window *window;
-    SDL_Surface *surface;
+    struct window_t *window;
     unsigned int frame;
-    unsigned int start_ticks;
+    clock_t start_ticks;
 };
 
 static struct meui_t *meui_instance = NULL;
@@ -35,8 +35,6 @@ struct meui_t *meui_start(int width, int height)
     ProfilerStart("test.prof");
     atexit(ProfilerStop);
 #endif
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 
     struct meui_platform_t *platform = calloc(1, sizeof(struct meui_platform_t));
 
@@ -47,23 +45,16 @@ struct meui_t *meui_start(int width, int height)
     if (!meui)
         goto exit1;
 
-    LOGI("SDL_CreateWindow");
+    LOGI("Create Window");
 
-    platform->window = SDL_CreateWindow("MEUI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    platform->window = window_create("MEUI", width, height);
 
     if (!platform->window)
         goto exit2;
 
-    LOGI("SDL_GetWindowSurface");
+    LOGI("Get Window Surface");
 
-    platform->surface = SDL_GetWindowSurface(platform->window);
-
-    if (!platform->surface)
-        goto exit2;
-
-    LOGI("plutovg_surface_create_for_data");
-
-    meui->win_surface = plutovg_surface_create_for_data(platform->surface->pixels, width, height, sizeof(int) * width);
+    meui->win_surface = plutovg_surface_create_for_data(window_get_image_data(platform->window), width, height, sizeof(int) * width);
     meui->render_context.surface = plutovg_surface_reference(meui->win_surface);
     meui->width = width;
     meui->height = height;
@@ -103,20 +94,19 @@ void meui_platform_fps(struct meui_t *meui)
 
     if (platform->start_ticks == 0)
     {
-        platform->start_ticks = SDL_GetTicks();
+        platform->start_ticks = clock();
     }
     else
     {
-        unsigned int ticks = SDL_GetTicks() - platform->start_ticks;
+        clock_t ticks = clock() - platform->start_ticks;
 
         if (ticks >= 1000)
         {
             char buf[128] = {0};
-            snprintf(buf, 128, "FPS: %f", (double)platform->frame * 1000.0 / ticks);
-
-            SDL_SetWindowTitle(platform->window, buf);
+            snprintf(buf, 128, "FPS: %f", (double)platform->frame * CLOCKS_PER_SEC / ticks);
+            window_set_name(platform->window, buf);
             platform->frame = 0;
-            platform->start_ticks = SDL_GetTicks();
+            platform->start_ticks = clock();
         }
     }
 }
@@ -233,48 +223,7 @@ void meui_render(struct meui_t *meui, box_t box)
 
     box_t root = meui_get_root_node(meui);
     Flex_addChild(root, box);
-}
-
-void meui_main_loop(struct meui_t *meui)
-{
-    if (!meui)
-    {
-        LOGE("meui == NULL");
-        return;
-    }
-
-    if (meui->callback[MEUI_CB_ON_CREATE])
-    {
-        LOGD("Invoke MEUI_CB_ON_CREATE");
-        meui->callback[MEUI_CB_ON_CREATE](meui);
-    }
-
     meui_update(meui);
-
-    bool running = true;
-    while (running)
-    {
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
-        {
-            switch (e.type)
-            {
-            case SDL_QUIT:
-                running = false;
-                break;
-            case SDL_MOUSEMOTION:
-                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_MOVE, .MOUSE_MOVE = {e.button.x, e.button.y}});
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_DOWN, .MOUSE_DOWN = {e.button.x, e.button.y}});
-                break;
-            case SDL_MOUSEBUTTONUP:
-                handle_event(meui, &(struct meui_event_t){.type = MEUI_EVENT_MOUSE_UP, .MOUSE_UP = {e.button.x, e.button.y}});
-                break;
-            }
-        }
-        meui_update(meui);
-    }
 }
 
 void meui_flush(struct meui_t *meui)
@@ -285,7 +234,7 @@ void meui_flush(struct meui_t *meui)
         return;
     }
     struct meui_platform_t *platform = meui->platform_data;
-    SDL_UpdateWindowSurface(platform->window);
+    window_update_image(platform->window);
 }
 
 void meui_update(struct meui_t *meui)
@@ -323,8 +272,7 @@ void meui_end(struct meui_t *meui)
     plutovg_surface_destroy(meui->win_surface);
 
     struct meui_platform_t *platform = meui->platform_data;
-    SDL_DestroyWindow(platform->window);
-    SDL_Quit();
+    window_destory(platform->window);
     free(platform);
     free(meui);
 }
@@ -375,4 +323,46 @@ box_t meui_get_root_node(struct meui_t *meui)
         return NULL;
     }
     return meui->render_context.root;
+}
+
+int meui_get_connect_number(struct meui_t *meui)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return NULL;
+    }
+
+    struct meui_platform_t *platform = meui->platform_data;
+    return window_connect_number(platform->window);
+}
+
+int meui_pending(struct meui_t *meui)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return -1;
+    }
+
+    struct meui_platform_t *platform = meui->platform_data;
+    return window_pending(platform->window);
+}
+
+void meui_next_event(struct meui_t *meui, struct meui_event_t *event)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return;
+    }
+
+    if (!event)
+    {
+        LOGE("event == NULL");
+        return;
+    }
+
+    struct meui_platform_t *platform = meui->platform_data;
+    window_next_event(platform->window, event);
 }
