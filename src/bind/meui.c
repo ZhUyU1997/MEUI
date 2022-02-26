@@ -1,4 +1,3 @@
-
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
@@ -134,6 +133,59 @@ static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
     return JS_EXCEPTION;
 }
 
+struct js_cb_data
+{
+    JSContext *ctx;
+    JSValue *pfunc;
+};
+
+JSValue js_createBoxFuncWithOpaque(JSContext *ctx, box_t box);
+
+static void js_search_node_cb(box_t node, bool hit, void *data)
+{
+    struct js_cb_data *cb_data = data;
+    JSContext *ctx = cb_data->ctx;
+    JSValue func = JS_DupValue(ctx, *(cb_data->pfunc));
+
+    JSValue argv[2] = {
+        JS_NewBool(ctx, hit),
+        js_createBoxFuncWithOpaque(ctx, node),
+    };
+
+    JS_Call(ctx, func, JS_UNDEFINED, 2, argv);
+    JS_FreeValue(ctx, argv[0]);
+    JS_FreeValue(ctx, argv[1]);
+    JS_FreeValue(ctx, func);
+}
+
+static JSValue js_search_node(JSContext *ctx, JSValueConst this_val,
+                              int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+    if (argc != 3)
+        return JS_EXCEPTION;
+
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+    if (!JS_IsFunction(ctx, argv[2]))
+        return JS_EXCEPTION;
+
+    plutovg_point_t point = {x, y};
+    struct js_cb_data data = {
+        .ctx = ctx,
+        .pfunc = &argv[2],
+    };
+
+    meui_search_node(meui, meui_get_root_node(meui), &data, &point, js_search_node_cb);
+
+    return JS_NULL;
+}
+
 static void js_meui_finalizer(JSRuntime *rt, JSValue val)
 {
     printf("js_meui_finalizer is called!\n");
@@ -189,6 +241,7 @@ static const JSCFunctionListEntry js_meui_proto_funcs[] = {
     JS_CFUNC_DEF("getConnectNumber", 0, js_get_connect_number),
     JS_CFUNC_DEF("pending", 0, js_pending),
     JS_CFUNC_DEF("nextEvent", 0, js_next_event),
+    JS_CFUNC_DEF("searchNode", 3, js_search_node),
 };
 
 static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)
@@ -226,6 +279,7 @@ JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name)
     JS_AddModuleExport(ctx, m, "MEUI");
     JS_AddModuleExport(ctx, m, "Box");
     JS_AddModuleExport(ctx, m, "createBoxStyle");
+    JS_AddModuleExport(ctx, m, "createBox");
     JS_AddModuleExport(ctx, m, "BOX_STATE");
     return m;
 }

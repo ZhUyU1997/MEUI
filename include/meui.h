@@ -51,3 +51,5 @@ box_t meui_get_root_node(struct meui_t *);
 int meui_get_connect_number(struct meui_t *meui);
 int meui_pending(struct meui_t *meui);
 void meui_next_event(struct meui_t *meui, struct meui_event_t *event);
+
+box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_point_t *point, void (*cb)(box_t node, bool hit, void *data));

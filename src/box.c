@@ -70,6 +70,14 @@ void box_free_recursive(box_t node)
     box_free(node);
 }
 
+void box_set_opaque(box_t node, void *opaque)
+{
+    assert(node);
+    struct Box *box = Flex_getContext(node);
+    assert(box->opaque == NULL);
+    box->opaque = opaque;
+}
+
 box_style_t *box_get_style(box_t node, enum BOX_STATE state)
 {
     assert(node);

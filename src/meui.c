@@ -137,7 +137,7 @@ void meui_register_callback(struct meui_t *meui, enum MEUI_CALLBACK type, meui_c
     meui->callback[type] = cb;
 }
 
-static box_t search_node(struct meui_t *meui, box_t node, struct meui_event_t *event, plutovg_point_t *point, void (*cb)(box_t node, bool hit, struct meui_event_t *event))
+box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_point_t *point, void (*cb)(box_t node, bool hit, void *data))
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -165,52 +165,15 @@ static box_t search_node(struct meui_t *meui, box_t node, struct meui_event_t *e
     }
 
     if (cb)
-        cb(node, target == node, event);
+        cb(node, target == node, data);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
-        box_t ret = search_node(meui, Flex_getChild(node, i), event, point, cb);
+        box_t ret = meui_search_node(meui, Flex_getChild(node, i), data, point, cb);
         target = ret ? ret : target;
     }
 
     return target;
-}
-
-static void search_cb(box_t node, bool hit, struct meui_event_t *event)
-{
-    box_set_state(node, hit ? BOX_STATE_HOVER : BOX_STATE_DEFAULT);
-
-    if (event->type == MEUI_EVENT_MOUSE_DOWN && hit)
-    {
-        box_set_state(node, BOX_STATE_ACTIVE);
-    }
-}
-
-static void handle_event(struct meui_t *meui, struct meui_event_t *event)
-{
-    plutovg_point_t point = {-1, -1};
-    if (event->type == MEUI_EVENT_MOUSE_DOWN)
-    {
-        point = (plutovg_point_t){event->MOUSE_DOWN.x, event->MOUSE_DOWN.y};
-    }
-    else if (event->type == MEUI_EVENT_MOUSE_UP)
-    {
-        point = (plutovg_point_t){event->MOUSE_UP.x, event->MOUSE_UP.y};
-    }
-    else if (event->type == MEUI_EVENT_MOUSE_MOVE)
-    {
-        point = (plutovg_point_t){event->MOUSE_MOVE.x, event->MOUSE_MOVE.y};
-    }
-
-    if (point.x >= 0 && point.y >= 0)
-    {
-        box_t node = search_node(meui, meui_get_root_node(meui), event, &point, search_cb);
-
-        if (node && event->type == MEUI_EVENT_MOUSE_DOWN)
-        {
-            box_dispatch_event(node, event->type, event);
-        }
-    }
 }
 
 void meui_render(struct meui_t *meui, box_t box)

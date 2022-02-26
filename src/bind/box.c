@@ -67,36 +67,34 @@ static JSValue js_add_child(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_set_state(JSContext *ctx, JSValueConst this_val,
+                            int argc, JSValueConst *argv)
+{
+    box_t box = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!box)
+        return JS_EXCEPTION;
+
+    int state;
+
+    if (JS_ToInt32(ctx, &state, argv[0]))
+        return JS_EXCEPTION;
+
+    box_set_state(box, state);
+    return JS_UNDEFINED;
+}
+
 static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
     JS_CFUNC_DEF("addChild", 1, js_add_child),
+    JS_CFUNC_DEF("setState", 1, js_set_state),
 };
-
-static JSValue js_box_ctor(JSContext *ctx,
-                           JSValueConst new_target,
-                           int argc, JSValueConst *argv)
-{
-    JSValue proto = JS_GetPropertyStr(ctx, new_target, "prototype");
-    if (JS_IsException(proto))
-        goto fail;
-    JSValue obj = JS_NewObjectProtoClass(ctx, proto, js_box_class_id);
-    JS_FreeValue(ctx, proto);
-    if (JS_IsException(obj))
-        goto fail;
-
-    box_t box = box_new();
-
-    JS_SetOpaque(obj, box);
-    return obj;
-fail:
-    JS_FreeValue(ctx, obj);
-    return JS_EXCEPTION;
-}
 
 static void js_box_finalizer(JSRuntime *rt, JSValue val)
 {
     struct box_t *box = JS_GetOpaque(val, js_box_class_id);
+    printf("js_box_finalizer\n");
 }
 
 static JSClassDef js_box_class = {
@@ -119,6 +117,26 @@ static const JSCFunctionListEntry box_state_entries[] = {
     JS_PROP_INT32_DEF("CHECK", BOX_STATE_CHECK, JS_PROP_CONFIGURABLE),
 };
 
+JSValue js_createBoxFuncWithOpaque(JSContext *ctx, box_t box)
+{
+    JSValue obj = JS_NewObjectClass(ctx, js_box_class_id);
+    if (JS_IsException(obj))
+        return obj;
+
+    JS_SetOpaque(obj, box);
+    return obj;
+}
+
+static JSValue js_createBoxFunc(JSContext *ctx,
+                                JSValueConst new_target,
+                                int argc, JSValueConst *argv)
+{
+    box_t box = box_new();
+    return js_createBoxFuncWithOpaque(ctx, box);
+}
+
+static const JSCFunctionListEntry entry = JS_CFUNC_DEF("createBox", 0, js_createBoxFunc);
+
 int js_box_class_define(JSContext *ctx, JSModuleDef *m)
 {
     JS_NewClassID(&js_box_class_id);
@@ -126,10 +144,8 @@ int js_box_class_define(JSContext *ctx, JSModuleDef *m)
 
     JSValue box_proto = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, box_proto, js_box_proto_funcs, countof(js_box_proto_funcs));
-    JSValue box_class = JS_NewCFunction2(ctx, js_box_ctor, "Box", 0, JS_CFUNC_constructor, 0);
-    JS_SetConstructor(ctx, box_class, box_proto);
     JS_SetClassProto(ctx, js_box_class_id, box_proto);
-    JS_SetModuleExport(ctx, m, "Box", box_class);
+    JS_SetModuleExportList(ctx, m, &entry, 1);
 
     JSValue js_box_state = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, js_box_state, box_state_entries, countof(box_state_entries));

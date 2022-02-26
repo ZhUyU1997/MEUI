@@ -1,4 +1,4 @@
-import { MEUI, Box, BOX_STATE, createBoxStyle } from "MEUI"
+import { MEUI, Box, BOX_STATE, createBoxStyle, createBox } from "MEUI"
 import * as os from "os"
 
 function HEX(color) {
@@ -70,7 +70,7 @@ function createElement(tag, attrs, ...children) {
         throw new Error(`Not support other tag (${tag})`)
     }
 
-    const elm = new Box();
+    const elm = createBox();
     for (let [name, val] of Object.entries(attrs)) {
         // if (name.startsWith("on") && name.toLowerCase() in window) {
         //     elm.addEventListener(name.toLowerCase().substr(2), val);
@@ -126,11 +126,24 @@ function render(root) {
     const meui = new MEUI(1920, 1080)
     meui.addFontFace("res/font/Droid-Sans-Fallback.ttf")
     meui.render(root)
+
     os.setReadHandler(meui.getConnectNumber(), () => {
         while (meui.pending() > 0) {
             const event = meui.nextEvent();
-            console.log(JSON.stringify(event))
+            if (!event) continue
+            meui.searchNode(event.x, event.y, (hit, box) => {
+                box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
+                if (event.type === "mousedown" && hit) {
+                    console.log(hit, BOX_STATE.ACTIVE)
+                    box.setState(BOX_STATE.ACTIVE)
+                }
+            })
+
+            if (event.type === "mousedown") {
+                console.log(JSON.stringify(event))
+            }
         }
+        meui.update()
     })
 }
 

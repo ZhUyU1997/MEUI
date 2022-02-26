@@ -754,6 +754,7 @@ static JSValue js_createBoxStyleFunc(JSContext *ctx,
 static void js_box_style_finalizer(JSRuntime *rt, JSValue val)
 {
     struct box_style_t *style = JS_GetOpaque(val, js_box_style_class_id);
+    printf("js_box_style_finalizer\n");
 }
 
 static JSClassDef js_box_style_class = {
