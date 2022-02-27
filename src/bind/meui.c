@@ -181,9 +181,12 @@ static JSValue js_search_node(JSContext *ctx, JSValueConst this_val,
         .pfunc = &argv[2],
     };
 
-    meui_search_node(meui, meui_get_root_node(meui), &data, &point, js_search_node_cb);
+    box_t node = meui_search_node(meui, meui_get_root_node(meui), &data, &point, js_search_node_cb);
 
-    return JS_NULL;
+    if (node == NULL)
+        return JS_NULL;
+    else
+        return js_createBoxFuncWithOpaque(ctx, node);
 }
 
 static void js_meui_finalizer(JSRuntime *rt, JSValue val)
