@@ -199,7 +199,7 @@ static void js_meui_finalizer(JSRuntime *rt, JSValue val)
 }
 
 static JSClassDef js_meui_class = {
-    "MEUI",
+    "NativeMEUI",
     .finalizer = js_meui_finalizer,
 };
 
@@ -255,10 +255,10 @@ static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)
 
     meui_proto = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, meui_proto, js_meui_proto_funcs, countof(js_meui_proto_funcs));
-    meui_class = JS_NewCFunction2(ctx, js_meui_ctor, "MEUI", 2, JS_CFUNC_constructor, 0);
+    meui_class = JS_NewCFunction2(ctx, js_meui_ctor, "NativeMEUI", 2, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, meui_class, meui_proto);
     JS_SetClassProto(ctx, js_meui_class_id, meui_proto);
-    JS_SetModuleExport(ctx, m, "MEUI", meui_class);
+    JS_SetModuleExport(ctx, m, "NativeMEUI", meui_class);
 
     return 0;
 }
@@ -279,7 +279,7 @@ JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name)
     m = JS_NewCModule(ctx, module_name, js_meui_module_init);
     if (!m)
         return NULL;
-    JS_AddModuleExport(ctx, m, "MEUI");
+    JS_AddModuleExport(ctx, m, "NativeMEUI");
     JS_AddModuleExport(ctx, m, "Box");
     JS_AddModuleExport(ctx, m, "createBoxStyle");
     JS_AddModuleExport(ctx, m, "createBox");

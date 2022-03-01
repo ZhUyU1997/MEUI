@@ -59,6 +59,8 @@ box_t box_new();
 void box_free(box_t node);
 void box_free_recursive(box_t node);
 void box_set_opaque(box_t node, void *opaque);
+void *box_get_opaque(box_t node);
+void box_clear_opaque(box_t node);
 
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
 void box_set_state(box_t node, enum BOX_STATE state);

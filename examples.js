@@ -1,5 +1,86 @@
-import { MEUI, Box, BOX_STATE, createBoxStyle, createBox } from "MEUI"
+import { NativeMEUI, BOX_STATE, createBoxStyle, createBox } from "MEUI"
 import * as os from "os"
+
+class Box {
+    constructor() {
+        this.nativeBox = createBox()
+        this.children = []
+    }
+
+    getStyle(state) {
+        return this.nativeBox.getStyle(state)
+    }
+    setStyle(style, state) {
+        this.nativeBox.setStyle(style, state)
+    }
+    addChild(child) {
+        this.nativeBox.addChild(child.nativeBox);
+        this.children.push(child)
+    }
+    setState(state) {
+        this.nativeBox.setState(state)
+    }
+    hit(x, y) {
+        return this.nativeBox.hit(x, y)
+    }
+    getNativeObject() {
+        return this.nativeBox
+    }
+}
+
+
+class MEUI {
+    constructor(width, height) {
+        this.nativeMEUI = new NativeMEUI(width, height)
+    }
+
+    registerCallback() {
+
+    }
+    render(root) {
+        this.root = root
+        this.nativeMEUI.render(root.getNativeObject())
+    }
+    flush() {
+        this.nativeMEUI.flush()
+    }
+    update() {
+        this.nativeMEUI.update()
+
+    }
+    addFontFace(fileName) {
+        this.nativeMEUI.addFontFace(fileName)
+    }
+    getConnectNumber() {
+        return this.nativeMEUI.getConnectNumber()
+    }
+    pending() {
+        return this.nativeMEUI.pending()
+
+    }
+    nextEvent() {
+        return this.nativeMEUI.nextEvent()
+
+    }
+    _searchNode(node, x, y, callback) {
+        let target = null
+        if (node.hit(x, y)) {
+            target = node
+        }
+
+        if (callback)
+            callback(target === node, node);
+
+        for (const item of node.children) {
+            this._searchNode(item, x, y, callback)
+        }
+        return target
+    }
+
+    searchNode(x, y, callback) {
+        return this._searchNode(this.root, x, y, callback)
+    }
+}
 
 function HEX(color) {
     const c = [(color >> 24) & 0xff, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff]
@@ -70,7 +151,7 @@ function createElement(tag, attrs, ...children) {
         throw new Error(`Not support other tag (${tag})`)
     }
 
-    const elm = createBox();
+    const elm = new Box();
     for (let [name, val] of Object.entries(attrs)) {
         // if (name.startsWith("on") && name.toLowerCase() in window) {
         //     elm.addEventListener(name.toLowerCase().substr(2), val);
@@ -131,16 +212,14 @@ function render(root) {
         while (meui.pending() > 0) {
             const event = meui.nextEvent();
             if (!event) continue
-            meui.searchNode(event.x, event.y, (hit, box) => {
+            const box = meui.searchNode(event.x, event.y, (hit, box) => {
                 box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
                 if (event.type === "mousedown" && hit) {
-                    console.log(hit, BOX_STATE.ACTIVE)
                     box.setState(BOX_STATE.ACTIVE)
                 }
             })
 
-            if (event.type === "mousedown") {
-                console.log(JSON.stringify(event))
+            if (box && event.type === "mousedown") {
             }
         }
         meui.update()

@@ -84,11 +84,54 @@ static JSValue js_set_state(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
+                      int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+
+    float left = Flex_getResultLeft(node);
+    float top = Flex_getResultTop(node);
+    float width = Flex_getResultWidth(node);
+    float height = Flex_getResultHeight(node);
+
+    struct Box *box = Flex_getContext(node);
+
+    double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
+    double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
+    double content_left = Flex_getResultPaddingLeft(node);
+    double content_top = Flex_getResultPaddingTop(node);
+
+    box_t target = NULL;
+
+    plutovg_matrix_t m = box->result.to_screen_matrix;
+    plutovg_matrix_invert(&m);
+
+    plutovg_point_t dst;
+    plutovg_matrix_map_point(&m, &(plutovg_point_t){x, y}, &dst);
+
+    if (dst.x >= 0 && dst.x < width && dst.y >= 0 && dst.y < height)
+    {
+        return JS_NewBool(ctx, 1);
+    }
+
+    return JS_NewBool(ctx, 0);
+}
+
 static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
     JS_CFUNC_DEF("addChild", 1, js_add_child),
     JS_CFUNC_DEF("setState", 1, js_set_state),
+    JS_CFUNC_DEF("hit", 1, js_hit),
 };
 
 static void js_box_finalizer(JSRuntime *rt, JSValue val)
@@ -135,7 +178,8 @@ static JSValue js_createBoxFunc(JSContext *ctx,
     return js_createBoxFuncWithOpaque(ctx, box);
 }
 
-static const JSCFunctionListEntry entry = JS_CFUNC_DEF("createBox", 0, js_createBoxFunc);
+static const JSCFunctionListEntry entries[] = {
+    JS_CFUNC_DEF("createBox", 0, js_createBoxFunc)};
 
 int js_box_class_define(JSContext *ctx, JSModuleDef *m)
 {
@@ -145,7 +189,7 @@ int js_box_class_define(JSContext *ctx, JSModuleDef *m)
     JSValue box_proto = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, box_proto, js_box_proto_funcs, countof(js_box_proto_funcs));
     JS_SetClassProto(ctx, js_box_class_id, box_proto);
-    JS_SetModuleExportList(ctx, m, &entry, 1);
+    JS_SetModuleExportList(ctx, m, entries, countof(entries));
 
     JSValue js_box_state = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, js_box_state, box_state_entries, countof(box_state_entries));
