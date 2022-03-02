@@ -5,6 +5,8 @@ class Box {
     constructor() {
         this.nativeBox = createBox()
         this.children = []
+        this.parent = null
+        this.eventListeners = {}
     }
 
     getStyle(state) {
@@ -14,6 +16,7 @@ class Box {
         this.nativeBox.setStyle(style, state)
     }
     addChild(child) {
+        child.parent = this
         this.nativeBox.addChild(child.nativeBox);
         this.children.push(child)
     }
@@ -25,6 +28,44 @@ class Box {
     }
     getNativeObject() {
         return this.nativeBox
+    }
+
+    addEventListener(type, listener, useCapture = false) {
+        if (!(type in this.eventListeners))
+            this.eventListeners[type] = []
+        this.eventListeners[type].push({ listener, useCapture })
+    }
+
+    tryHandleEvent(event, capture) {
+        if (event.type in this.eventListeners) {
+            for (const { listener, useCapture } of this.eventListeners[event.type]) {
+                if (capture == useCapture) listener(event)
+            }
+        }
+    }
+
+    capturingPhase(node, event) {
+        if (node.parent)
+            this.capturingPhase(node.parent, event)
+        event.currentTarget = node
+        node.tryHandleEvent(event, true)
+    }
+
+    bubblingPhase(node, event) {
+        while (true) {
+            event.currentTarget = node
+            node.tryHandleEvent(event, false)
+
+            if (!node.parent)
+                break;
+            node = node.parent
+        }
+    }
+
+    dispatchEvent(event) {
+        event.target = this
+        this.capturingPhase(this, event)
+        this.bubblingPhase(this, event)
     }
 }
 
@@ -72,7 +113,8 @@ class MEUI {
             callback(target === node, node);
 
         for (const item of node.children) {
-            this._searchNode(item, x, y, callback)
+            const ret = this._searchNode(item, x, y, callback)
+            target = ret ? ret : target
         }
         return target
     }
@@ -153,10 +195,13 @@ function createElement(tag, attrs, ...children) {
 
     const elm = new Box();
     for (let [name, val] of Object.entries(attrs)) {
-        // if (name.startsWith("on") && name.toLowerCase() in window) {
-        //     elm.addEventListener(name.toLowerCase().substr(2), val);
-        // } else 
-        if (name === "ref") {
+        if (name.startsWith("on")) {
+            const index = name.indexOf("Capture")
+            if (index !== -1)
+                elm.addEventListener(name.toLowerCase().substring(2, index), val, true);
+            else
+                elm.addEventListener(name.toLowerCase().substring(2), val);
+        } else if (name === "ref") {
             val(elm);
         } else if (name === "style") {
             let style = {}
@@ -198,7 +243,6 @@ function createElement(tag, attrs, ...children) {
     return elm;
 }
 
-
 function render(root) {
     const meui = new MEUI(1920, 1080)
     meui.addFontFace("res/font/Droid-Sans-Fallback.ttf")
@@ -215,7 +259,8 @@ function render(root) {
                 }
             })
 
-            if (box && event.type === "mousedown") {
+            if (box) {
+                box.dispatchEvent(event)
             }
         }
         meui.update()
@@ -515,15 +560,20 @@ function Body() {
             height: "100%",
             flexDirection: "column",
         }}>
-            {["Desktop", "Dribbble", "Images", "Downloads"].map((text) => {
-                return <div style={{
-                    width: 200,
-                    height: 55,
-                    alignItems: "center",
-                    HOVER: {
-                        backgroundColor: HEX(0x41464EFF)
-                    },
-                }}>
+            {["Desktop", "Dribbble", "Images", "Downloads"].map((text, index) => {
+                return <div
+                    style={{
+                        width: 200,
+                        height: 55,
+                        alignItems: "center",
+                        HOVER: {
+                            backgroundColor: HEX(0x41464EFF)
+                        },
+                    }}
+                    onMouseDown={(e) => {
+                        console.log("onMouseDown:" + index)
+                    }}
+                >
                     <div style={{
                         width: 38,
                         height: 38,
