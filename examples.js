@@ -1,4 +1,4 @@
-import { NativeMEUI, BOX_STATE, createBoxStyle, createBox } from "MEUI"
+import { NativeMEUI, BOX_STATE, createBox } from "MEUI"
 import * as os from "os"
 
 class Box {
@@ -159,24 +159,20 @@ function createElement(tag, attrs, ...children) {
         if (name === "ref") {
             val(elm);
         } else if (name === "style") {
-            let style = elm.getStyle(BOX_STATE.DEFAULT);
+            let style = {}
             for (let [k, v] of Object.entries(val)) {
                 if (k in BOX_STATE) {
-                    let style = elm.getStyle(BOX_STATE[k]);
-
-                    if (!style) {
-                        style = createBoxStyle()
-                        elm.setStyle(style, BOX_STATE[k])
-                    }
-
+                    let style = {};
                     for (let [key, val] of Object.entries(v)) {
                         style[key] = val
                     }
+                    elm.setStyle(style, BOX_STATE[k])
                 }
                 else {
                     style[k] = v
                 }
             }
+            elm.setStyle(style, BOX_STATE.DEFAULT)
         }
     }
 
@@ -187,8 +183,8 @@ function createElement(tag, attrs, ...children) {
         // Is child a leaf?
         if (!Array.isArray(child)) {
             if (typeof child === "string") {
-                let style = elm.getStyle(BOX_STATE.DEFAULT);
-                style.text = style.text + child;
+                let style = elm.setStyle({ text: child }, BOX_STATE.DEFAULT);
+                // style.text = style.text + child;
             }
             else {
                 elm.addChild(child)

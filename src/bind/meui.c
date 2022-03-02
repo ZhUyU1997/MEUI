@@ -67,6 +67,7 @@ static JSValue js_add_font_face(JSContext *ctx, JSValueConst this_val,
     if (!s)
         return JS_EXCEPTION;
     meui_add_font_face(meui, s);
+    JS_FreeCString(ctx, s);
     return JS_UNDEFINED;
 }
 
@@ -80,6 +81,7 @@ static JSValue js_get_connect_number(JSContext *ctx, JSValueConst this_val,
     if (!s)
         return JS_EXCEPTION;
     int fd = meui_get_connect_number(meui);
+    JS_FreeCString(ctx, s);
     return JS_NewInt32(ctx, fd);
 }
 
@@ -264,12 +266,10 @@ static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)
 }
 
 extern int js_box_class_define(JSContext *ctx, JSModuleDef *m);
-extern int js_box_style_class_define(JSContext *ctx, JSModuleDef *m);
 static int js_meui_module_init(JSContext *ctx, JSModuleDef *m)
 {
     js_meui_class_define(ctx, m);
     js_box_class_define(ctx, m);
-    js_box_style_class_define(ctx, m);
     return 0;
 }
 
@@ -281,7 +281,6 @@ JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name)
         return NULL;
     JS_AddModuleExport(ctx, m, "NativeMEUI");
     JS_AddModuleExport(ctx, m, "Box");
-    JS_AddModuleExport(ctx, m, "createBoxStyle");
     JS_AddModuleExport(ctx, m, "createBox");
     JS_AddModuleExport(ctx, m, "BOX_STATE");
     return m;

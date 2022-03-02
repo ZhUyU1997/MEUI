@@ -4,6 +4,7 @@
 #include "quickjs-libc.h"
 #include <box.h>
 #include <string.h>
+#include <bind/style.h>
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -22,14 +23,25 @@ static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
 
     box_style_t *style = box_get_style(box, v);
-
-    if (style)
-        return js_createBoxStyleFuncWithOpaque(ctx, box_get_style(box, v));
-    else
-        return JS_NULL;
+    // TODO:
+    // if (style)
+    //     return js_createBoxStyleFuncWithOpaque(ctx, box_get_style(box, v));
+    // else
+    return JS_NULL;
 }
 
-extern JSClassID get_js_box_style_class_id();
+static void setBoxStyleFromJSValue(JSContext *ctx, box_style_t *style, JSValueConst obj)
+{
+    for (int i = 0; i < jsStyleGetSetLength; i++)
+    {
+        JSValue value = JS_GetPropertyStr(ctx, obj, jsStyleGetSet[i].name);
+        if (JS_IsUndefined(value))
+            continue;
+
+        jsStyleGetSet[i].set(ctx, style, value);
+        JS_FreeValue(ctx, value);
+    }
+}
 
 static JSValue js_set_style(JSContext *ctx, JSValueConst this_val,
                             int argc, JSValueConst *argv)
@@ -39,15 +51,19 @@ static JSValue js_set_style(JSContext *ctx, JSValueConst this_val,
     if (!box)
         return JS_EXCEPTION;
 
-    box_style_t *style = JS_GetOpaque2(ctx, argv[0], get_js_box_style_class_id());
-    if (!style)
-        return JS_EXCEPTION;
-
     uint32_t v;
     if (JS_ToUint32(ctx, &v, argv[1]))
         return JS_EXCEPTION;
 
-    box_set_style(box, style, v);
+    box_style_t *style = box_get_style(box, v);
+
+    if (!style)
+    {
+        style = box_style_new();
+        box_set_style(box, style, v);
+    }
+
+    setBoxStyleFromJSValue(ctx, style, argv[0]);
     return JS_UNDEFINED;
 }
 
