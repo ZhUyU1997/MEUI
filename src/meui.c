@@ -200,6 +200,16 @@ void meui_flush(struct meui_t *meui)
     window_update_image(platform->window);
 }
 
+void meui_debug(struct meui_t *meui)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return;
+    }
+    Flex_print(meui_get_root_node(meui), FlexPrintDefault);
+}
+
 void meui_update(struct meui_t *meui)
 {
     if (!meui)
@@ -214,9 +224,10 @@ void meui_update(struct meui_t *meui)
     plutovg_fill(pluto);
     plutovg_destroy(pluto);
 
-    box_updateStyleRecursive(meui_get_root_node(meui));
-    Flex_layout(meui_get_root_node(meui), FlexUndefined, FlexUndefined, 1);
-    box_draw(meui_get_root_node(meui));
+    box_t root = meui_get_root_node(meui);
+    box_updateStyleRecursive(root);
+    Flex_layout(root, FlexUndefined, FlexUndefined, 1);
+    box_draw(root);
     meui_flush(meui);
 
     meui_platform_fps(meui);

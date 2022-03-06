@@ -48,6 +48,17 @@ static JSValue js_update(JSContext *ctx, JSValueConst this_val,
     meui_update(meui);
     return JS_UNDEFINED;
 }
+
+static JSValue js_debug(JSContext *ctx, JSValueConst this_val,
+                         int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+    meui_debug(meui);
+    return JS_UNDEFINED;
+}
+
 static JSValue js_end(JSContext *ctx, JSValueConst this_val,
                       int argc, JSValueConst *argv)
 {
@@ -242,6 +253,7 @@ static const JSCFunctionListEntry js_meui_proto_funcs[] = {
     JS_CFUNC_DEF("render", 1, js_render),
     JS_CFUNC_DEF("flush", 0, js_flush),
     JS_CFUNC_DEF("update", 0, js_update),
+    JS_CFUNC_DEF("debug", 0, js_debug),
     JS_CFUNC_DEF("addFontFace", 1, js_add_font_face),
     JS_CFUNC_DEF("getConnectNumber", 0, js_get_connect_number),
     JS_CFUNC_DEF("pending", 0, js_pending),
