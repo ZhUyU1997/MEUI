@@ -3,8 +3,8 @@
         [
             "@babel/plugin-transform-react-jsx",
             {
-                "pragma": "createElement",
-                "pragmaFrag": "Fragment"
+                "pragma": "React.createElement",
+                "pragmaFrag": "React.Fragment"
             }
         ]
     ]
