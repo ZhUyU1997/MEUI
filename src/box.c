@@ -108,6 +108,12 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
     box->style_array[state] = style;
 }
 
+enum BOX_STATE box_get_state(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->state;
+}
+
 void box_set_state(box_t node, enum BOX_STATE state)
 {
     struct Box *box = Flex_getContext(node);

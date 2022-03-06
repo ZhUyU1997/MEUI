@@ -63,6 +63,10 @@ export class Box {
         }
     }
 
+    getState() {
+        return this.nativeBox.getState()
+    }
+
     setState(state) {
         this.nativeBox.setState(state)
     }
@@ -79,6 +83,22 @@ export class Box {
         if (!(type in this.eventListeners))
             this.eventListeners[type] = []
         this.eventListeners[type].push({ listener, useCapture })
+    }
+
+    removeEventListener(type, listener, useCapture) {
+        if ((!listener) || (!type))
+            return
+        if (!(type in this.eventListeners))
+            return
+
+        const listenerArray = this.eventListeners[type]
+        for (const index in listenerArray) {
+            if (listenerArray[index].listener === listener
+                && listenerArray[index].useCapture === useCapture) {
+                listenerArray.splice(index, 1)
+                return
+            }
+        }
     }
 
     tryHandleEvent(event, capture) {
@@ -152,6 +172,10 @@ export class MEUI {
 
                 if (box) {
                     box.dispatchEvent(event)
+
+                    if (event.type === "mouseup" && box.getState() === BOX_STATE.HOVER) {
+                        box.dispatchEvent({ type: "click" })
+                    }
                 }
             }
             this.update()

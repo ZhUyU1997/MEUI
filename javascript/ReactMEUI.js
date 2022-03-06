@@ -4,7 +4,8 @@ import { Box } from "./meui"
 const rootHostContext = {};
 const childHostContext = {};
 
-const log = console.log
+// const log = console.log
+const log = ()=>{}
 const hostConfig = {
     now: Date.now,
     getRootHostContext: () => {
@@ -64,10 +65,17 @@ const hostConfig = {
             // }
             if (propName.startsWith("on")) {
                 const index = propName.indexOf("Capture")
-                if (index !== -1)
-                    domElement.addEventListener(propName.toLowerCase().substring(2, index), propValue, true);
-                else
-                    domElement.addEventListener(propName.toLowerCase().substring(2), propValue);
+
+                let type, useCapture;
+                if (index !== -1) {
+                    type = propName.toLowerCase().substring(2, index)
+                    useCapture = true
+                }
+                else {
+                    type = propName.toLowerCase().substring(2)
+                    useCapture = false
+                }
+                domElement.addEventListener(type, propValue, useCapture);
             }
         });
         return domElement;
@@ -108,9 +116,19 @@ const hostConfig = {
                 else if (propValue.every((item) => typeof item === 'string' || typeof item === 'number')) {
                     domElement.setStyle({ text: propValue.join("") })
                 }
-            } else {
-                // const propValue = newProps[propName];
-                // domElement.setAttribute(propName, propValue);
+            } else if (propName.startsWith("on")) {
+                const index = propName.indexOf("Capture")
+                let type, useCapture;
+                if (index !== -1) {
+                    type = propName.toLowerCase().substring(2, index)
+                    useCapture = true
+                }
+                else {
+                    type = propName.toLowerCase().substring(2)
+                    useCapture = false
+                }
+                domElement.removeEventListener(type, oldProps[propName], useCapture);
+                domElement.addEventListener(type, propValue, useCapture);
             }
         });
     },

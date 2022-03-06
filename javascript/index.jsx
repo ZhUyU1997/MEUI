@@ -1,8 +1,9 @@
 import "./polyfill"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import ReactMEUI from "./ReactMEUI"
 import Button from "./button"
 import { MEUI } from "./meui"
+
 function Root({ children, ...props }) {
     return <div style={{
         backgroundColor: "#FFFFFFFF",
@@ -16,7 +17,12 @@ function Root({ children, ...props }) {
 }
 
 function TestHooks() {
-    const [count, setCount] = useState(0)
+    const [dollar, setDollar] = useState(0)
+    const [rmb, setRMB] = useState(0)
+
+    useEffect(() => {
+        setRMB(6.32 * dollar)
+    }, [dollar])
 
     return <Root>
         <div
@@ -29,14 +35,13 @@ function TestHooks() {
                 width: 300,
                 height: 200,
             }}>
-            You clicked below {count} times
+            {dollar}美元 = {rmb}人民币
         </div>
         <Button
             type="primary"
             style={{ width: 200, height: 70 }}
-            onMouseDown={() => {
-                console.log("onMouseDown")
-                setCount(count => count + 1)
+            onClick={() => {
+                setDollar(count => count + 1)
             }}
         >Click Me</Button>
     </Root>

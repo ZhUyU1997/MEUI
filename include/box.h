@@ -63,6 +63,7 @@ void *box_get_opaque(box_t node);
 void box_clear_opaque(box_t node);
 
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
+enum BOX_STATE box_get_state(box_t node);
 void box_set_state(box_t node, enum BOX_STATE state);
 box_style_t *box_get_style(box_t node, enum BOX_STATE state);
 
