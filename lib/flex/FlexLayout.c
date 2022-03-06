@@ -1318,6 +1318,7 @@ void Flex_addChild(FlexNodeRef node, FlexNodeRef child) {
     }
     flex_markDirty(node);
     FlexVector_add(FlexNodeRef, node->children, child);
+    child->parent = node;
 }
 
 void Flex_removeChild(FlexNodeRef node, FlexNodeRef child) {
