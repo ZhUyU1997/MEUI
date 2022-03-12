@@ -11,10 +11,10 @@ export default {
 	},
 	external: ['MEUI', 'os', 'renderer'],
 	plugins: [
-		resolve({ 
+		resolve({
 			// browser: true,
-			extensions:['.mjs', '.js', '.json', '.node','.jsx']
-		 }),
+			extensions: ['.mjs', '.js', '.json', '.node', '.jsx']
+		}),
 		commonjs({ include: 'node_modules/**', sourceMap: true }),
 		babel({
 			// presets: ['@babel/preset-react'],
