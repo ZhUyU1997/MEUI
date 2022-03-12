@@ -26,6 +26,9 @@ SRC			+= lib/flex/*.c
 X_INCDIRS	+= lib/QuickJS
 SRC			+= lib/QuickJS/
 
+# hashmap
+X_INCDIRS	+= lib/hashmap/include
+SRC			+= lib/hashmap/src/*.c
 
 X_CFLAGS	+=
 X_LDFLAGS	+= -lm -lprofiler -ldl -lpthread -lX11
