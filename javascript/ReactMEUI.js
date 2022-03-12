@@ -14,6 +14,7 @@ const hostConfig = {
     },
     prepareForCommit: () => {
         log("prepareForCommit")
+        return null
     },
     resetAfterCommit: () => {
         log("resetAfterCommit")
@@ -24,9 +25,6 @@ const hostConfig = {
     },
     shouldSetTextContent: (type, props) => {
         log("# shouldSetTextContent", type, props.children)
-        if (Array.isArray(props.children)) {
-            return props.children.every((item) => typeof item === 'string' || typeof item === 'number')
-        }
         return typeof props.children === 'string' || typeof props.children === 'number';
     },
     createInstance: (type, { style, children, ...newProps }, rootContainerInstance, _currentHostContext, workInProgress) => {
@@ -37,13 +35,8 @@ const hostConfig = {
         if (typeof children === 'string' || typeof children === 'number') {
             domElement.setStyle({ text: children })
         }
-        else if (children.every((item) => typeof item === 'string' || typeof item === 'number')) {
-
-            domElement.setStyle({ text: children.join("") })
-        }
 
         if (style) {
-            console.log(JSON.stringify(style))
             domElement.setStyle(style)
         }
 
@@ -81,6 +74,7 @@ const hostConfig = {
         return domElement;
     },
     createTextInstance: text => {
+        log("createTextInstance", text)
         return text;
     },
     appendInitialChild: (parent, child) => {
@@ -104,17 +98,17 @@ const hostConfig = {
 
         return true;
     },
-    commitUpdate(domElement, updatePayload, type, oldProps, newProps) {
+    commitUpdate(domElement, updatePayload, type, oldProps, {style, ...newProps}) {
         log("commitUpdate")
+        if (style) {
+            domElement.setStyle(style)
+        }
 
         Object.keys(newProps).forEach(propName => {
             const propValue = newProps[propName];
             if (propName === 'children') {
                 if (typeof propValue === 'string' || typeof propValue === 'number') {
                     domElement.setStyle({ text: propValue })
-                }
-                else if (propValue.every((item) => typeof item === 'string' || typeof item === 'number')) {
-                    domElement.setStyle({ text: propValue.join("") })
                 }
             } else if (propName.startsWith("on")) {
                 const index = propName.indexOf("Capture")
@@ -142,6 +136,10 @@ const hostConfig = {
     clearContainer(container) {
         log("clearContainer")
         // container.remove()
+    },
+    insertBefore(parentInstance, child, beforeChild)
+    {
+        parentInstance.insertBefore(child, beforeChild)
     }
 };
 

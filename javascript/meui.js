@@ -8,6 +8,7 @@ export class Box {
         this.children = []
         this.parent = null
         this.eventListeners = {}
+        this.text = ""
 
         if (style) {
             this.setStyle(style, BOX_STATE.DEFAULT)
@@ -26,7 +27,6 @@ export class Box {
                 style[p] = [r / 255.0, g / 255.0, b / 255.0, a]
             }
         }
-
         this.nativeBox.setStyle(style, state)
     }
     setStyle(style) {
@@ -48,12 +48,31 @@ export class Box {
     }
 
     addChild(child) {
-        console.log("addChild")
-        child.parent = this
-        this.nativeBox.addChild(child.nativeBox);
-        this.children.push(child)
+        if (typeof child === 'string' || typeof child === 'number') {
+            this.text += child
+            this.setStyle({ text: this.text })
+        }
+        else {
+            child.parent = this
+            this.nativeBox.addChild(child.nativeBox);
+            this.children.push(child)
+        }
+
+    }
+    insertChild(child, index) {
+        this.nativeBox.insertChild(child.nativeBox, index);
+        this.children.splice(index, 0, child);
     }
 
+    insertBefore(child, beforeChild) {
+        if (this.children.indexOf(child) !== -1)
+            this.removeChild(child)
+
+        const index = this.children.indexOf(beforeChild)
+        if (index !== -1) {
+            this.insertChild(child, index)
+        }
+    }
     removeChild(child) {
         const index = this.children.indexOf(child)
 

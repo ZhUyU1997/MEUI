@@ -83,6 +83,25 @@ static JSValue js_add_child(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_insert_child(JSContext *ctx, JSValueConst this_val,
+                               int argc, JSValueConst *argv)
+{
+    box_t box = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!box)
+        return JS_EXCEPTION;
+
+    box_t child = JS_GetOpaque2(ctx, argv[0], js_box_class_id);
+    if (!child)
+        return JS_EXCEPTION;
+
+    int32_t index;
+    if (JS_ToInt32(ctx, &index, argv[1]))
+        return JS_EXCEPTION;
+    Flex_insertChild(box, child, index);
+    return JS_UNDEFINED;
+}
+
 static JSValue js_remove_child(JSContext *ctx, JSValueConst this_val,
                                int argc, JSValueConst *argv)
 {
@@ -173,6 +192,7 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
     JS_CFUNC_DEF("addChild", 1, js_add_child),
+    JS_CFUNC_DEF("insertChild", 2, js_insert_child),
     JS_CFUNC_DEF("removeChild", 1, js_remove_child),
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
