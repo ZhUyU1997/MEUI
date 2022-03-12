@@ -55,7 +55,7 @@ declare module 'os' {
     export const S_IFLNK: number;
     export const S_ISGID: number;
     export const S_ISUID: number;
-    export type stat = {
+    export type stat_return_type = {
         dev: number;
         ino: number;
         nlink: number;
@@ -68,11 +68,11 @@ declare module 'os' {
         mtime: number;
         ctime: number;
     };
-    export function stat(path: string): [stat, number];
+    export function stat(path: string): [stat_return_type, number];
     export function utimes(path: string, atime: number, mtime: number): number;
     export function sleep(delay: number): number;
     export function realpath(path: number): [string, number];
-    export function lstat(path: string): [stat, number];
+    export function lstat(path: string): [stat_return_type, number];
     export function symlink(target: string, linkpath: string): number;
     export function readlink(path: string): [string, number];
     export function exec(args: string[], options?: {
