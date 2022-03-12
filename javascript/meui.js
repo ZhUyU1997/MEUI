@@ -175,7 +175,7 @@ export class MEUI {
         })
 
         this.addFontFace("Droid-Sans-Fallback", "res/font/Droid-Sans-Fallback.ttf")
-        this.addFontFace("MaterialDesignIcons", "MaterialDesign-Font/MaterialDesignIconsDesktop.ttf")
+        this.addFontFace("MaterialDesignIcons", "res/font/MaterialDesignIconsDesktop.ttf")
 
         this.nativeMEUI.render(this.root.getNativeObject())
 
