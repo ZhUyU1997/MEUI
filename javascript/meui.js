@@ -174,7 +174,8 @@ export class MEUI {
             height: "100%",
         })
 
-        this.addFontFace("res/font/Droid-Sans-Fallback.ttf")
+        this.addFontFace("Droid-Sans-Fallback", "res/font/Droid-Sans-Fallback.ttf")
+        this.addFontFace("MaterialDesignIcons", "MaterialDesign-Font/MaterialDesignIconsDesktop.ttf")
 
         this.nativeMEUI.render(this.root.getNativeObject())
 
@@ -184,12 +185,13 @@ export class MEUI {
                 if (!event) continue
                 const box = this.searchNode(event.x, event.y, (hit, box) => {
                     box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
-                    if (event.type === "mousedown" && hit) {
-                        box.setState(BOX_STATE.ACTIVE)
-                    }
                 })
 
                 if (box) {
+                    if (event.type === "mousedown") {
+                        box.setState(BOX_STATE.ACTIVE)
+                    }
+
                     box.dispatchEvent(event)
 
                     if (event.type === "mouseup" && box.getState() === BOX_STATE.HOVER) {
@@ -219,8 +221,8 @@ export class MEUI {
     debug() {
         this.nativeMEUI.debug()
     }
-    addFontFace(fileName) {
-        this.nativeMEUI.addFontFace(fileName)
+    addFontFace(fontFamily, fileName) {
+        this.nativeMEUI.addFontFace(fontFamily, fileName)
     }
     getConnectNumber() {
         return this.nativeMEUI.getConnectNumber()
