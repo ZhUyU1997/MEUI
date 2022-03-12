@@ -50,7 +50,7 @@ static JSValue js_update(JSContext *ctx, JSValueConst this_val,
 }
 
 static JSValue js_debug(JSContext *ctx, JSValueConst this_val,
-                         int argc, JSValueConst *argv)
+                        int argc, JSValueConst *argv)
 {
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
@@ -74,11 +74,21 @@ static JSValue js_add_font_face(JSContext *ctx, JSValueConst this_val,
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
         return JS_EXCEPTION;
-    const char *s = JS_ToCString(ctx, argv[0]);
-    if (!s)
+
+    const char *font_family = JS_ToCString(ctx, argv[0]);
+    if (!font_family)
         return JS_EXCEPTION;
-    meui_add_font_face(meui, s);
-    JS_FreeCString(ctx, s);
+
+    const char *path = JS_ToCString(ctx, argv[1]);
+    if (!path)
+    {
+        JS_FreeCString(ctx, font_family);
+        return JS_EXCEPTION;
+    }
+
+    meui_add_font_face(meui, font_family, path);
+    JS_FreeCString(ctx, path);
+    JS_FreeCString(ctx, font_family);
     return JS_UNDEFINED;
 }
 
@@ -254,7 +264,7 @@ static const JSCFunctionListEntry js_meui_proto_funcs[] = {
     JS_CFUNC_DEF("flush", 0, js_flush),
     JS_CFUNC_DEF("update", 0, js_update),
     JS_CFUNC_DEF("debug", 0, js_debug),
-    JS_CFUNC_DEF("addFontFace", 1, js_add_font_face),
+    JS_CFUNC_DEF("addFontFace", 2, js_add_font_face),
     JS_CFUNC_DEF("getConnectNumber", 0, js_get_connect_number),
     JS_CFUNC_DEF("pending", 0, js_pending),
     JS_CFUNC_DEF("nextEvent", 0, js_next_event),

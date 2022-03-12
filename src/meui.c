@@ -59,6 +59,7 @@ struct meui_t *meui_start(int width, int height)
     meui->width = width;
     meui->height = height;
     meui->render_context.root = box_new();
+    hashmap_init(&meui->render_context.font_map, hashmap_hash_string, strcmp);
 
 #if 0
     plutovg_t *pluto = plutovg_create(meui->render_context.surface);
@@ -241,6 +242,19 @@ void meui_end(struct meui_t *meui)
         return;
     }
 
+    plutovg_font_face_t *val;
+    hashmap_foreach_data(val, &meui->render_context.font_map)
+    {
+        plutovg_font_face_destroy(val);
+    }
+    hashmap_cleanup(&meui->render_context.font_map);
+
+    if (meui->render_context.default_font_family)
+    {
+        free(meui->render_context.default_font_family);
+        meui->render_context.default_font_family = NULL;
+    }
+
     box_free_recursive(meui->render_context.root);
     plutovg_surface_destroy(meui->render_context.surface);
     plutovg_surface_destroy(meui->win_surface);
@@ -251,7 +265,24 @@ void meui_end(struct meui_t *meui)
     free(meui);
 }
 
-void meui_add_font_face(struct meui_t *meui, const char *file)
+void meui_set_default_font_family(struct meui_t *meui, const char *font_family)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return;
+    }
+
+    if (!font_family)
+    {
+        LOGE("font_family == NULL");
+        return;
+    }
+
+    meui->render_context.default_font_family = strdup(font_family);
+}
+
+void meui_add_font_face(struct meui_t *meui, const char *font_family, const char *file)
 {
     if (!meui)
     {
@@ -265,10 +296,29 @@ void meui_add_font_face(struct meui_t *meui, const char *file)
         return;
     }
 
-    meui->render_context.face = plutovg_font_face_load_from_file(file);
+    if (!font_family)
+    {
+        LOGE("font_family == NULL");
+        return;
+    }
+
+    font_map_t *map = &meui->render_context.font_map;
+    if (hashmap_get(map, font_family) == NULL)
+    {
+        if (hashmap_size(map) == 0)
+        {
+            meui_set_default_font_family(meui, font_family);
+        }
+
+        hashmap_put(map, font_family, plutovg_font_face_load_from_file(file));
+    }
+    else
+    {
+        LOGE("font family " $(font_family) " existed");
+    }
 }
 
-plutovg_font_t *meui_get_font(struct meui_t *meui, double size)
+plutovg_font_t *meui_get_font(struct meui_t *meui, const char *font_family, double size)
 {
     if (!meui)
     {
@@ -276,7 +326,15 @@ plutovg_font_t *meui_get_font(struct meui_t *meui, double size)
         return NULL;
     }
 
-    return plutovg_font_load_from_face(meui->render_context.face, size);
+    font_map_t *map = &meui->render_context.font_map;
+    plutovg_font_face_t *font_face = hashmap_get(map, font_family == NULL ? meui->render_context.default_font_family : font_family);
+    if (font_face == NULL)
+    {
+        LOGE("font family " $(font_family) " not existed");
+        return NULL;
+    }
+
+    return plutovg_font_load_from_face(font_face, size);
 }
 
 plutovg_surface_t *meui_get_surface(struct meui_t *meui)
@@ -304,7 +362,7 @@ int meui_get_connect_number(struct meui_t *meui)
     if (!meui)
     {
         LOGE("meui == NULL");
-        return NULL;
+        return -1;
     }
 
     struct meui_platform_t *platform = meui->platform_data;

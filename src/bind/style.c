@@ -538,6 +538,20 @@ static JSValue js_set_style_font_size(JSContext *ctx, box_style_t *style, JSValu
     return JS_UNDEFINED;
 }
 
+static JSValue js_set_style_font_family(JSContext *ctx, box_style_t *style, JSValue val)
+{
+    if (!style)
+        return JS_EXCEPTION;
+
+    const char *font_family = JS_ToCString(ctx, val);
+    if (!font_family)
+        return JS_EXCEPTION;
+
+    box_style_fontFamily(style, font_family);
+    JS_FreeCString(ctx, font_family);
+    return JS_UNDEFINED;
+}
+
 static JSValue js_set_style_text_align(JSContext *ctx, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
@@ -732,6 +746,7 @@ const JSStyleGetSet jsStyleGetSet[] = {
     {"fontColor", NULL, js_set_style_font_color},
     {"text", js_get_style_text, js_set_style_text},
     {"fontSize", NULL, js_set_style_font_size},
+    {"fontFamily", NULL, js_set_style_font_family},
     {"textAlign", NULL, js_set_style_text_align},
     {"backgroundImage", NULL, js_set_style_background_image},
     {"contentImage", NULL, js_set_style_content_image},

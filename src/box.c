@@ -416,11 +416,11 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
     return result;
 }
 
-static void draw_text(struct Box *box, plutovg_t *pluto, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
+static void draw_text(struct Box *box, plutovg_t *pluto, const char *fontFamily, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
 {
     plutovg_save(pluto);
 
-    plutovg_font_t *font = meui_get_font(meui_get_instance(), size);
+    plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
 
     plutovg_set_font(pluto, font);
     double ascent = plutovg_font_get_ascent(font);
@@ -443,6 +443,8 @@ static void draw_text(struct Box *box, plutovg_t *pluto, double size, struct plu
 
     plutovg_set_source_rgba(pluto, color.r, color.g, color.b, color.a);
     plutovg_fill(pluto);
+
+    plutovg_font_destroy(font);
     plutovg_restore(pluto);
 }
 
@@ -581,7 +583,7 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
                         box->style.borderColor, box->style.backgroundColor);
 
     if (box->style.text && box->style.text[0] != '\0')
-        draw_text(box, pluto, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
+        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {

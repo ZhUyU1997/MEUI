@@ -49,6 +49,7 @@ style_table = [
     ["plutovg_matrix_t", "transform", False, False],
     ["struct transform_origin_t", "transformOrigin", False, False],
     ["char *", "text", False, False],
+    ["char *", "fontFamily", False, False],
 ]
 
 if len(style_table) > 64:

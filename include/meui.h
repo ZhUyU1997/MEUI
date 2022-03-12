@@ -5,9 +5,11 @@
 #include <FlexLayout.h>
 #include <meui/event.h>
 #include <box.h>
+#include <hashmap.h>
 
 struct meui_t;
 
+typedef HASHMAP(char, plutovg_font_face_t) font_map_t;
 typedef void (*meui_callback_t)(struct meui_t *);
 
 enum MEUI_CALLBACK
@@ -19,7 +21,8 @@ enum MEUI_CALLBACK
 
 struct meui_render_context_t
 {
-    plutovg_font_face_t *face;
+    font_map_t font_map;
+    char *default_font_family;
     plutovg_surface_t *surface;
     box_t root;
 };
@@ -45,8 +48,9 @@ void meui_debug(struct meui_t *);
 void meui_update(struct meui_t *);
 void meui_end(struct meui_t *);
 
-void meui_add_font_face(struct meui_t *, const char *);
-plutovg_font_t *meui_get_font(struct meui_t *, double);
+void meui_set_default_font_family(struct meui_t *meui, const char *font_family);
+void meui_add_font_face(struct meui_t *meui, const char *font_family, const char *file);
+plutovg_font_t *meui_get_font(struct meui_t *meui, const char *font_family, double size);
 plutovg_surface_t *meui_get_surface(struct meui_t *);
 box_t meui_get_root_node(struct meui_t *);
 int meui_get_connect_number(struct meui_t *meui);
