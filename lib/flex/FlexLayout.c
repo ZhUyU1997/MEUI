@@ -64,8 +64,8 @@ void _FlexVector_insert_##type(FlexVectorRef(type) vector, type value, size_t in
        vector->capacity *= 2;                                                           \
        vector->data = (type *)realloc(vector->data, sizeof(type) * vector->capacity);   \
    }                                                                                    \
-   for (size_t i = index; i < vector->size; i++) {                                      \
-       vector->data[i + 1] = vector->data[i];                                           \
+   for (size_t i = vector->size; i > index; i--) {                                      \
+       vector->data[i] = vector->data[i - 1];                                           \
    }                                                                                    \
    vector->data[index] = value;                                                         \
    vector->size++;                                                                      \
