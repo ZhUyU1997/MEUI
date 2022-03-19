@@ -140,7 +140,11 @@ const hostConfig = {
     insertBefore(parentInstance, child, beforeChild)
     {
         parentInstance.insertBefore(child, beforeChild)
-    }
+    },
+    getPublicInstance(instance)
+    {
+        return instance
+    },
 };
 
 const ReactReconcilerInst = ReactReconciler(hostConfig);
