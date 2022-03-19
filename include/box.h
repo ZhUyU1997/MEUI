@@ -45,6 +45,11 @@ struct Box
     box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
 
+    double scroll_top, scroll_left;
+    double scroll_width, scroll_height;
+    double client_width, client_height;
+    double offset_width, offset_height;
+
     struct list_head event_list;
 
     struct
@@ -66,6 +71,11 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
 enum BOX_STATE box_get_state(box_t node);
 void box_set_state(box_t node, enum BOX_STATE state);
 box_style_t *box_get_style(box_t node, enum BOX_STATE state);
+
+int box_get_scroll_top(box_t node);
+void box_set_scroll_top(box_t node, int scroll_top);
+int box_get_scroll_left(box_t node);
+void box_set_scroll_left(box_t node, int scroll_left);
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb);
 void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e);

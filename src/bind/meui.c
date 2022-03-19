@@ -137,18 +137,27 @@ static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
             JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousedown"));
             JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_DOWN.x));
             JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_DOWN.y));
+            JS_SetPropertyStr(ctx, obj, "button", JS_NewInt32(ctx, event.MOUSE_DOWN.button));
         }
         else if (event.type == MEUI_EVENT_MOUSE_UP)
         {
             JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mouseup"));
             JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_UP.x));
             JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_UP.y));
+            JS_SetPropertyStr(ctx, obj, "button", JS_NewInt32(ctx, event.MOUSE_UP.button));
         }
         else if (event.type == MEUI_EVENT_MOUSE_MOVE)
         {
             JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousemove"));
             JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_MOVE.x));
             JS_SetPropertyStr(ctx, obj, "y", JS_NewInt32(ctx, event.MOUSE_MOVE.y));
+        }
+        else if (event.type == MEUI_EVENT_MOUSE_WHEEL)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousewheel"));
+            JS_SetPropertyStr(ctx, obj, "deltaX", JS_NewInt32(ctx, event.MOUSE_WHEEL.deltaX));
+            JS_SetPropertyStr(ctx, obj, "deltaY", JS_NewInt32(ctx, event.MOUSE_WHEEL.deltaY));
+            JS_SetPropertyStr(ctx, obj, "deltaZ", JS_NewInt32(ctx, event.MOUSE_WHEEL.deltaZ));
         }
         return obj;
     }

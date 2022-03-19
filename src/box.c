@@ -37,6 +37,8 @@ static const char *fileext(const char *filename)
 
 #define KAPPA90 (0.5522847493f)
 
+FlexSize box_measure_text(void *context, FlexSize constrainedSize);
+
 box_t box_new()
 {
     box_t node = Flex_newNode();
@@ -46,6 +48,7 @@ box_t box_new()
     init_list_head(&box->event_list);
 
     Flex_setContext(node, box);
+    Flex_setMeasureFunc(node, box_measure_text);
     return node;
 }
 
@@ -120,6 +123,42 @@ void box_set_state(box_t node, enum BOX_STATE state)
     box->state = state;
 }
 
+int box_get_scroll_top(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->scroll_top;
+}
+
+void box_set_scroll_top(box_t node, int scroll_top)
+{
+    struct Box *box = Flex_getContext(node);
+
+    if (scroll_top < 0)
+        scroll_top = 0;
+    else if (scroll_top > box->scroll_height - box->client_height)
+        scroll_top = box->scroll_height - box->client_height;
+
+    box->scroll_top = scroll_top;
+}
+
+int box_get_scroll_left(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->scroll_left;
+}
+
+void box_set_scroll_left(box_t node, int scroll_left)
+{
+    struct Box *box = Flex_getContext(node);
+
+    if (scroll_left < 0)
+        scroll_left = 0;
+    else if (scroll_left > box->scroll_width - box->client_width)
+        scroll_left = box->scroll_width - box->client_width;
+
+    box->scroll_left = scroll_left;
+}
+
 static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
 {
     const char a[4][3][2] = {
@@ -183,6 +222,16 @@ static void draw_image(plutovg_t *pluto, const char *path, plutovg_rect_t *r)
         plutovg_fill_preserve(pluto);
     }
 
+    plutovg_surface_destroy(img);
+    plutovg_restore(pluto);
+}
+
+static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, double h, struct plutovg_color fill_color)
+{
+    plutovg_save(pluto);
+    plutovg_rect(pluto, x, y, w, h);
+    plutovg_set_source_color(pluto, &fill_color);
+    plutovg_fill(pluto);
     plutovg_restore(pluto);
 }
 
@@ -223,7 +272,7 @@ static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_
 
     plutovg_path_t *outer_path = round4_rect(r, 0, 0, w, h);
     plutovg_add_path(pluto, outer_path);
-    plutovg_set_source_rgba(pluto, fill_color.r, fill_color.g, fill_color.b, fill_color.a);
+    plutovg_set_source_color(pluto, &fill_color);
 
     plutovg_fill_preserve(pluto);
 
@@ -275,7 +324,7 @@ static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_
         plutovg_add_path(pluto, outer_path);
         plutovg_set_fill_rule(pluto, plutovg_fill_rule_even_odd);
 
-        plutovg_set_source_rgba(pluto, border_color.r, border_color.g, border_color.b, border_color.a);
+        plutovg_set_source_color(pluto, &border_color);
 
         plutovg_fill(pluto);
         plutovg_path_destroy(inner_path);
@@ -441,11 +490,86 @@ static void draw_text(struct Box *box, plutovg_t *pluto, const char *fontFamily,
     plutovg_add_path(pluto, path);
     plutovg_path_destroy(path);
 
-    plutovg_set_source_rgba(pluto, color.r, color.g, color.b, color.a);
+    plutovg_set_source_color(pluto, &color);
     plutovg_fill(pluto);
 
     plutovg_font_destroy(font);
     plutovg_restore(pluto);
+}
+
+static void measure_font_get_textn_oneline_path(const plutovg_font_t *font, const char **utf8, const char *end, double w, double *out_w)
+{
+    double advance = 0;
+    while (*utf8 < end)
+    {
+        int ch = 0;
+        const char *start = *utf8;
+        if (!decode_utf8(utf8, end, &ch))
+            break;
+
+        if (ch == '\n')
+            break;
+
+        double char_advance = plutovg_font_get_char_advance(font, ch);
+
+        if (advance + char_advance > w)
+        {
+            *utf8 = start;
+            break;
+        }
+
+        advance += char_advance;
+    }
+
+    *out_w = advance;
+}
+
+static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
+{
+    FlexSize outSize = {.width = 0, .height = 0};
+
+    double advance = 0;
+    const char *end = utf8 + size;
+    plutovg_font_face_t *face = plutovg_font_get_face(font);
+    double ascent = plutovg_font_get_ascent(font);
+    double descent = plutovg_font_get_descent(font);
+    double line_gap = plutovg_font_get_line_gap(font);
+    double leading = plutovg_font_get_leading(font);
+
+    double y = 0;
+
+    while (utf8 < end)
+    {
+        if (y + ascent > h)
+            break;
+
+        y += ascent;
+
+        double line_width = 0;
+        draw_font_get_textn_oneline_path(font, &utf8, end, w, &line_width);
+
+        if (line_width > outSize.width)
+        {
+            outSize.width = line_width;
+        }
+    }
+    outSize.height = y - descent;
+
+    return outSize;
+}
+
+FlexSize box_measure_text(void *context, FlexSize constrainedSize)
+{
+    struct Box *box = context;
+
+    const char *fontFamily = box->style.fontFamily;
+    double size = box->style.fontSize;
+    TEXT_ALIGN align = box->style.textAlign;
+    const char *utf8 = box->style.text;
+
+    plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
+    FlexSize outSize = measure_font_get_textn_path(font, align, utf8, strlen(utf8), constrainedSize.width, constrainedSize.height);
+    return outSize;
 }
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb)
@@ -541,7 +665,7 @@ void box_updateStyleRecursive(box_t node)
     }
 }
 
-void box_drawRecursive(plutovg_t *pluto, box_t node)
+static void box_draw_self(box_t node, plutovg_t *pluto)
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -555,6 +679,47 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
     double content_left = Flex_getResultPaddingLeft(node);
     double content_top = Flex_getResultPaddingTop(node);
 
+    plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
+
+    draw_box_background(box, pluto, &(plutovg_rect_t){0, 0, width, height},
+                        &content_rect,
+                        (float[]){
+                            box->style.borderTopLeftRadius,
+                            box->style.borderTopRightRadius,
+                            box->style.borderBottomRightRadius,
+                            box->style.borderBottomLeftRadius,
+                        },
+                        (float[]){
+                            Flex_getResultBorderTop(node),
+                            Flex_getResultBorderRight(node),
+                            Flex_getResultBorderBottom(node),
+                            Flex_getResultBorderLeft(node),
+                        },
+                        box->style.borderColor, box->style.backgroundColor);
+
+    if (box->style.text && box->style.text[0] != '\0')
+        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
+}
+
+static void box_draw_child(box_t node, plutovg_t *pluto)
+{
+    for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
+    {
+        plutovg_save(pluto);
+        box_drawRecursive(pluto, Flex_getChild(node, i));
+        plutovg_restore(pluto);
+    }
+}
+
+void box_drawRecursive(plutovg_t *pluto, box_t node)
+{
+    float left = Flex_getResultLeft(node);
+    float top = Flex_getResultTop(node);
+    float width = Flex_getResultWidth(node);
+    float height = Flex_getResultHeight(node);
+
+    struct Box *box = Flex_getContext(node);
+
     if (!box)
     {
         LOGE("Node is not box!");
@@ -565,32 +730,44 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
 
     plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
 
-    plutovg_rect_t content_rect = {content_left, content_top, content_width, content_height};
-    draw_box_background(box, pluto, &(plutovg_rect_t){0, 0, width, height},
-                        &content_rect,
-                        (float[]){
-                            box->style.borderTopLeftRadius,
-                            box->style.borderTopRightRadius,
-                            box->style.borderBottomRightRadius,
-                            box->style.borderBottomLeftRadius,
-                        },
-                        (float[]){
-                            Flex_getBorderTop(node),
-                            Flex_getBorderRight(node),
-                            Flex_getBorderBottom(node),
-                            Flex_getBorderLeft(node),
-                        },
-                        box->style.borderColor, box->style.backgroundColor);
+    box_draw_self(node, pluto);
 
-    if (box->style.text && box->style.text[0] != '\0')
-        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
+    box->client_width = width - Flex_getResultBorderLeft(node) - Flex_getResultBorderRight(node);
+    box->client_height = height - Flex_getResultBorderTop(node) - Flex_getResultBorderBottom(node);
+    box->offset_width = width;
+    box->offset_height = height;
+    box->scroll_width = Flex_getResultScrollWidth(node);
+    box->scroll_height = Flex_getResultScrollHeight(node);
 
-    for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
+    if (box->style.overflow == CSS_OVERFLOW_VISIBLE || (box->client_width >= box->scroll_width && box->client_height >= box->scroll_height))
+    {
+        box_draw_child(node, pluto);
+    }
+    else
     {
         plutovg_save(pluto);
-        box_drawRecursive(pluto, Flex_getChild(node, i));
+        // printf("%f %f\n", box->client_width, box->client_height);
+        plutovg_surface_t *surface = plutovg_surface_create(box->client_width, box->client_height);
+        plutovg_translate(pluto, Flex_getResultBorderLeft(node), Flex_getResultBorderTop(node));
+
+        {
+            plutovg_t *pluto = plutovg_create(surface);
+            plutovg_translate(pluto, -box->scroll_left - Flex_getResultBorderLeft(node), -box->scroll_top - Flex_getResultBorderTop(node));
+            box_draw_child(node, pluto);
+            plutovg_destroy(pluto);
+        }
+
+        plutovg_rect(pluto, 0, 0, box->client_width, box->client_height);
+        plutovg_set_source_surface(pluto, surface, 0, 0);
+        plutovg_fill(pluto);
+
+        plutovg_surface_destroy(surface);
+
         plutovg_restore(pluto);
     }
+
+    // if (Flex_getResultScrollWidth(node) != meui_get_instance()->width && Flex_getResultScrollHeight(node) != meui_get_instance()->height)
+    //     draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, (plutovg_color_t){1, 0, 0, 0.5});
 }
 
 void box_draw(box_t root)

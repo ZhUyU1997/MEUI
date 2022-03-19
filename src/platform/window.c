@@ -155,14 +155,107 @@ void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
 {
     XEvent event;
     XNextEvent(window->dis, &event);
+    meui_event->type = MEUI_EVENT_NULL;
 
     if (event.type == ButtonPress)
     {
-        *meui_event = (struct meui_event_t){.type = MEUI_EVENT_MOUSE_DOWN, .MOUSE_DOWN = {event.xbutton.x, event.xbutton.y}};
+        switch (event.xbutton.button)
+        {
+        case Button1:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_DOWN,
+                .MOUSE_DOWN = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_PRIMARY_BUTTON,
+                },
+            };
+            break;
+        case Button2:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_DOWN,
+                .MOUSE_DOWN = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_AUXILIARY_BUTTON,
+                },
+            };
+
+            break;
+        case Button3:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_DOWN,
+                .MOUSE_DOWN = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_SECONDARY_BUTTON,
+                },
+            };
+            break;
+        case Button4:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_WHEEL,
+                .MOUSE_WHEEL = {
+                    .deltaX = 0,
+                    .deltaY = -30,
+                },
+            };
+            break;
+        case Button5:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_WHEEL,
+                .MOUSE_WHEEL = {
+                    .deltaX = 0,
+                    .deltaY = 30,
+                },
+            };
+            break;
+        default:
+            printf("Unhandled event -> xbutton:%d\n", event.xbutton.button);
+        }
     }
     else if (event.type == ButtonRelease)
     {
-        *meui_event = (struct meui_event_t){.type = MEUI_EVENT_MOUSE_UP, .MOUSE_UP = {event.xbutton.x, event.xbutton.y}};
+        switch (event.xbutton.button)
+        {
+        case Button1:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_UP,
+                .MOUSE_UP = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_PRIMARY_BUTTON,
+                },
+            };
+            break;
+        case Button2:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_UP,
+                .MOUSE_UP = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_AUXILIARY_BUTTON,
+                },
+            };
+
+            break;
+        case Button3:
+            *meui_event = (struct meui_event_t){
+                .type = MEUI_EVENT_MOUSE_UP,
+                .MOUSE_UP = {
+                    .x = event.xbutton.x,
+                    .y = event.xbutton.y,
+                    .button = MEUI_MOUSE_SECONDARY_BUTTON,
+                },
+            };
+            break;
+        case Button4:
+            break;
+        case Button5:
+            break;
+        default:
+            printf("Unhandled event -> xbutton:%d\n", event.xbutton.button);
+        }
     }
     else if (event.type == MotionNotify)
     {
@@ -171,7 +264,6 @@ void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
     else
     {
         printf("Unhandled event -> type:%d\n", event.type);
-        meui_event->type = MEUI_EVENT_NULL;
     }
     return;
 }

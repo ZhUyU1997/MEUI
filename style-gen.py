@@ -50,6 +50,7 @@ style_table = [
     ["struct transform_origin_t", "transformOrigin", False, False],
     ["char *", "text", False, False],
     ["char *", "fontFamily", False, False],
+    ["CSS_OVERFLOW", "overflow", False, False],
 ]
 
 if len(style_table) > 64:
@@ -84,7 +85,7 @@ enum BOX_STYLE
 
     count = 0
     for index, item in enumerate(style_table):
-        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double"]:
+        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW"]:
             count = count + 1
             print(
                 f"void box_style_{item[1]}(box_style_t *style, {item[0]} {item[1]});", file=f)
@@ -124,7 +125,7 @@ void box_style_to_flex(box_style_t *style, box_t box);''', file=f)
 with open('include/gen/style.c', 'wt') as f:
     count = 0
     for index, item in enumerate(style_table):
-        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double"]:
+        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW"]:
             count = count + 1
             print(f'''
 void box_style_{item[1]}(box_style_t *style, {item[0]} {item[1]})

@@ -13,6 +13,11 @@ export class Box {
         if (style) {
             this.setStyle(style, BOX_STATE.DEFAULT)
         }
+
+        this.addEventListener("mousewheel", (e) => {
+            this.scrollTop += e.deltaY
+            this.dispatchEvent({ type: "scroll" })
+        })
     }
 
     getStyle(state) {
@@ -151,6 +156,22 @@ export class Box {
         this.capturingPhase(this, event)
         this.bubblingPhase(this, event)
     }
+
+    get scrollTop() {
+        return this.nativeBox.scrollTop
+    }
+
+    set scrollTop(val) {
+        this.nativeBox.scrollTop = val
+    }
+
+    get scrollLeft() {
+        return this.nativeBox.scrollLeft
+    }
+
+    set scrollLeft(val) {
+        this.nativeBox.scrollLeft = val
+    }
 }
 
 const FPS = 60
@@ -178,14 +199,28 @@ export class MEUI {
         this.addFontFace("MaterialDesignIcons", "res/font/MaterialDesignIconsDesktop.ttf")
 
         this.nativeMEUI.render(this.root.getNativeObject())
+        this.mouseX = 0;
+        this.mouseY = 0;
 
         os.setReadHandler(this.getConnectNumber(), () => {
             while (this.pending() > 0) {
                 const event = this.nextEvent();
                 if (!event) continue
-                const box = this.searchNode(event.x, event.y, (hit, box) => {
-                    box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
-                })
+                let box = null
+
+                if (["mousedown", "mouseup", "mousemove"].includes(event.type)) {
+                    box = this.searchNode(event.x, event.y, (hit, box) => {
+                        box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
+                    })
+                    this.mouseX = event.x
+                    this.mouseY = event.y
+                }
+                else {
+                    box = this.searchNode(this.mouseX, this.mouseY, (hit, box) => {
+                        box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
+                    })
+                }
+
 
                 if (box) {
                     if (event.type === "mousedown") {
@@ -194,7 +229,7 @@ export class MEUI {
 
                     box.dispatchEvent(event)
 
-                    if (event.type === "mouseup" && box.getState() === BOX_STATE.HOVER) {
+                    if (event.type === "mouseup" && event.button === 0 && box.getState() === BOX_STATE.HOVER) {
                         box.dispatchEvent({ type: "click" })
                     }
                 }

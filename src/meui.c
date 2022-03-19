@@ -208,7 +208,7 @@ void meui_debug(struct meui_t *meui)
         LOGE("meui == NULL");
         return;
     }
-    Flex_print(meui_get_root_node(meui), FlexPrintDefault);
+    Flex_print(meui_get_root_node(meui), FlexPrintDefault | FlexPrintResult | FlexPrintChildren);
 }
 
 void meui_update(struct meui_t *meui)

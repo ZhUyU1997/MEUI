@@ -594,6 +594,40 @@ static JSValue js_set_style_text_align(JSContext *ctx, box_style_t *style, JSVal
     return ret;
 }
 
+static JSValue js_box_style_overflow(JSContext *ctx, box_style_t *style, JSValue val)
+{
+    JSValue ret = JS_EXCEPTION;
+    if (!style)
+        return ret;
+    const char *s = JS_ToCString(ctx, val);
+    if (!s)
+        return ret;
+
+    const static struct
+    {
+        const char *string_value;
+        CSS_OVERFLOW enum_value;
+    } map[] = {
+        {"visible", CSS_OVERFLOW_VISIBLE},
+        {"hidden", CSS_OVERFLOW_HIDDEN},
+        {"scroll", CSS_OVERFLOW_SCROLL},
+        {"auto", CSS_OVERFLOW_AUTO},
+    };
+
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
+        {
+            box_style_overflow(style, map[i].enum_value);
+            ret = JS_UNDEFINED;
+            break;
+        }
+    }
+
+    JS_FreeCString(ctx, s);
+    return ret;
+}
+
 static JSValue js_set_style_background_image(JSContext *ctx, box_style_t *style, JSValue val)
 {
     if (!style)
@@ -761,6 +795,7 @@ const JSStyleGetSet jsStyleGetSet[] = {
     {"margin", NULL, js_box_style_margin},
     {"border", NULL, js_box_style_border},
     {"padding", NULL, js_box_style_padding},
+    {"overflow", NULL, js_box_style_overflow},
     JS_FLEX_PROPERTYES()};
 
 const int jsStyleGetSetLength = sizeof(jsStyleGetSet) / sizeof(JSStyleGetSet);

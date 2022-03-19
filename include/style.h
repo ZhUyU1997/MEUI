@@ -49,6 +49,14 @@ struct transform_origin_t
     } x, y;
 };
 
+typedef enum CSS_OVERFLOW
+{
+    CSS_OVERFLOW_VISIBLE = 0,
+    CSS_OVERFLOW_HIDDEN = 1,
+    CSS_OVERFLOW_SCROLL = 2,
+    CSS_OVERFLOW_AUTO = 3,
+} CSS_OVERFLOW;
+
 #include <gen/style.h>
 
 void box_default_style_init();

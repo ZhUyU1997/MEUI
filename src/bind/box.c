@@ -1,4 +1,3 @@
-
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
@@ -188,6 +187,52 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, 0);
 }
 
+static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_scroll_left(node));
+}
+
+static JSValue js_set_scroll_left(JSContext *ctx, JSValueConst this_val, JSValue val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int scroll_left;
+    if (JS_ToInt32(ctx, &scroll_left, val))
+        return JS_EXCEPTION;
+    box_set_scroll_left(node, scroll_left);
+    return JS_UNDEFINED;
+}
+
+static JSValue js_get_scroll_top(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_scroll_top(node));
+}
+
+static JSValue js_set_scroll_top(JSContext *ctx, JSValueConst this_val, JSValue val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int scroll_top;
+    if (JS_ToInt32(ctx, &scroll_top, val))
+        return JS_EXCEPTION;
+    box_set_scroll_top(node, scroll_top);
+    return JS_UNDEFINED;
+}
+
 static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
@@ -197,6 +242,8 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
     JS_CFUNC_DEF("hit", 1, js_hit),
+    JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
+    JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
 };
 
 static void js_box_finalizer(JSRuntime *rt, JSValue val)
