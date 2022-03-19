@@ -1,5 +1,5 @@
 import "./polyfill"
-import React, { useState, useEffect, useLayoutEffect } from "react"
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import ReactMEUI from "./ReactMEUI"
 import Button from "./button"
 import { MEUI } from "./meui"
@@ -105,7 +105,7 @@ function PathBar({ fullPath, onChange }) {
             flexDirection: "row",
             width: "100%",
             height: 50,
-            minHeight:50,
+            minHeight: 50,
             padding: [5, 5, 5, 5],
         }}
     >
@@ -128,7 +128,6 @@ function PathBar({ fullPath, onChange }) {
                         <Column
                             style={{
                                 padding: [0, 10, 0, 10],
-                                width: index === 0 ? 30 : name.length * 18,
                                 fontSize: 18,
                                 height: "100%",
                                 HOVER: {
@@ -170,9 +169,9 @@ function TestDir() {
     return <Root style={{
         flexDirection: "column",
     }}>
-        <PathBar fullPath={curPath} onChange={(newPath)=>{
+        <PathBar fullPath={curPath} onChange={(newPath) => {
             setCurPath(newPath)
-        }}/>
+        }} />
         <div style={{
             alignItems: "flex-start",
             alignContent: "flex-start",
@@ -225,6 +224,69 @@ function TestDir() {
     </Root >
 }
 
-const meui = new MEUI(1000, 800)
+const meui = new MEUI(500, 400)
 
-ReactMEUI.render(<TestDir />, meui)
+
+function TestScroll() {
+    const ref = useRef()
+    useEffect(() => {
+        setTimeout(() => {
+            meui.debug()
+
+        }, 1000)
+    }, [])
+
+    useEffect(() => {
+        console.log("ref", ref.current);
+    }, [])
+    return <div ref={ref} style={{
+        backgroundColor: "#FFFFFFFF",
+        width: 500,
+        height: 400,
+        padding: [20, 20, 20, 20],
+        border: [20, 20, 20, 20],
+        borderColor: "blue",
+        margin: [20, 20, 20, 20],
+        // width: 1000,
+        // height: 100,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        overflow: "scroll",
+    }}
+    >
+        {
+            Array(100).fill(0).map(() => {
+                return <div
+                    style={{
+                        textAlign: "center",
+                        fontSize: 20,
+                        width: Math.round(Math.random() * 100),
+                        height: Math.round(Math.random() * 100),
+                        backgroundColor: `rgba(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, 1)`,
+                    }}
+                >
+                </div>
+            })
+        }
+    </div >
+}
+
+function TestMeasure() {
+    useEffect(() => {
+        meui.debug()
+    }, [])
+
+    return <Root style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+    }}>
+        <div style={{
+            backgroundColor: "red",
+
+        }}>3213144444444444</div>
+    </Root >
+}
+
+ReactMEUI.render(<div>
+    <TestScroll /><TestScroll />
+</div>, meui)
