@@ -123,6 +123,30 @@ void box_set_state(box_t node, enum BOX_STATE state)
     box->state = state;
 }
 
+int box_get_client_width(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->client_width;
+}
+
+int box_get_client_height(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->client_height;
+}
+
+int box_get_scroll_width(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->scroll_width;
+}
+
+int box_get_scroll_height(box_t node)
+{
+    struct Box *box = Flex_getContext(node);
+    return box->scroll_height;
+}
+
 int box_get_scroll_top(box_t node)
 {
     struct Box *box = Flex_getContext(node);
@@ -550,7 +574,7 @@ static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALI
 
         if (line_width > outSize.width)
         {
-            outSize.width = line_width;
+            outSize.width = line_width + 1; // + 1 to fix precision
         }
     }
     outSize.height = y - descent;
@@ -566,10 +590,13 @@ FlexSize box_measure_text(void *context, FlexSize constrainedSize)
     double size = box->style.fontSize;
     TEXT_ALIGN align = box->style.textAlign;
     const char *utf8 = box->style.text;
-
-    plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
-    FlexSize outSize = measure_font_get_textn_path(font, align, utf8, strlen(utf8), constrainedSize.width, constrainedSize.height);
-    return outSize;
+    if (utf8 && utf8[0] != '\0')
+    {
+        plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
+        FlexSize outSize = measure_font_get_textn_path(font, align, utf8, strlen(utf8), constrainedSize.width, constrainedSize.height);
+        return outSize;
+    }
+    return (FlexSize){.width = constrainedSize.width, .height = 0};
 }
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb)

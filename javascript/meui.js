@@ -157,6 +157,30 @@ export class Box {
         this.bubblingPhase(this, event)
     }
 
+    get scrollWidth() {
+        return this.nativeBox.scrollWidth
+    }
+
+    get scrollHeight() {
+        return this.nativeBox.scrollHeight
+    }
+
+    get clientWidth() {
+        return this.nativeBox.clientWidth
+    }
+
+    get clientHeight() {
+        return this.nativeBox.clientHeight
+    }
+
+    get scrollTopMax() {
+        return this.nativeBox.scrollHeight - this.nativeBox.clientHeight
+    }
+
+    get scrollLeftMax() {
+        return this.nativeBox.scrollWidth - this.nativeBox.clientWidth
+    }
+
     get scrollTop() {
         return this.nativeBox.scrollTop
     }

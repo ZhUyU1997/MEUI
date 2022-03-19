@@ -233,6 +233,43 @@ static JSValue js_set_scroll_top(JSContext *ctx, JSValueConst this_val, JSValue 
     return JS_UNDEFINED;
 }
 
+static JSValue js_get_client_width(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_client_width(node));
+}
+
+static JSValue js_get_client_height(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_client_height(node));
+}
+
+
+static JSValue js_get_scroll_width(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_scroll_width(node));
+}
+
+static JSValue js_get_scroll_height(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewInt32(ctx, box_get_scroll_height(node));
+}
+
 static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
@@ -244,6 +281,10 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("hit", 1, js_hit),
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
+    JS_CGETSET_DEF("scrollWidth", js_get_scroll_width, NULL),
+    JS_CGETSET_DEF("scrollHeight", js_get_scroll_height, NULL),
+    JS_CGETSET_DEF("clientWidth", js_get_client_width, NULL),
+    JS_CGETSET_DEF("clientHeight", js_get_client_height, NULL),
 };
 
 static void js_box_finalizer(JSRuntime *rt, JSValue val)

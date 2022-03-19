@@ -72,6 +72,10 @@ enum BOX_STATE box_get_state(box_t node);
 void box_set_state(box_t node, enum BOX_STATE state);
 box_style_t *box_get_style(box_t node, enum BOX_STATE state);
 
+int box_get_client_width(box_t node);
+int box_get_client_height(box_t node);
+int box_get_scroll_width(box_t node);
+int box_get_scroll_height(box_t node);
 int box_get_scroll_top(box_t node);
 void box_set_scroll_top(box_t node, int scroll_top);
 int box_get_scroll_left(box_t node);
