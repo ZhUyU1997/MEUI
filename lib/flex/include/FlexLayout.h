@@ -155,6 +155,8 @@ typedef float       (*FlexBaselineFunc)(void* context, FlexSize constrainedSize)
 #define FLEX_RESULT_PROPERTYES() \
     FLEX_RESULT_PROPERTY                (                   Width,          result.size[FLEX_WIDTH]     ); \
     FLEX_RESULT_PROPERTY                (                   Height,         result.size[FLEX_HEIGHT]    ); \
+    FLEX_RESULT_PROPERTY                (                   ScrollWidth,    result.scroll[FLEX_WIDTH]   ); \
+    FLEX_RESULT_PROPERTY                (                   ScrollHeight,   result.scroll[FLEX_HEIGHT]  ); \
     FLEX_RESULT_PROPERTY                (                   Left,           result.position[FLEX_LEFT]  ); \
     FLEX_RESULT_PROPERTY                (                   Top,            result.position[FLEX_TOP]   ); \
     FLEX_RESULT_PROPERTY                (                   MarginLeft,     result.margin[FLEX_LEFT]    ); \
@@ -165,7 +167,10 @@ typedef float       (*FlexBaselineFunc)(void* context, FlexSize constrainedSize)
     FLEX_RESULT_PROPERTY                (                   PaddingRight,   result.padding[FLEX_RIGHT]  ); \
     FLEX_RESULT_PROPERTY                (                   PaddingTop,     result.padding[FLEX_TOP]    ); \
     FLEX_RESULT_PROPERTY                (                   PaddingBottom,  result.padding[FLEX_BOTTOM] ); \
-
+    FLEX_RESULT_PROPERTY                (                   BorderLeft,     result.border[FLEX_LEFT]    ); \
+    FLEX_RESULT_PROPERTY                (                   BorderRight,    result.border[FLEX_RIGHT]   ); \
+    FLEX_RESULT_PROPERTY                (                   BorderTop,      result.border[FLEX_TOP]     ); \
+    FLEX_RESULT_PROPERTY                (                   BorderBottom,   result.border[FLEX_BOTTOM]  ); \
 
 // declaration of getters and setters
 #define FLEX_GETTER(type, Name, field)                  type Flex_get##Name(FlexNodeRef node);
