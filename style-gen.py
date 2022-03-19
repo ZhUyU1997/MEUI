@@ -307,7 +307,7 @@ void box_style_to_flex(box_style_t *style, box_t box)
             case {index}:
                 Flex_set{item[1][:1].upper()}{item[1][1:]}_Length(box, style->{item[1]});
                 break;''', file=f)
-        elif item[1] in ["borderLeft", "borderTop", "borderBottom", "borderRight", "borderStart", "borderEnd"]:
+        elif item[1] in ["borderLeft", "borderTop", "borderBottom", "borderRight", "borderStart", "borderEnd", "flexGrow", "flexShrink"]:
             print(f'''
             case {index}:
                 Flex_set{item[1][:1].upper()}{item[1][1:]}(box, style->{item[1]});
