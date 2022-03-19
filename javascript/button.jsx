@@ -44,7 +44,7 @@ const style_color = [
     ]
 ];
 
-export default function Button({ type, children, style, ...props }) {
+export default function Button({ type = "primary", children, style, ...props }) {
     const index = style_name.indexOf(type)
     const list = style_color[index]
     return <div style={{
