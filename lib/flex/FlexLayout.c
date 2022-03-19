@@ -355,6 +355,18 @@ static inline float flex_clampMax(float value, float maxValue) {
     }
 }
 
+static inline float flex_clampMin(float value, float minValue) {
+    if (FlexIsUndefined(value)) {
+        return value;
+    }
+    
+    if (FlexIsUndefined(minValue)) {
+        return value;
+    } else {
+        return fmaxf(value, minValue);
+    }
+}
+
 static inline float flex_inset(float *inset, FlexDirection direction) {
     float inset_start = inset[flex_start[direction]];
     float inset_end = inset[flex_end[direction]];
@@ -665,12 +677,13 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             itemsMainSize = lines[i].itemsSize;
         }
     }
-    
-    node->result.scroll[mainAxis] = (resolvedSize.size[mainAxis] ? resolvedSize.size[mainAxis] : itemsMainSize + resolvedPaddingSize.size[mainAxis]) - resolvedBorderSize.size[mainAxis];
 
     // 4. Determine the main size of the flex container using the rules of the formatting context in which it participates. For this computation, auto margins on flex items are treated as 0.
     node->result.size[mainAxis] = FlexIsResolved(resolvedSize.size[mainAxis]) ? resolvedSize.size[mainAxis] : flex_clampMax(itemsMainSize + resolvedPaddingSize.size[mainAxis], !FlexIsUndefined(constrainedSize.size[mainAxis]) ? constrainedSize.size[mainAxis] - resolvedMarginSize.size[mainAxis] : NAN);
     node->result.size[mainAxis] = flex_clamp(node->result.size[mainAxis], resolvedMinMainSize, resolvedMaxMainSize);
+
+    node->result.scroll[mainAxis] = flex_clampMin(node->result.size[mainAxis], itemsMainSize + resolvedPaddingSize.size[mainAxis]) - resolvedBorderSize.size[mainAxis];
+
     itemsMainSize = node->result.size[mainAxis] - resolvedPaddingSize.size[mainAxis];
     
     if ((flags == FlexLayoutFlagMeasureWidth && mainAxis == FLEX_WIDTH)
@@ -1103,7 +1116,6 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
     }
     }
     
-    node->result.scroll[crossAxis] = itemsCrossSize + resolvedPaddingSize.size[crossAxis] - resolvedBorderSize.size[crossAxis];
     // 15. Determine the flex container’s used cross size:
     //       * If the cross size property is a definite size, use that, clamped by the min and max cross size properties of the flex container.
     if (FlexIsResolved(resolvedSize.size[crossAxis])) {
@@ -1113,7 +1125,9 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
     else {
         node->result.size[crossAxis] = flex_clamp(itemsCrossSize + resolvedPaddingSize.size[crossAxis], resolvedMinCrossSize, resolvedMaxCrossSize);
     }
-    
+
+    node->result.scroll[crossAxis] = flex_clampMin(node->result.size[crossAxis], itemsCrossSize + resolvedPaddingSize.size[crossAxis]) - resolvedBorderSize.size[crossAxis];
+
     if (flags != FlexLayoutFlagLayout) {
         free(lines);
         free(items);
