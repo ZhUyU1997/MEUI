@@ -98,11 +98,7 @@ static JSValue js_get_connect_number(JSContext *ctx, JSValueConst this_val,
     struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
     if (!meui)
         return JS_EXCEPTION;
-    const char *s = JS_ToCString(ctx, argv[0]);
-    if (!s)
-        return JS_EXCEPTION;
     int fd = meui_get_connect_number(meui);
-    JS_FreeCString(ctx, s);
     return JS_NewInt32(ctx, fd);
 }
 

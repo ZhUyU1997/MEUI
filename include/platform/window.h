@@ -1,9 +1,4 @@
 #pragma once
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
-
 struct meui_event_t;
 struct window_t;
 struct window_t *window_create(const char *title, int width, int height);

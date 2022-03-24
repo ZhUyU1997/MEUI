@@ -11,4 +11,4 @@ typedef struct
 } JSStyleGetSet;
 
 extern const JSStyleGetSet jsStyleGetSet[];
-const int jsStyleGetSetLength;
+extern const int jsStyleGetSetLength;
