@@ -1265,6 +1265,9 @@ size_t Flex_getChildrenCount(FlexNodeRef node) {
     return FlexVector_size(FlexNodeRef, node->children);
 }
 
+FlexNodeRef Flex_getParent(FlexNodeRef node) {
+    return node->parent;
+}
 
 void flex_print_float(float value) {
     printf("%.1f", value);

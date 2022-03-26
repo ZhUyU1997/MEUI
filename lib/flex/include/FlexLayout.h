@@ -210,6 +210,7 @@ void        Flex_addChild          (FlexNodeRef node, FlexNodeRef child);
 void        Flex_removeChild       (FlexNodeRef node, FlexNodeRef child);
 FlexNodeRef Flex_getChild          (FlexNodeRef node, size_t index);
 size_t      Flex_getChildrenCount  (FlexNodeRef node);
+FlexNodeRef Flex_getParent         (FlexNodeRef node);
 void        Flex_layout            (FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 void        Flex_print             (FlexNodeRef node, FlexPrintOptions options);
 
