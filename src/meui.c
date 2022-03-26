@@ -25,7 +25,7 @@ struct meui_platform_t
 {
     struct window_t *window;
     unsigned int frame;
-    clock_t start_ticks;
+    unsigned long start_ticks;
 };
 
 static struct meui_t *meui_instance = NULL;
@@ -93,22 +93,25 @@ void meui_platform_fps(struct meui_t *meui)
 {
     struct meui_platform_t *platform = meui->platform_data;
     platform->frame++;
+    struct timespec tp = {0, 0};
+    clock_gettime(CLOCK_MONOTONIC, &tp);
+    unsigned long time = tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
 
     if (platform->start_ticks == 0)
     {
-        platform->start_ticks = clock();
+        platform->start_ticks = time;
     }
     else
     {
-        clock_t ticks = clock() - platform->start_ticks;
+        unsigned long ticks = time - platform->start_ticks;
 
-        if (ticks >= 1000)
+        if (ticks >= CLOCKS_PER_SEC)
         {
             char buf[128] = {0};
-            snprintf(buf, 128, "FPS: %f", (double)platform->frame * CLOCKS_PER_SEC / ticks);
+            snprintf(buf, 128, "FPS: %f", (double)platform->frame * 1000000 / ticks);
             window_set_name(platform->window, buf);
             platform->frame = 0;
-            platform->start_ticks = clock();
+            platform->start_ticks = time;
         }
     }
 }
