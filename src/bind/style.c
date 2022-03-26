@@ -353,7 +353,11 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_style_t *style, J
     JS_FLOAT_PROPERTY_RW(borderTopLeftRadius)     \
     JS_FLOAT_PROPERTY_RW(borderTopRightRadius)    \
     JS_FLOAT_PROPERTY_RW(borderBottomRightRadius) \
-    JS_FLOAT_PROPERTY_RW(borderBottomLeftRadius)
+    JS_FLOAT_PROPERTY_RW(borderBottomLeftRadius)  \
+    JS_FLEX_LENGTH_PROPERTY(left)                 \
+    JS_FLEX_LENGTH_PROPERTY(right)                \
+    JS_FLEX_LENGTH_PROPERTY(top)                  \
+    JS_FLEX_LENGTH_PROPERTY(bottom)
 
 JS_FLEX_PROPERTYES()
 

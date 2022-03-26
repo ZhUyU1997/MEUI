@@ -13,6 +13,10 @@ static box_style_t default_style = {
     .transformOrigin.type = TRANSFORM_ORIGIN_TYPE_KEYWORD,
     .transformOrigin.x.keyword = TRANSFORM_ORIGIN_CENTER,
     .transformOrigin.y.keyword = TRANSFORM_ORIGIN_CENTER,
+    .left = FlexLengthUndefined,
+    .right = FlexLengthUndefined,
+    .top = FlexLengthUndefined,
+    .bottom = FlexLengthUndefined,
 };
 
 void box_default_style_init()

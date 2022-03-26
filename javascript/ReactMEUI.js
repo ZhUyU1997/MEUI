@@ -5,7 +5,7 @@ const rootHostContext = {};
 const childHostContext = {};
 
 // const log = console.log
-const log = ()=>{}
+const log = () => { }
 const hostConfig = {
     now: Date.now,
     getRootHostContext: () => {
@@ -29,8 +29,12 @@ const hostConfig = {
     },
     createInstance: (type, { style, children, ...newProps }, rootContainerInstance, _currentHostContext, workInProgress) => {
         log("createInstance " + type)
+        const type_map = {
+            "div": "flex",
+            "stack": "stack"
+        }
 
-        const domElement = new Box();
+        const domElement = new Box(type_map[type]);
 
         if (typeof children === 'string' || typeof children === 'number') {
             domElement.setStyle({ text: children })
@@ -98,7 +102,7 @@ const hostConfig = {
 
         return true;
     },
-    commitUpdate(domElement, updatePayload, type, oldProps, {style, ...newProps}) {
+    commitUpdate(domElement, updatePayload, type, oldProps, { style, ...newProps }) {
         log("commitUpdate")
         if (style) {
             domElement.setStyle(style)
@@ -137,12 +141,10 @@ const hostConfig = {
         log("clearContainer")
         // container.remove()
     },
-    insertBefore(parentInstance, child, beforeChild)
-    {
+    insertBefore(parentInstance, child, beforeChild) {
         parentInstance.insertBefore(child, beforeChild)
     },
-    getPublicInstance(instance)
-    {
+    getPublicInstance(instance) {
         return instance
     },
 };

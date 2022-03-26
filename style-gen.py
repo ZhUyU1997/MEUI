@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 style_table = [
-    # type,field,auto,content
+    # type,field,auto,content,default
     ["FlexWrapMode", "wrap", False, False],
     ["FlexDirection", "direction", False, False],
     ["FlexAlign", "alignItems", False, False],
@@ -51,6 +51,10 @@ style_table = [
     ["char *", "text", False, False],
     ["char *", "fontFamily", False, False],
     ["CSS_OVERFLOW", "overflow", False, False],
+    ["FlexLength", "left", False, False],
+    ["FlexLength", "right", False, False],
+    ["FlexLength", "top", False, False],
+    ["FlexLength", "bottom", False, False],
 ]
 
 if len(style_table) > 64:
@@ -302,7 +306,7 @@ void box_style_to_flex(box_style_t *style, box_t box)
             case {index}:
                 Flex_set{item[1][:1].upper()}{item[1][1:]}(box, style->{item[1]});
                 break;''', file=f)
-        elif item[0] in ["FlexLength"]:
+        elif item[0] in ["FlexLength"] and not item[1] in ["left", "right", "top", "bottom"]:
             print(f'''
             case {index}:
                 Flex_set{item[1][:1].upper()}{item[1][1:]}_Length(box, style->{item[1]});

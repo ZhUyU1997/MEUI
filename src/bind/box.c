@@ -251,7 +251,6 @@ static JSValue js_get_client_height(JSContext *ctx, JSValueConst this_val)
     return JS_NewInt32(ctx, box_get_client_height(node));
 }
 
-
 static JSValue js_get_scroll_width(JSContext *ctx, JSValueConst this_val)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
@@ -327,7 +326,34 @@ static JSValue js_createBoxFunc(JSContext *ctx,
                                 JSValueConst new_target,
                                 int argc, JSValueConst *argv)
 {
-    box_t box = box_new();
+    enum BOX_TYPE type = BOX_TYPE_FLEX;
+    if (argc == 1)
+    {
+        const char *s = JS_ToCString(ctx, argv[0]);
+        if (!s)
+            return JS_EXCEPTION;
+
+        const static struct
+        {
+            const char *string_value;
+            enum BOX_TYPE enum_value;
+        } map[] = {
+            {"flex", BOX_TYPE_FLEX},
+            {"stack", BOX_TYPE_STACK},
+        };
+
+        for (int i = 0; i < countof(map); i++)
+        {
+            if (!strcmp(map[i].string_value, s))
+            {
+               type = map[i].enum_value;
+               break;
+            }
+        }
+
+        JS_FreeCString(ctx, s);
+    }
+    box_t box = box_new(type);
     return js_createBoxFuncWithOpaque(ctx, box);
 }
 

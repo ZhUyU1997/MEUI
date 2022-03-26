@@ -59,7 +59,7 @@ struct meui_t *meui_start(int width, int height)
     meui->render_context.surface = plutovg_surface_reference(meui->win_surface);
     meui->width = width;
     meui->height = height;
-    meui->render_context.root = box_new();
+    meui->render_context.root = box_new(BOX_TYPE_FLEX);
     hashmap_init(&meui->render_context.font_map, hashmap_hash_string, strcmp);
 
 #if 0

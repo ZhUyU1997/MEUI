@@ -38,8 +38,9 @@ static const char *fileext(const char *filename)
 #define KAPPA90 (0.5522847493f)
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
+FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 
-box_t box_new()
+box_t box_new(enum BOX_TYPE type)
 {
     box_t node = Flex_newNode();
     struct Box *box = calloc(1, sizeof(struct Box));
@@ -49,6 +50,11 @@ box_t box_new()
 
     Flex_setContext(node, box);
     Flex_setMeasureFunc(node, box_measure_text);
+
+    if (type == BOX_TYPE_STACK)
+    {
+        Flex_setCustomLayout(node, box_stack_layout);
+    }
     return node;
 }
 
@@ -597,6 +603,36 @@ FlexSize box_measure_text(void *context, FlexSize constrainedSize)
         return outSize;
     }
     return (FlexSize){.width = constrainedSize.width, .height = 0};
+}
+
+FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale)
+{
+    struct Box *box = Flex_getContext(node);
+
+    for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
+    {
+        FlexNodeRef item = Flex_getChild(node, i);
+        Flex_layout(item, constrainedWidth, constrainedHeight, scale);
+        struct Box *childBox = Flex_getContext(item);
+        float left = flex_resolve(childBox->style.left, NULL, constrainedWidth);
+        float right = flex_resolve(childBox->style.right, NULL, constrainedWidth);
+        float top = flex_resolve(childBox->style.top, NULL, constrainedHeight);
+        float bottom = flex_resolve(childBox->style.bottom, NULL, constrainedHeight);
+
+        if (FlexIsResolved(right))
+            Flex_setResultLeft(item, constrainedWidth - Flex_getResultWidth(item) - right);
+
+        if (FlexIsResolved(bottom))
+            Flex_setResultTop(item, constrainedHeight - Flex_getResultHeight(item) - bottom);
+
+        // below code with high priority
+        if (FlexIsResolved(left))
+            Flex_setResultLeft(item, left);
+
+        if (FlexIsResolved(top))
+            Flex_setResultTop(item, top);
+    }
+    return (FlexSize){.width = constrainedWidth, .height = constrainedHeight};
 }
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb)

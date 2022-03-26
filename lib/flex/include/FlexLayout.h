@@ -56,6 +56,14 @@ typedef struct {
     FlexLengthType type;
 } FlexLength;
 
+typedef enum {
+    FLEX_LEFT = 0,
+    FLEX_TOP,
+    FLEX_RIGHT,
+    FLEX_BOTTOM,
+    FLEX_START,
+    FLEX_END
+} FlexPositionIndex;
 
 #define FlexUndefined NAN
 #define FlexIsUndefined(n) isnan(n)
@@ -86,7 +94,7 @@ typedef struct FlexNode * FlexNodeRef;
 
 typedef FlexSize    (*FlexMeasureFunc )(void* context, FlexSize constrainedSize);
 typedef float       (*FlexBaselineFunc)(void* context, FlexSize constrainedSize);
-
+typedef FlexSize    (*CustomLayoutFunc)(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 
 #define FLEX_PROPERTY(type, Name, field) \
     FLEX_GETTER(type, Name, field) \
@@ -103,7 +111,9 @@ typedef float       (*FlexBaselineFunc)(void* context, FlexSize constrainedSize)
 #define FLEX_LENGTH_PROPERTY_AUTO_CONTENT(Name, field) \
     FLEX_LENGTH_PROPERTY_AUTO(Name, field) \
     FLEX_SETTER_LENGTH_TYPE(Name, field, Content)
-#define FLEX_RESULT_PROPERTY(Name, field) FLEX_GETTER(float, Result##Name, field)
+#define FLEX_RESULT_PROPERTY(Name, field) \
+    FLEX_GETTER(float, Result##Name, field) \
+    FLEX_SETTER(float, Result##Name, field)
 
 #define FLEX_PROPERTYES() \
     FLEX_PROPERTY                       ( FlexWrapMode,     Wrap,           wrap                        ); \
@@ -144,6 +154,7 @@ typedef float       (*FlexBaselineFunc)(void* context, FlexSize constrainedSize)
 #define FLEX_CALLBACK_PROPERTIES() \
     FLEX_PROPERTY                       ( FlexMeasureFunc,  MeasureFunc,    measure                     ); \
     FLEX_PROPERTY                       ( FlexBaselineFunc, BaselineFunc,   baseline                    ); \
+    FLEX_PROPERTY                       ( CustomLayoutFunc, CustomLayout,   customLayout                ); \
 
 #define FLEX_EXT_PROPERTYES() \
     FLEX_PROPERTY                       ( bool,             Fixed,          fixed                       ); \
@@ -202,6 +213,92 @@ size_t      Flex_getChildrenCount  (FlexNodeRef node);
 void        Flex_layout            (FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 void        Flex_print             (FlexNodeRef node, FlexPrintOptions options);
 
+#if DEBUG
+#   define flex_assert(e) assert(e)
+#else
+#   define flex_assert(e) ((void)0)
+#endif
+
+#define FlexTreatNanAsInf(n) (isnan(n) ? INFINITY : n)
+#define FlexFloatEquals(a, b) ((isnan(a) && isnan(b)) || a == b)
+#define FlexLengthEquals(a, b) (FlexFloatEquals(a.value, b.value) && a.type == b.type)
+#define FlexPixelRound(value, scale) (roundf((value) * (scale)) / (scale))
+#define FlexIsResolved(n) !FlexIsUndefined(n)
+#define FlexCacheSizeUndefined (FlexSize){ -1000, -1000 }
+
+#define FlexVector(type) FlexVector_##type
+#define FlexVectorRef(type) FlexVector(type)*
+#define FlexVector_new(type, initialCapacity) _FlexVector_new_##type(initialCapacity)
+#define FlexVector_free(type, vector) _FlexVector_free_##type(vector)
+#define FlexVector_insert(type, vector, value, index) _FlexVector_insert_##type(vector, value, index)
+#define FlexVector_add(type, vector, value) _FlexVector_add_##type(vector, value)
+#define FlexVector_removeAt(type, vector, index) _FlexVector_removeAt_##type(vector, index)
+#define FlexVector_remove(type, vector, value) _FlexVector_remove_##type(vector, value)
+#define FlexVector_size(type, vector) _FlexVector_size_##type(vector)
+
+typedef struct {
+    float scale;
+} FlexLayoutContext;
+
+static inline bool flex_isAbsolute(FlexLength length) {
+    return length.type == FlexLengthTypePoint;
+}
+
+static inline float flex_absoluteValue(FlexLength length, FlexLayoutContext *context) {
+    flex_assert(flex_isAbsolute(length));    // absolute value is requested
+    return length.value;
+}
+
+static inline float flex_resolve(FlexLength length, FlexLayoutContext *context, float relativeTo) {
+    if (flex_isAbsolute(length)) {
+        return flex_absoluteValue(length, context);
+    }
+    else if (length.type == FlexLengthTypePercent && FlexIsResolved(relativeTo)) {
+        return length.value / 100 * relativeTo;
+    }
+    
+    return NAN;
+}
+
+static inline float flex_auto_to_0(float value) {
+    return FlexIsResolved(value) ? value : 0;
+}
+
+static inline float flex_clamp(float value, float minValue, float maxValue) {
+    if (FlexIsUndefined(value)) {
+        return value;
+    }
+    
+    if (FlexIsUndefined(maxValue)) {
+        return fmaxf(value, minValue);
+    } else {
+        return fmaxf(fminf(value, maxValue), minValue);
+    }
+}
+
+static inline float flex_clampMax(float value, float maxValue) {
+    if (FlexIsUndefined(value)) {
+        return value;
+    }
+    
+    if (FlexIsUndefined(maxValue)) {
+        return value;
+    } else {
+        return fminf(value, maxValue);
+    }
+}
+
+static inline float flex_clampMin(float value, float minValue) {
+    if (FlexIsUndefined(value)) {
+        return value;
+    }
+    
+    if (FlexIsUndefined(minValue)) {
+        return value;
+    } else {
+        return fmaxf(value, minValue);
+    }
+}
 
 #ifdef __cplusplus
 }

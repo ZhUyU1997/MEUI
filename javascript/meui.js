@@ -3,8 +3,8 @@ import * as os from "os"
 import * as colorString from "color-string"
 
 export class Box {
-    constructor(style) {
-        this.nativeBox = createBox()
+    constructor(type = "flex", style) {
+        this.nativeBox = createBox(type)
         this.children = []
         this.parent = null
         this.eventListeners = {}
@@ -211,7 +211,7 @@ const mainLoop = async (onTick, delay = 1000 / FPS) => {
 export class MEUI {
     constructor(width, height) {
         this.nativeMEUI = new NativeMEUI(width, height)
-        this.root = new Box({
+        this.root = new Box("flex", {
             justifyContent: "center",
             alignItems: "center",
             alignContent: "center",

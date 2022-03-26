@@ -27,6 +27,12 @@ typedef struct box_event_dsc_t
     box_event_cb_t cb;
 } box_event_dsc_t;
 
+enum BOX_TYPE
+{
+    BOX_TYPE_FLEX,
+    BOX_TYPE_STACK,
+};
+
 enum BOX_STATE
 {
     BOX_STATE_DEFAULT,
@@ -60,7 +66,7 @@ struct Box
     void *opaque;
 };
 
-box_t box_new();
+box_t box_new(enum BOX_TYPE type);
 void box_free(box_t node);
 void box_free_recursive(box_t node);
 void box_set_opaque(box_t node, void *opaque);
