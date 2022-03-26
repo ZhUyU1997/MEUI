@@ -30,6 +30,10 @@ SRC			+= lib/QuickJS/
 X_INCDIRS	+= lib/hashmap/include
 SRC			+= lib/hashmap/src/*.c
 
+# pqueue
+X_INCDIRS	+= lib/pqueue
+SRC			+= lib/pqueue/*.c
+
 X_CFLAGS	+=
 X_LDFLAGS	+= -lm -lprofiler -ldl -lpthread -lX11
 
