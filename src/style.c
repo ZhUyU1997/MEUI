@@ -23,7 +23,7 @@ void box_default_style_init()
 {
     plutovg_matrix_init_identity(&default_style.transform);
 
-    default_style.flags = BOX_STYLE_fontColor | BOX_STYLE_fontSize | BOX_STYLE_textAlign | BOX_STYLE_transformOrigin | BOX_STYLE_transform;
+    default_style.flags = BOX_STYLE_fontColor | BOX_STYLE_fontSize | BOX_STYLE_textAlign | BOX_STYLE_transformOrigin | BOX_STYLE_transform | BOX_STYLE_left | BOX_STYLE_right | BOX_STYLE_top | BOX_STYLE_bottom;
 }
 
 const box_style_t *box_default_style()

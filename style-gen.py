@@ -55,6 +55,7 @@ style_table = [
     ["FlexLength", "right", False, False],
     ["FlexLength", "top", False, False],
     ["FlexLength", "bottom", False, False],
+    ["int", "zIndex", False, False],
 ]
 
 if len(style_table) > 64:
@@ -89,7 +90,7 @@ enum BOX_STYLE
 
     count = 0
     for index, item in enumerate(style_table):
-        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW"]:
+        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW", "int"]:
             count = count + 1
             print(
                 f"void box_style_{item[1]}(box_style_t *style, {item[0]} {item[1]});", file=f)
@@ -123,13 +124,14 @@ void box_style_{item[1]}Percent(box_style_t *style, float {item[1]});''', file=f
     print(f'''box_style_t *box_style_new();
 void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
+int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop);
 void box_style_merge(box_style_t *dst, const box_style_t *src);
 void box_style_to_flex(box_style_t *style, box_t box);''', file=f)
 
 with open('include/gen/style.c', 'wt') as f:
     count = 0
     for index, item in enumerate(style_table):
-        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW"]:
+        if item[0] in ["FlexWrapMode", "FlexDirection", "FlexAlign", "float", "plutovg_color_t", "TEXT_ALIGN", "double", "CSS_OVERFLOW", "int"]:
             count = count + 1
             print(f'''
 void box_style_{item[1]}(box_style_t *style, {item[0]} {item[1]})
@@ -254,6 +256,11 @@ void box_style_free(box_style_t *style)
     assert(style);
     box_style_clear(style);
     free(style);
+}}
+
+int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop)
+{{
+    return !(style->flags & prop);
 }}
 ''', file=f)
 

@@ -9,6 +9,7 @@
 typedef FlexNodeRef box_t;
 
 #include "style.h"
+#include "pqueue.h"
 
 typedef struct box_event_t
 {
@@ -63,6 +64,7 @@ struct Box
         plutovg_matrix_t to_screen_matrix; // box to screen
     } result;
 
+    size_t queue_pos;
     void *opaque;
 };
 
@@ -91,5 +93,5 @@ void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_
 void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e);
 
 void box_updateStyleRecursive(box_t node);
-void box_drawRecursive(plutovg_t *pluto, box_t node);
+void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
 void box_draw(box_t root);

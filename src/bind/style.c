@@ -6,6 +6,18 @@
 #include <string.h>
 #include <bind/style.h>
 
+#define JS_INT_PROPERTY(Name)                                                           \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val) \
+    {                                                                                   \
+        if (!style)                                                                     \
+            return JS_EXCEPTION;                                                        \
+        int v;                                                                          \
+        if (JS_ToInt32(ctx, &v, val))                                                   \
+            return JS_EXCEPTION;                                                        \
+        box_style_##Name(style, v);                                                     \
+        return JS_UNDEFINED;                                                            \
+    }
+
 #define JS_FLOAT_PROPERTY(Name)                                                         \
     static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val) \
     {                                                                                   \
@@ -357,7 +369,8 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_style_t *style, J
     JS_FLEX_LENGTH_PROPERTY(left)                 \
     JS_FLEX_LENGTH_PROPERTY(right)                \
     JS_FLEX_LENGTH_PROPERTY(top)                  \
-    JS_FLEX_LENGTH_PROPERTY(bottom)
+    JS_FLEX_LENGTH_PROPERTY(bottom)               \
+    JS_INT_PROPERTY(zIndex)
 
 JS_FLEX_PROPERTYES()
 
@@ -766,12 +779,13 @@ static JSValue js_set_style_transform_origin(JSContext *ctx, box_style_t *style,
 
     return JS_UNDEFINED;
 }
-
+#undef JS_INT_PROPERTY
 #undef JS_FLOAT_PROPERTY
 #undef JS_FLOAT_PROPERTY_RW
 #undef JS_FLEX_LENGTH_PROPERTY
 #undef JS_FLEX_LENGTH_PROPERTY_AUTO
 
+#define JS_INT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},
 #define JS_FLOAT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},
 #define JS_FLOAT_PROPERTY_RW(Name) {#Name, NULL, js_box_style_##Name},
 #define JS_FLEX_LENGTH_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},

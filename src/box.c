@@ -3,6 +3,7 @@
 #include "meui.h"
 #include "log.h"
 #include "list.h"
+#include "pqueue.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -612,7 +613,7 @@ FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constr
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
         FlexNodeRef item = Flex_getChild(node, i);
-        Flex_layout(item, constrainedWidth, constrainedHeight, scale);
+        Flex_layout(item, FlexUndefined, FlexUndefined, scale);
         struct Box *childBox = Flex_getContext(item);
         float left = flex_resolve(childBox->style.left, NULL, constrainedWidth);
         float right = flex_resolve(childBox->style.right, NULL, constrainedWidth);
@@ -764,17 +765,25 @@ static void box_draw_self(box_t node, plutovg_t *pluto)
         draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
 }
 
-static void box_draw_child(box_t node, plutovg_t *pluto)
+static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
 {
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
+        box_t child = Flex_getChild(node, i);
+        struct Box *box = Flex_getContext(child);
+
+        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
+        {
+            pqueue_insert(pq, child);
+            continue;
+        }
         plutovg_save(pluto);
-        box_drawRecursive(pluto, Flex_getChild(node, i));
+        box_drawRecursive(pluto, Flex_getChild(node, i), pq);
         plutovg_restore(pluto);
     }
 }
 
-void box_drawRecursive(plutovg_t *pluto, box_t node)
+void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -804,7 +813,7 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
 
     if (box->style.overflow == CSS_OVERFLOW_VISIBLE || (box->client_width >= box->scroll_width && box->client_height >= box->scroll_height))
     {
-        box_draw_child(node, pluto);
+        box_draw_child(node, pluto, pq);
     }
     else
     {
@@ -816,7 +825,7 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
         {
             plutovg_t *pluto = plutovg_create(surface);
             plutovg_translate(pluto, -box->scroll_left - Flex_getResultBorderLeft(node), -box->scroll_top - Flex_getResultBorderTop(node));
-            box_draw_child(node, pluto);
+            box_draw_child(node, pluto, pq);
             plutovg_destroy(pluto);
         }
 
@@ -833,9 +842,62 @@ void box_drawRecursive(plutovg_t *pluto, box_t node)
     //     draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, (plutovg_color_t){1, 0, 0, 0.5});
 }
 
+static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
+{
+    return (next >= curr);
+}
+
+static pqueue_pri_t get_pri(void *a)
+{
+    struct Box *box = Flex_getContext((box_t)a);
+    return box->style.zIndex;
+}
+
+static void set_pri(void *a, pqueue_pri_t pri)
+{
+    struct Box *box = Flex_getContext((box_t)a);
+    box->style.zIndex = pri;
+}
+
+static size_t get_pos(void *a)
+{
+    struct Box *box = Flex_getContext((box_t)a);
+
+    return box->queue_pos;
+}
+
+static void set_pos(void *a, size_t pos)
+{
+    struct Box *box = Flex_getContext((box_t)a);
+    box->queue_pos = pos;
+}
+
+void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
+{
+    pqueue_t *pq = pqueue_init(10, cmp_pri, get_pri, set_pri, get_pos, set_pos);
+    box_drawRecursive(pluto, root, pq);
+
+    if (pqueue_peek(pq) != NULL)
+    {
+        box_t box = NULL;
+        while ((box = pqueue_pop(pq)))
+        {
+            box_t parent = Flex_getParent(box);
+            struct Box *parentBox = Flex_getContext(parent);
+
+            plutovg_save(pluto);
+
+            plutovg_set_matrix(pluto, &parentBox->result.to_screen_matrix);
+            box_drawRecursiveQueue(pluto, box);
+            plutovg_restore(pluto);
+        }
+    }
+    pqueue_free(pq);
+}
+
 void box_draw(box_t root)
 {
     plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
-    box_drawRecursive(pluto, root);
+    box_drawRecursiveQueue(pluto, root);
     plutovg_destroy(pluto);
 }
