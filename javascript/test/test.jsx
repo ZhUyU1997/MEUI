@@ -1,47 +1,5 @@
 import React from "react"
 
-function matrix_multiply(_a, _b) {
-    let a, b;
-    {
-        const [m00, m10, m01, m11, m02, m12] = _a
-        a = { m00, m10, m01, m11, m02, m12 }
-    }
-
-    {
-        const [m00, m10, m01, m11, m02, m12] = _b
-        b = { m00, m10, m01, m11, m02, m12 }
-    }
-
-    const m00 = a.m00 * b.m00 + a.m10 * b.m01;
-    const m10 = a.m00 * b.m10 + a.m10 * b.m11;
-    const m01 = a.m01 * b.m00 + a.m11 * b.m01;
-    const m11 = a.m01 * b.m10 + a.m11 * b.m11;
-    const m02 = a.m02 * b.m00 + a.m12 * b.m01 + b.m02;
-    const m12 = a.m02 * b.m10 + a.m12 * b.m11 + b.m12;
-
-    return [m00, m10, m01, m11, m02, m12]
-}
-
-const Transform = {
-    identity() {
-        return [1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
-    },
-    translate(m, x, y) {
-        return matrix_multiply(m, [1.0, 0.0, 0.0, 1.0, x, y])
-    },
-    rotate(m, radians) {
-        const c = Math.cos(radians);
-        const s = Math.sin(radians);
-        return matrix_multiply(m, [c, s, -s, c, 0.0, 0.0])
-    },
-    scale(m, x, y) {
-        return matrix_multiply(m, [0.0, 0.0, y, 0.0, 0.0])
-    },
-    skew(m, x, y) {
-        return matrix_multiply(m, [1.0, Math.tan(y), Math.tan(x), 1.0, 0.0, 0.0])
-    }
-}
-
 function Flex_Test() {
     function TestItem() {
         return <div style={{
@@ -58,7 +16,7 @@ function Flex_Test() {
             textAlign: "center",
             contentImage: "res/img/picture.png",
             backgroundImage: "res/img/Gradient2.svg",
-            transform: Transform.rotate(Transform.identity(), 0.25 * 3.1415926),
+            transform: "rotate(0.25rad)",
             transformOrigin: ["center", "center"],
         }}></div>
     }
@@ -79,20 +37,20 @@ function Flex_Test() {
                 width: 340,
                 height: 240,
                 backgroundColor: [Math.random(), Math.random(), Math.random(), 1.0],
-                transform: Transform.rotate(Transform.identity(), 0.25 * 3.1415926),
+                transform: "rotate(0.25rad)",
             }}>
                 <div style={{
 
                     backgroundColor: [Math.random(), Math.random(), Math.random(), 1.0],
                     width: 100,
                     height: 100,
-                    transform: Transform.rotate(Transform.identity(), 0.25 * 3.1415926),
+                    transform: "rotate(0.25rad)",
                 }}></div>
                 <div style={{
                     backgroundColor: [Math.random(), Math.random(), Math.random(), 1.0],
                     width: 100,
                     height: 100,
-                    transform: Transform.rotate(Transform.identity(), 0.25 * 3.1415926),
+                    transform: "rotate(0.25rad)",
                 }}></div>
 
             </div>
