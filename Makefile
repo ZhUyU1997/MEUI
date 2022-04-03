@@ -35,7 +35,8 @@ X_INCDIRS	+= lib/pqueue
 SRC			+= lib/pqueue/*.c
 
 X_CFLAGS	+=
-X_LDFLAGS	+= -lm -lprofiler -ldl -lpthread -lX11
+X_LDFLAGS	+= -lm -lprofiler -ldl -lpthread -lX11 -ltcmalloc
+# X_LDFLAGS	+= -ltcmalloc
 
 NAME		:= meui
 
