@@ -5,6 +5,15 @@ import { MEUI } from "../meui"
 import ReactMEUI from "../ReactMEUI"
 import path from "../path"
 
+import {
+    useTransition,
+    useSpring,
+    useChain,
+    config,
+    animated,
+    useSpringRef,
+} from "../react-sping-meui"
+
 import { Center, Row, Column, Root, MaterialDesignIcon } from "../components"
 function PathBar({ fullPath, onChange }) {
     const pathArray = fullPath.split(path.sep)
@@ -59,6 +68,12 @@ function FileExplorer() {
     const [curPath, setCurPath] = useState(() => process.cwd())
     const [dirent, setDirent] = useState([])
 
+    const transition = useTransition(dirent, {
+        trail: 18,
+        from: { opacity: 0, scale: 0 },
+        enter: { opacity: 1, scale: 1 },
+    })
+
     useLayoutEffect(() => {
         const [d, err] = readdir(curPath)
         setDirent(
@@ -93,17 +108,22 @@ function FileExplorer() {
             overflow: "scroll",
         }}>
             {
-                dirent.map(({ name, attribute, isDir }, index) => {
-                    return <Column
+                transition((style, { name, attribute, isDir }) => {
+                    return <animated.div
                         key={name}
                         style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            alignContent: "center",
+                            flexDirection: "column",
                             textAlign: "center",
                             fontSize: 20,
                             width: 100,
                             height: 120,
                             HOVER: {
                                 backgroundColor: "rgba(0, 177, 255, 0.1)",
-                            }
+                            },
+                            ...style,
                         }}
                         onClick={() => {
                             let nextPath = path.join(curPath, name)
@@ -129,7 +149,7 @@ function FileExplorer() {
                             }}>
                             {name}
                         </Center>
-                    </Column>
+                    </animated.div>
                 })
             }
         </div>
