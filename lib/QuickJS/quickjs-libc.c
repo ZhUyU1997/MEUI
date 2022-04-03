@@ -88,8 +88,8 @@ typedef struct {
 } JSOSSignalHandler;
 
 typedef struct {
+    int ref_count;
     struct list_head link;
-    BOOL has_object;
     int64_t timeout;
     JSValue func;
 } JSOSTimer;
@@ -1980,18 +1980,22 @@ static int64_t get_time_ms(void)
 }
 #endif
 
+static void free_timer(JSRuntime *rt, JSOSTimer *th)
+{
+    if(--th->ref_count <= 0)
+    {
+        JS_FreeValueRT(rt, th->func);
+        js_free_rt(rt, th);
+    }
+}
+
 static void unlink_timer(JSRuntime *rt, JSOSTimer *th)
 {
     if (th->link.prev) {
         list_del(&th->link);
         th->link.prev = th->link.next = NULL;
+        free_timer(rt, th);
     }
-}
-
-static void free_timer(JSRuntime *rt, JSOSTimer *th)
-{
-    JS_FreeValueRT(rt, th->func);
-    js_free_rt(rt, th);
 }
 
 static JSClassID js_os_timer_class_id;
@@ -2000,20 +2004,10 @@ static void js_os_timer_finalizer(JSRuntime *rt, JSValue val)
 {
     JSOSTimer *th = JS_GetOpaque(val, js_os_timer_class_id);
     if (th) {
-        th->has_object = FALSE;
-        if (!th->link.prev)
-            free_timer(rt, th);
+        free_timer(rt, th);
     }
 }
 
-static void js_os_timer_mark(JSRuntime *rt, JSValueConst val,
-                             JS_MarkFunc *mark_func)
-{
-    JSOSTimer *th = JS_GetOpaque(val, js_os_timer_class_id);
-    if (th) {
-        JS_MarkValue(rt, th->func, mark_func);
-    }
-}
 
 static JSValue js_os_setTimeout(JSContext *ctx, JSValueConst this_val,
                                 int argc, JSValueConst *argv)
@@ -2038,9 +2032,12 @@ static JSValue js_os_setTimeout(JSContext *ctx, JSValueConst this_val,
         JS_FreeValue(ctx, obj);
         return JS_EXCEPTION;
     }
-    th->has_object = TRUE;
+
+    th->ref_count = 1;
     th->timeout = get_time_ms() + delay;
     th->func = JS_DupValue(ctx, func);
+
+    th->ref_count++;
     list_add_tail(&th->link, &ts->os_timers);
     JS_SetOpaque(obj, th);
     return obj;
@@ -2059,7 +2056,6 @@ static JSValue js_os_clearTimeout(JSContext *ctx, JSValueConst this_val,
 static JSClassDef js_os_timer_class = {
     "OSTimer",
     .finalizer = js_os_timer_finalizer,
-    .gc_mark = js_os_timer_mark,
 }; 
 
 static void call_handler(JSContext *ctx, JSValueConst func)
@@ -2102,12 +2098,8 @@ static int js_os_poll(JSContext *ctx)
                 JSValue func;
                 /* the timer expired */
                 func = th->func;
-                th->func = JS_UNDEFINED;
-                unlink_timer(rt, th);
-                if (!th->has_object)
-                    free_timer(rt, th);
                 call_handler(ctx, func);
-                JS_FreeValue(ctx, func);
+                unlink_timer(rt, th);
                 return 0;
             } else if (delay < min_delay) {
                 min_delay = delay;
@@ -2271,12 +2263,8 @@ static int js_os_poll(JSContext *ctx)
                 JSValue func;
                 /* the timer expired */
                 func = th->func;
-                th->func = JS_UNDEFINED;
-                unlink_timer(rt, th);
-                if (!th->has_object)
-                    free_timer(rt, th);
                 call_handler(ctx, func);
-                JS_FreeValue(ctx, func);
+                unlink_timer(rt, th);
                 return 0;
             } else if (delay < min_delay) {
                 min_delay = delay;
@@ -3812,8 +3800,6 @@ void js_std_free_handlers(JSRuntime *rt)
     list_for_each_safe(el, el1, &ts->os_timers) {
         JSOSTimer *th = list_entry(el, JSOSTimer, link);
         unlink_timer(rt, th);
-        if (!th->has_object)
-            free_timer(rt, th);
     }
 
 #ifdef USE_WORKER
