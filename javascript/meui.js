@@ -64,6 +64,18 @@ const Transform = {
     }
 }
 
+function parseLength(value) {
+    if (value.endsWith("px")) {
+        const num = parseFloat(value.slice(0, - "px".length))
+        return num * (Math.PI / 180)
+    }
+    else {
+        const num = parseFloat(value)
+        return num
+    }
+}
+
+
 function parseAngle(value) {
     if (value.endsWith("deg")) {
         const num = parseFloat(value.slice(0, - "deg".length))
@@ -126,6 +138,7 @@ export function parseTransform(value) {
                     return Transform.scaleY(previousValue, v)
                 }
             case "rotate":
+            case "rotateZ":
                 {
                     const valueNode = currentValue.nodes.filter((node) => node.type === 'word')
                     const v = parseAngle(valueNode[0].value)
@@ -156,22 +169,22 @@ export function parseTransform(value) {
             case "translate":
                 {
                     const valueNode = currentValue.nodes.filter((node) => node.type === 'word')
-                    const v0 = parseFloat(valueNode[0].value)
-                    const v1 = parseFloat(valueNode[1].value)
+                    const v0 = parseLength(valueNode[0].value)
+                    const v1 = parseLength(valueNode[1].value)
 
                     return Transform.translate(previousValue, v0, v1)
                 }
             case "translateX":
                 {
                     const valueNode = currentValue.nodes.filter((node) => node.type === 'word')
-                    const v = parseFloat(valueNode[0].value)
+                    const v = parseLength(valueNode[0].value)
 
                     return Transform.translateX(previousValue, v)
                 }
             case "translateY":
                 {
                     const valueNode = currentValue.nodes.filter((node) => node.type === 'word')
-                    const v = parseFloat(valueNode[0].value)
+                    const v = parseLength(valueNode[0].value)
 
                     return Transform.translateY(previousValue, v)
                 }
@@ -217,6 +230,15 @@ export class Box {
         if ("transform" in style) {
             style["transform"] = parseTransform(style["transform"])
         }
+
+        if ("borderRadius" in style) {
+            const v = style["borderRadius"]
+            if (typeof style["borderRadius"] === "number") {
+                style["borderRadius"] = [v, v, v, v]
+            }
+        }
+
+
         this.nativeBox.setStyle(style, state)
     }
     setStyle(style) {
@@ -384,13 +406,8 @@ export class Box {
 }
 
 const FPS = 60
-const mainLoop = async (onTick, delay = 1000 / FPS) => {
-    const nativeTick = () => new Promise(resolve => {
-        onTick()
-        setTimeout(resolve, delay)
-    })
-    // eslint-disable-next-line no-constant-condition
-    while (true) await nativeTick()
+const mainLoop = (onTick, delay = 1000.0 / FPS) => {
+    setInterval(onTick, delay)
 }
 
 export class MEUI {
@@ -443,13 +460,13 @@ export class MEUI {
                     }
                 }
             }
-            this.update()
         })
 
         mainLoop(() => this.onFrameTick())
     }
 
     onFrameTick() {
+        window.triggerAnimationFrame()
         this.update()
     }
 

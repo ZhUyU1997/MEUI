@@ -114,6 +114,7 @@ FLEX_VECTOR_INIT(FlexNodeRef)
 FLEX_VECTOR_INIT_WITH_EQUALS(FlexMeasureCache, FlexMeasureCacheEquals)
 
 typedef struct FlexNode {
+    int ref;
     FlexWrapMode wrap;
     FlexDirection direction;
     FlexAlign alignItems;
@@ -164,6 +165,7 @@ typedef struct FlexNode {
 
 
 static const FlexNode defaultFlexNode = {
+    .ref = 1,
     .wrap = FlexNoWrap,
     .direction = FlexHorizontal,
     .alignItems = FlexStretch,
@@ -1212,6 +1214,14 @@ void Flex_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeig
     node->result.size[FLEX_HEIGHT] = FlexPixelRound(node->result.size[FLEX_HEIGHT], scale);
 }
 
+FlexNodeRef Flex_reference(FlexNodeRef node) {
+    if(node == NULL)
+        return NULL;
+
+    node->ref++;
+    return node;
+}
+
 FlexNodeRef Flex_newNode() {
     FlexNodeRef flexNode = (FlexNodeRef)malloc(sizeof(FlexNode));
     memcpy(flexNode, &defaultFlexNode, sizeof(FlexNode));
@@ -1219,10 +1229,21 @@ FlexNodeRef Flex_newNode() {
 }
 
 void Flex_freeNode(FlexNodeRef node) {
+    if(--node->ref != 0)
+        return;
+
     if (node->measuredSizeCache) {
         FlexVector_free(FlexMeasureCache, node->measuredSizeCache);
     }
+    if(node->parent) {
+        Flex_removeChild(node->parent, node);
+        node->parent = NULL;
+    }
     if (node->children) {
+        for (size_t i = 0; i < Flex_getChildrenCount(node); i++) {
+            FlexNodeRef child = Flex_getChild(node, i);
+            child->parent = NULL;
+        }
         FlexVector_free(FlexNodeRef, node->children);
     }
     free(node);
@@ -1240,7 +1261,7 @@ void Flex_insertChild(FlexNodeRef node, FlexNodeRef child, size_t index) {
         node->children = FlexVector_new(FlexNodeRef, 4);
     }
     flex_markDirty(node);
-    FlexVector_insert(FlexNodeRef, node->children, child, index);
+    FlexVector_insert(FlexNodeRef, node->children, Flex_reference(child), index);
 }
 
 void Flex_addChild(FlexNodeRef node, FlexNodeRef child) {
@@ -1248,13 +1269,14 @@ void Flex_addChild(FlexNodeRef node, FlexNodeRef child) {
         node->children = FlexVector_new(FlexNodeRef, 4);
     }
     flex_markDirty(node);
-    FlexVector_add(FlexNodeRef, node->children, child);
+    FlexVector_add(FlexNodeRef, node->children, Flex_reference(child));
     child->parent = node;
 }
 
 void Flex_removeChild(FlexNodeRef node, FlexNodeRef child) {
     FlexVector_remove(FlexNodeRef, node->children, child);
     flex_markDirty(node);
+    Flex_freeNode(child);
 }
 
 FlexNodeRef Flex_getChild(FlexNodeRef node, size_t index) {

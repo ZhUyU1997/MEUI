@@ -137,14 +137,19 @@ const hostConfig = {
         log("removeChild")
         parentInstance.removeChild(child);
     },
+    removeChildFromContainer(container, child) {
+        container.removeChild(child);
+    },
     clearContainer(container) {
         log("clearContainer")
         // container.remove()
     },
     insertBefore(parentInstance, child, beforeChild) {
+        log("insertBefore")
         parentInstance.insertBefore(child, beforeChild)
     },
     getPublicInstance(instance) {
+        log("getPublicInstance")
         return instance
     },
 };
@@ -158,3 +163,5 @@ export default {
         return ReactReconcilerInst.updateContainer(reactElement, container, null, callback);
     }
 };
+
+export { batchedUpdates } from 'react-reconciler';

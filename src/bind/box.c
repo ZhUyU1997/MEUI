@@ -288,8 +288,10 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
 
 static void js_box_finalizer(JSRuntime *rt, JSValue val)
 {
-    struct box_t *box = JS_GetOpaque(val, js_box_class_id);
-    printf("js_box_finalizer\n");
+    box_t node = JS_GetOpaque(val, js_box_class_id);
+    JS_SetOpaque(val, NULL);
+
+    box_free(node);
 }
 
 static JSClassDef js_box_class = {
@@ -346,8 +348,8 @@ static JSValue js_createBoxFunc(JSContext *ctx,
         {
             if (!strcmp(map[i].string_value, s))
             {
-               type = map[i].enum_value;
-               break;
+                type = map[i].enum_value;
+                break;
             }
         }
 

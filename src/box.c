@@ -65,6 +65,16 @@ void box_free(box_t node)
 
     if (box)
     {
+        for (int i = 0; i < BOX_STATE_MAX; i++)
+        {
+            if (box->style_array[i])
+            {
+                box_style_free(box->style_array[i]);
+                box->style_array[i] = NULL;
+            }
+
+            box_style_clear(&box->style);
+        }
         free(box);
         Flex_setContext(node, NULL);
     }
