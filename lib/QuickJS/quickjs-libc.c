@@ -1982,9 +1982,9 @@ static int64_t get_time_ms(void)
 
 static void free_timer(JSRuntime *rt, JSOSTimer *th)
 {
+    JS_FreeValueRT(rt, th->func);
     if(--th->ref_count <= 0)
     {
-        JS_FreeValueRT(rt, th->func);
         js_free_rt(rt, th);
     }
 }
@@ -2008,6 +2008,14 @@ static void js_os_timer_finalizer(JSRuntime *rt, JSValue val)
     }
 }
 
+static void js_os_timer_mark(JSRuntime *rt, JSValueConst val,
+                             JS_MarkFunc *mark_func)
+{
+    JSOSTimer *th = JS_GetOpaque(val, js_os_timer_class_id);
+    if (th) {
+        JS_MarkValue(rt, th->func, mark_func);
+    }
+}
 
 static JSValue js_os_setTimeout(JSContext *ctx, JSValueConst this_val,
                                 int argc, JSValueConst *argv)
@@ -2037,6 +2045,7 @@ static JSValue js_os_setTimeout(JSContext *ctx, JSValueConst this_val,
     th->timeout = get_time_ms() + delay;
     th->func = JS_DupValue(ctx, func);
 
+    JS_DupValue(ctx, func);
     th->ref_count++;
     list_add_tail(&th->link, &ts->os_timers);
     JS_SetOpaque(obj, th);
@@ -2056,6 +2065,7 @@ static JSValue js_os_clearTimeout(JSContext *ctx, JSValueConst this_val,
 static JSClassDef js_os_timer_class = {
     "OSTimer",
     .finalizer = js_os_timer_finalizer,
+    .gc_mark = js_os_timer_mark,
 }; 
 
 static void call_handler(JSContext *ctx, JSValueConst func)
@@ -2097,9 +2107,11 @@ static int js_os_poll(JSContext *ctx)
             if (delay <= 0) {
                 JSValue func;
                 /* the timer expired */
-                func = th->func;
-                call_handler(ctx, func);
+                func = JS_DupValue(ctx, th->func);
                 unlink_timer(rt, th);
+
+                call_handler(ctx, func);
+                JS_FreeValue(ctx, func);
                 return 0;
             } else if (delay < min_delay) {
                 min_delay = delay;
@@ -2262,9 +2274,11 @@ static int js_os_poll(JSContext *ctx)
             if (delay <= 0) {
                 JSValue func;
                 /* the timer expired */
-                func = th->func;
-                call_handler(ctx, func);
+                func = JS_DupValue(ctx, th->func);
                 unlink_timer(rt, th);
+
+                call_handler(ctx, func);
+                JS_FreeValue(ctx, func);
                 return 0;
             } else if (delay < min_delay) {
                 min_delay = delay;
