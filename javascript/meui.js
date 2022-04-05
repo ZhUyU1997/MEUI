@@ -197,7 +197,7 @@ export function parseTransform(value) {
 }
 
 export class Box {
-    constructor(type = "flex", style) {
+    constructor(type = "div", style) {
         this.nativeBox = createBox(type)
         this.children = []
         this.parent = null
@@ -304,6 +304,25 @@ export class Box {
 
     hit(x, y) {
         return this.nativeBox.hit(x, y)
+    }
+    putImage(buf, width, height) {
+        this.nativeBox.putImage(buf, width, height)
+    }
+
+    get width() {
+        return this.nativeBox.width
+    }
+
+    set width(val) {
+        this.nativeBox.width = val
+    }
+
+    get height() {
+        return this.nativeBox.height
+    }
+
+    set height(val) {
+        this.nativeBox.height = val
     }
 
     getNativeObject() {

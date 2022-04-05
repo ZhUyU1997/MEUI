@@ -1,4 +1,6 @@
 #include "box.h"
+#include "class.h"
+
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
@@ -93,6 +95,8 @@ static int eval_file(JSContext *ctx, const char *filename)
 
 int main(int argc, char **argv)
 {
+    do_class_init();
+
     JSRuntime *rt;
     JSContext *ctx;
     rt = JS_NewRuntime();

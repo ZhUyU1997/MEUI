@@ -59,7 +59,7 @@ struct meui_t *meui_start(int width, int height)
     meui->render_context.surface = plutovg_surface_reference(meui->win_surface);
     meui->width = width;
     meui->height = height;
-    meui->render_context.root = box_new(BOX_TYPE_FLEX);
+    meui->render_context.root = box_new(BOX_TYPE_DIV);
     hashmap_init(&meui->render_context.font_map, hashmap_hash_string, strcmp);
 
 #if 0
@@ -149,7 +149,7 @@ box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_poin
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
     double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);

@@ -1,4 +1,5 @@
 #include "box.h"
+#include "element.h"
 #include "image.h"
 #include "meui.h"
 #include "log.h"
@@ -38,47 +39,55 @@ static const char *fileext(const char *filename)
 
 #define KAPPA90 (0.5522847493f)
 
-FlexSize box_measure_text(void *context, FlexSize constrainedSize);
-FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
+class_impl(Box){};
+
+constructor(Box)
+{
+    this->node = Flex_newNode();
+    this->style_array[BOX_STATE_DEFAULT] = box_style_new();
+    init_list_head(&this->event_list);
+    Flex_setContext(this->node, this);
+}
+
+destructor(Box)
+{
+    for (int i = 0; i < BOX_STATE_MAX; i++)
+    {
+        if (this->style_array[i])
+        {
+            box_style_free(this->style_array[i]);
+            this->style_array[i] = NULL;
+        }
+
+        box_style_clear(&this->style);
+    }
+    Flex_setContext(this->node, NULL);
+    Flex_freeNode(this->node);
+}
 
 box_t box_new(enum BOX_TYPE type)
 {
-    box_t node = Flex_newNode();
-    struct Box *box = calloc(1, sizeof(struct Box));
-    box->style_array[BOX_STATE_DEFAULT] = box_style_new();
-
-    init_list_head(&box->event_list);
-
-    Flex_setContext(node, box);
-    Flex_setMeasureFunc(node, box_measure_text);
-
-    if (type == BOX_TYPE_STACK)
+    Box *box = NULL;
+    if (type == BOX_TYPE_DIV)
     {
-        Flex_setCustomLayout(node, box_stack_layout);
+        box = dynamic_cast(Box)(new (DivEle));
     }
-    return node;
+    else if (type == BOX_TYPE_STACK)
+    {
+        box = dynamic_cast(Box)(new (StackEle));
+    }
+    else if (type == BOX_TYPE_CANVAS)
+    {
+        box = dynamic_cast(Box)(new (CanvasEle));
+    }
+
+    return box->node;
 }
 
 void box_free(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
-
-    if (box)
-    {
-        for (int i = 0; i < BOX_STATE_MAX; i++)
-        {
-            if (box->style_array[i])
-            {
-                box_style_free(box->style_array[i]);
-                box->style_array[i] = NULL;
-            }
-
-            box_style_clear(&box->style);
-        }
-        free(box);
-        Flex_setContext(node, NULL);
-    }
-    Flex_freeNode(node);
+    Box *box = Flex_getContext(node);
+    delete (box);
 }
 
 void box_free_recursive(box_t node)
@@ -90,33 +99,11 @@ void box_free_recursive(box_t node)
     box_free(node);
 }
 
-void box_set_opaque(box_t node, void *opaque)
-{
-    assert(node && opaque);
-    struct Box *box = Flex_getContext(node);
-    assert(box->opaque == NULL);
-    box->opaque = opaque;
-}
-
-void *box_get_opaque(box_t node)
-{
-    assert(node);
-    struct Box *box = Flex_getContext(node);
-    return box->opaque;
-}
-
-void box_clear_opaque(box_t node)
-{
-    assert(node);
-    struct Box *box = Flex_getContext(node);
-    box->opaque = NULL;
-}
-
 box_style_t *box_get_style(box_t node, enum BOX_STATE state)
 {
     assert(node);
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->style_array[state];
 }
 
@@ -124,55 +111,55 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
 {
     assert(node && style);
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     box->style_array[state] = style;
 }
 
 enum BOX_STATE box_get_state(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->state;
 }
 
 void box_set_state(box_t node, enum BOX_STATE state)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     box->state = state;
 }
 
 int box_get_client_width(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->client_width;
 }
 
 int box_get_client_height(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->client_height;
 }
 
 int box_get_scroll_width(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->scroll_width;
 }
 
 int box_get_scroll_height(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->scroll_height;
 }
 
 int box_get_scroll_top(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->scroll_top;
 }
 
 void box_set_scroll_top(box_t node, int scroll_top)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     if (scroll_top < 0)
         scroll_top = 0;
@@ -184,13 +171,13 @@ void box_set_scroll_top(box_t node, int scroll_top)
 
 int box_get_scroll_left(box_t node)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     return box->scroll_left;
 }
 
 void box_set_scroll_left(box_t node, int scroll_left)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     if (scroll_left < 0)
         scroll_left = 0;
@@ -276,7 +263,7 @@ static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, doub
     plutovg_restore(pluto);
 }
 
-static void draw_box_background(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect, plutovg_rect_t *content_rect, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
+static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect, plutovg_rect_t *content_rect, float radius[4], float border[4], struct plutovg_color border_color, struct plutovg_color fill_color)
 {
     float r[4][2] = {0};
 
@@ -506,7 +493,7 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
     return result;
 }
 
-static void draw_text(struct Box *box, plutovg_t *pluto, const char *fontFamily, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
+static void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
 {
     plutovg_save(pluto);
 
@@ -601,7 +588,7 @@ static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALI
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize)
 {
-    struct Box *box = context;
+    Box *box = context;
 
     const char *fontFamily = box->style.fontFamily;
     double size = box->style.fontSize;
@@ -618,13 +605,13 @@ FlexSize box_measure_text(void *context, FlexSize constrainedSize)
 
 FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
         FlexNodeRef item = Flex_getChild(node, i);
         Flex_layout(item, FlexUndefined, FlexUndefined, scale);
-        struct Box *childBox = Flex_getContext(item);
+        Box *childBox = Flex_getContext(item);
         float left = flex_resolve(childBox->style.left, NULL, constrainedWidth);
         float right = flex_resolve(childBox->style.right, NULL, constrainedWidth);
         float top = flex_resolve(childBox->style.top, NULL, constrainedHeight);
@@ -648,7 +635,7 @@ FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constr
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     if (!box)
         return;
 
@@ -666,7 +653,7 @@ void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_
 
 void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e)
 {
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     if (!box)
         return;
 
@@ -687,7 +674,7 @@ void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e)
     }
 }
 
-static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_rect_t *rect)
+static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *rect)
 {
     double x_off = 0.0, y_off = 0.0;
     if (box->style.transformOrigin.type == TRANSFORM_ORIGIN_TYPE_KEYWORD)
@@ -706,7 +693,7 @@ static void box_transform_by_origin(struct Box *box, plutovg_t *pluto, plutovg_r
     plutovg_translate(pluto, -x_off, -y_off);
 }
 
-static void merge_styles(struct Box *box)
+static void merge_styles(Box *box)
 {
     box_style_clear(&box->style);
     box_style_merge(&box->style, box_default_style());
@@ -723,7 +710,7 @@ static void merge_styles(struct Box *box)
 void box_updateStyleRecursive(box_t node)
 {
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
     if (!box)
     {
         LOGE("Node is not box!");
@@ -739,14 +726,14 @@ void box_updateStyleRecursive(box_t node)
     }
 }
 
-static void box_draw_self(box_t node, plutovg_t *pluto)
+static void box_draw_self(Box *box, plutovg_t *pluto)
 {
+    box_t node = box->node;
+
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
-
-    struct Box *box = Flex_getContext(node);
 
     double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
     double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
@@ -780,7 +767,7 @@ static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
         box_t child = Flex_getChild(node, i);
-        struct Box *box = Flex_getContext(child);
+        Box *box = Flex_getContext(child);
 
         if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
         {
@@ -800,7 +787,7 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     if (!box)
     {
@@ -812,7 +799,8 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 
     plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
 
-    box_draw_self(node, pluto);
+    if (box->draw)
+        box->draw(box, pluto);
 
     box->client_width = width - Flex_getResultBorderLeft(node) - Flex_getResultBorderRight(node);
     box->client_height = height - Flex_getResultBorderTop(node) - Flex_getResultBorderBottom(node);
@@ -859,26 +847,26 @@ static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
 
 static pqueue_pri_t get_pri(void *a)
 {
-    struct Box *box = Flex_getContext((box_t)a);
+    Box *box = Flex_getContext((box_t)a);
     return box->style.zIndex;
 }
 
 static void set_pri(void *a, pqueue_pri_t pri)
 {
-    struct Box *box = Flex_getContext((box_t)a);
+    Box *box = Flex_getContext((box_t)a);
     box->style.zIndex = pri;
 }
 
 static size_t get_pos(void *a)
 {
-    struct Box *box = Flex_getContext((box_t)a);
+    Box *box = Flex_getContext((box_t)a);
 
     return box->queue_pos;
 }
 
 static void set_pos(void *a, size_t pos)
 {
-    struct Box *box = Flex_getContext((box_t)a);
+    Box *box = Flex_getContext((box_t)a);
     box->queue_pos = pos;
 }
 
@@ -893,7 +881,7 @@ void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
         while ((box = pqueue_pop(pq)))
         {
             box_t parent = Flex_getParent(box);
-            struct Box *parentBox = Flex_getContext(parent);
+            Box *parentBox = Flex_getContext(parent);
 
             plutovg_save(pluto);
 

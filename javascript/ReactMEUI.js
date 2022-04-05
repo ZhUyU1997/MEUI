@@ -29,12 +29,7 @@ const hostConfig = {
     },
     createInstance: (type, { style, children, ...newProps }, rootContainerInstance, _currentHostContext, workInProgress) => {
         log("createInstance " + type)
-        const type_map = {
-            "div": "flex",
-            "stack": "stack"
-        }
-
-        const domElement = new Box(type_map[type]);
+        const domElement = new Box(type);
 
         if (typeof children === 'string' || typeof children === 'number') {
             domElement.setStyle({ text: children })

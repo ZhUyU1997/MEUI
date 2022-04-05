@@ -2,6 +2,7 @@
 #include "quickjs.h"
 #include "quickjs-libc.h"
 #include <box.h>
+#include <element.h>
 #include <string.h>
 #include <bind/style.h>
 
@@ -164,7 +165,7 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
 
-    struct Box *box = Flex_getContext(node);
+    Box *box = Flex_getContext(node);
 
     double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
     double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
@@ -185,6 +186,95 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     }
 
     return JS_NewBool(ctx, 0);
+}
+
+static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
+                                   int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int width, height;
+    if (JS_ToInt32(ctx, &width, argv[1]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &height, argv[2]))
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    size_t size, ret;
+    uint8_t *buf = JS_GetArrayBuffer(ctx, &size, argv[0]);
+    if (!buf)
+        return JS_EXCEPTION;
+    if (width * height * sizeof(uint32_t) != size)
+        return JS_ThrowRangeError(ctx, "width * height * sizeof(uint32_t) != size");
+
+    plutovg_surface_t *img = plutovg_surface_create_for_data(buf, width, height, width * sizeof(uint32_t));
+
+    plutovg_t *pluto = plutovg_create(e->surface);
+    plutovg_rect(pluto, 0, 0, width, height);
+    plutovg_set_source_surface(pluto, img, 0, 0);
+    plutovg_fill(pluto);
+    plutovg_destroy(pluto);
+    plutovg_surface_destroy(img);
+
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_get_width(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+    return JS_NewInt32(ctx, canvas_get_width(e));
+}
+
+static JSValue js_canvas_set_width(JSContext *ctx, JSValueConst this_val, JSValue val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    int width;
+    if (JS_ToInt32(ctx, &width, val))
+        return JS_EXCEPTION;
+    canvas_set_width(e, width);
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_get_height(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+    return JS_NewInt32(ctx, canvas_get_height(e));
+}
+
+static JSValue js_canvas_set_height(JSContext *ctx, JSValueConst this_val, JSValue val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    int height;
+    if (JS_ToInt32(ctx, &height, val))
+        return JS_EXCEPTION;
+    canvas_set_height(e, height);
+    return JS_UNDEFINED;
 }
 
 static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
@@ -278,6 +368,10 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
     JS_CFUNC_DEF("hit", 1, js_hit),
+    JS_CFUNC_DEF("putImage", 3, js_canvas_put_image),
+    JS_CGETSET_DEF("width", js_canvas_get_width, js_canvas_set_width),
+    JS_CGETSET_DEF("height", js_canvas_get_height, js_canvas_set_height),
+
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
     JS_CGETSET_DEF("scrollWidth", js_get_scroll_width, NULL),
@@ -328,7 +422,7 @@ static JSValue js_createBoxFunc(JSContext *ctx,
                                 JSValueConst new_target,
                                 int argc, JSValueConst *argv)
 {
-    enum BOX_TYPE type = BOX_TYPE_FLEX;
+    enum BOX_TYPE type = BOX_TYPE_DIV;
     if (argc == 1)
     {
         const char *s = JS_ToCString(ctx, argv[0]);
@@ -340,8 +434,9 @@ static JSValue js_createBoxFunc(JSContext *ctx,
             const char *string_value;
             enum BOX_TYPE enum_value;
         } map[] = {
-            {"flex", BOX_TYPE_FLEX},
+            {"div", BOX_TYPE_DIV},
             {"stack", BOX_TYPE_STACK},
+            {"canvas", BOX_TYPE_CANVAS},
         };
 
         for (int i = 0; i < countof(map); i++)

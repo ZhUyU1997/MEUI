@@ -5,6 +5,7 @@
 #include <meui/event.h>
 
 #include <list.h>
+#include <class.h>
 
 typedef FlexNodeRef box_t;
 
@@ -30,8 +31,9 @@ typedef struct box_event_dsc_t
 
 enum BOX_TYPE
 {
-    BOX_TYPE_FLEX,
+    BOX_TYPE_DIV,
     BOX_TYPE_STACK,
+    BOX_TYPE_CANVAS,
 };
 
 enum BOX_STATE
@@ -46,8 +48,9 @@ enum BOX_STATE
     BOX_STATE_MAX,
 };
 
-struct Box
+class(Box)
 {
+    box_t node;
     enum BOX_STATE state;
     box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
@@ -65,15 +68,13 @@ struct Box
     } result;
 
     size_t queue_pos;
-    void *opaque;
+
+    void (*draw)(Box *this, plutovg_t *pluto);
 };
 
 box_t box_new(enum BOX_TYPE type);
 void box_free(box_t node);
 void box_free_recursive(box_t node);
-void box_set_opaque(box_t node, void *opaque);
-void *box_get_opaque(box_t node);
-void box_clear_opaque(box_t node);
 
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
 enum BOX_STATE box_get_state(box_t node);
@@ -91,6 +92,9 @@ void box_set_scroll_left(box_t node, int scroll_left);
 
 void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb);
 void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e);
+
+FlexSize box_measure_text(void *context, FlexSize constrainedSize);
+FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 
 void box_updateStyleRecursive(box_t node);
 void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
