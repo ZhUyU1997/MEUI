@@ -14,7 +14,7 @@ function test() {
     let timer = null
     function run() {
         timer = os.setTimeout(() => {
-            console.log(run)
+            console.log(run, typeof timer)
         }, 1000)
     }
     run()
