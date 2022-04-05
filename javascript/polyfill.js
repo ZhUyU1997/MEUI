@@ -44,8 +44,8 @@ if (!globalThis.setInterval) {
         function run() {
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
-                callback()
                 run()
+                callback()
             }, time)
         }
         run()
