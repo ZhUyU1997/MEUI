@@ -188,6 +188,30 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, 0);
 }
 
+static const plutovg_surface_t* plutovg_surface_format_convert(const plutovg_surface_t *surface)
+{
+    unsigned char *data = plutovg_surface_get_data(surface);
+    int width = plutovg_surface_get_width(surface);
+    int height = plutovg_surface_get_height(surface);
+    int stride = plutovg_surface_get_stride(surface);
+    unsigned char *image = malloc((size_t)(stride * height));
+
+    for (int y = 0; y < height; y++)
+    {
+        const uint32_t *src = (uint32_t *)(data + stride * y);
+        uint32_t *dst = (uint32_t *)(image + stride * y);
+        for (int x = 0; x < width; x++)
+        {
+            uint32_t b = ((src[x] >> 16) & 0xff);
+            uint32_t g = ((src[x] >> 8) & 0xff);
+            uint32_t r = ((src[x] >> 0) & 0xff);
+            dst[x] = 0xff000000 | (r << 16) | (g << 8) | b;
+        }
+    }
+
+    return plutovg_surface_create_for_data(image, width, height, width * sizeof(uint32_t));
+}
+
 static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
                                    int argc, JSValueConst *argv)
 {
@@ -212,14 +236,14 @@ static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
         return JS_ThrowRangeError(ctx, "width * height * sizeof(uint32_t) != size");
 
     plutovg_surface_t *img = plutovg_surface_create_for_data(buf, width, height, width * sizeof(uint32_t));
-
+    plutovg_surface_t *convert =  plutovg_surface_format_convert(img);
     plutovg_t *pluto = plutovg_create(e->surface);
     plutovg_rect(pluto, 0, 0, width, height);
-    plutovg_set_source_surface(pluto, img, 0, 0);
+    plutovg_set_source_surface(pluto, convert, 0, 0);
     plutovg_fill(pluto);
     plutovg_destroy(pluto);
     plutovg_surface_destroy(img);
-
+    plutovg_surface_destroy(convert);
     return JS_UNDEFINED;
 }
 
