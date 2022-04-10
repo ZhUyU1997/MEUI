@@ -3,7 +3,8 @@
     "dev": "make -j16 && rollup -c && ./meui dist/app.js",
     "build": "make -j16 && rollup -c",
     "profile": "make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/app.js",
-    "gen": "./style-gen.py"
+    "gen": "./style-gen.py",
+    "format": "prettier --write javascript"
   },
   "dependencies": {
     "@react-spring/core": "^9.4.4",
@@ -20,10 +21,15 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@types/color-string": "^1.5.2",
     "@types/react": "^17.0.43",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
     "eslint": "^8.10.0",
-    "eslint-plugin-react": "^7.29.3",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.3.0",
     "postcss-value-parser": "^4.2.0",
+    "prettier": "^2.6.2",
+    "prettier-check": "^2.0.0",
     "rollup-plugin-typescript2": "^0.31.2",
     "tslib": "^2.3.1",
     "typescript": "^4.6.3"

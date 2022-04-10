@@ -43,7 +43,7 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     /* system modules */
     js_init_module_std(ctx, "std");
     js_init_module_os(ctx, "os");
-    js_init_module_meui(ctx, "MEUI");
+    js_init_module_meui(ctx, "NativeMEUI");
     return ctx;
 }
 

@@ -1,14 +1,14 @@
+/* eslint-disable no-inner-declarations */
 /* global globalThis */
-import * as os from 'os'
+import * as os from "os"
 globalThis.process = {
-    env: { NODE_ENV: 'development' },
+    env: { NODE_ENV: "development" },
     platform: os.platform,
     cwd: () => {
         const [path, err] = os.getcwd()
-        if (err !== 0)
-            throw new Error(" os.cwd() errno")
+        if (err !== 0) throw new Error(" os.cwd() errno")
         return path
-    }
+    },
 }
 
 if (!globalThis.window) {
@@ -52,7 +52,7 @@ if (!globalThis.setInterval) {
         return {
             clear() {
                 if (timer) clearTimeout(timer)
-            }
+            },
         }
     }
 
@@ -90,5 +90,4 @@ if (!globalThis.requestAnimationFrame) {
     globalThis.requestAnimationFrame = requestAnimationFrame
     globalThis.cancelAnimationFrame = cancelAnimationFrame
     globalThis.triggerAnimationFrame = triggerAnimationFrame
-
 }

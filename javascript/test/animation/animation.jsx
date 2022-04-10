@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import ReactMEUI from "../../ReactMEUI"
-import Button from "../../button"
-import { MEUI } from "../../meui"
+import Button from "../../components/button"
+import { MEUI, ReactMEUI } from "../../meui"
 import { Root, Column, Center, MaterialDesignIcon } from "../../components"
 import { animated, useSpring } from "../../react-sping-meui"
 
@@ -17,7 +16,7 @@ function App() {
             style={{
                 width: 80,
                 height: 80,
-                backgroundColor: '#46e891',
+                backgroundColor: "#46e891",
                 borderRadius: 16,
                 ...styles,
             }}
@@ -27,7 +26,5 @@ function App() {
 
 export function Main() {
     const meui = new MEUI(390, 844)
-    ReactMEUI.render(<div>
-        <App />
-    </div>, meui)
+    ReactMEUI.render(<App />, meui)
 }

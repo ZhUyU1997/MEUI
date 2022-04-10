@@ -10,7 +10,7 @@ export default {
 		file: 'dist/app.js',
 		format: 'esm'
 	},
-	external: ['MEUI', 'os', 'renderer'],
+	external: ['NativeMEUI', 'os', 'renderer'],
 	plugins: [
 		resolve({
 			// browser: true,

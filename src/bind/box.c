@@ -10,8 +10,6 @@
 
 static JSClassID js_box_class_id;
 
-JSValue js_createBoxStyleFuncWithOpaque(JSContext *ctx, box_style_t *style);
-
 static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
                             int argc, JSValueConst *argv)
 {
@@ -24,9 +22,6 @@ static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
 
     box_style_t *style = box_get_style(box, v);
     // TODO:
-    // if (style)
-    //     return js_createBoxStyleFuncWithOpaque(ctx, box_get_style(box, v));
-    // else
     return JS_NULL;
 }
 
@@ -188,7 +183,7 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, 0);
 }
 
-static const plutovg_surface_t* plutovg_surface_format_convert(const plutovg_surface_t *surface)
+static const plutovg_surface_t *plutovg_surface_format_convert(const plutovg_surface_t *surface)
 {
     unsigned char *data = plutovg_surface_get_data(surface);
     int width = plutovg_surface_get_width(surface);
@@ -210,95 +205,6 @@ static const plutovg_surface_t* plutovg_surface_format_convert(const plutovg_sur
     }
 
     return plutovg_surface_create_for_data(image, width, height, width * sizeof(uint32_t));
-}
-
-static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
-                                   int argc, JSValueConst *argv)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    int width, height;
-    if (JS_ToInt32(ctx, &width, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToInt32(ctx, &height, argv[2]))
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-
-    size_t size, ret;
-    uint8_t *buf = JS_GetArrayBuffer(ctx, &size, argv[0]);
-    if (!buf)
-        return JS_EXCEPTION;
-    if (width * height * sizeof(uint32_t) != size)
-        return JS_ThrowRangeError(ctx, "width * height * sizeof(uint32_t) != size");
-
-    plutovg_surface_t *img = plutovg_surface_create_for_data(buf, width, height, width * sizeof(uint32_t));
-    plutovg_surface_t *convert =  plutovg_surface_format_convert(img);
-    plutovg_t *pluto = plutovg_create(e->surface);
-    plutovg_rect(pluto, 0, 0, width, height);
-    plutovg_set_source_surface(pluto, convert, 0, 0);
-    plutovg_fill(pluto);
-    plutovg_destroy(pluto);
-    plutovg_surface_destroy(img);
-    plutovg_surface_destroy(convert);
-    return JS_UNDEFINED;
-}
-
-static JSValue js_canvas_get_width(JSContext *ctx, JSValueConst this_val)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-    return JS_NewInt32(ctx, canvas_get_width(e));
-}
-
-static JSValue js_canvas_set_width(JSContext *ctx, JSValueConst this_val, JSValue val)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-
-    int width;
-    if (JS_ToInt32(ctx, &width, val))
-        return JS_EXCEPTION;
-    canvas_set_width(e, width);
-    return JS_UNDEFINED;
-}
-
-static JSValue js_canvas_get_height(JSContext *ctx, JSValueConst this_val)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-    return JS_NewInt32(ctx, canvas_get_height(e));
-}
-
-static JSValue js_canvas_set_height(JSContext *ctx, JSValueConst this_val, JSValue val)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-
-    int height;
-    if (JS_ToInt32(ctx, &height, val))
-        return JS_EXCEPTION;
-    canvas_set_height(e, height);
-    return JS_UNDEFINED;
 }
 
 static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
@@ -392,9 +298,6 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
     JS_CFUNC_DEF("hit", 1, js_hit),
-    JS_CFUNC_DEF("putImage", 3, js_canvas_put_image),
-    JS_CGETSET_DEF("width", js_canvas_get_width, js_canvas_set_width),
-    JS_CGETSET_DEF("height", js_canvas_get_height, js_canvas_set_height),
 
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
@@ -408,7 +311,6 @@ static void js_box_finalizer(JSRuntime *rt, JSValue val)
 {
     box_t node = JS_GetOpaque(val, js_box_class_id);
     JS_SetOpaque(val, NULL);
-
     box_free(node);
 }
 
@@ -442,44 +344,84 @@ JSValue js_createBoxFuncWithOpaque(JSContext *ctx, box_t box)
     return obj;
 }
 
-static JSValue js_createBoxFunc(JSContext *ctx,
-                                JSValueConst new_target,
-                                int argc, JSValueConst *argv)
+static JSValue js_box_ctor(JSContext *ctx,
+                           JSValueConst new_target,
+                           int argc, JSValueConst *argv)
 {
     enum BOX_TYPE type = BOX_TYPE_DIV;
-    if (argc == 1)
+    if (argc != 1)
+        return JS_EXCEPTION;
+
+    /* using new_target to get the prototype is necessary when the
+       class is extended. */
+    JSValue proto = JS_GetPropertyStr(ctx, new_target, "prototype");
+    if (JS_IsException(proto))
+        goto fail;
+    JSValue obj = JS_NewObjectProtoClass(ctx, proto, js_box_class_id);
+    JS_FreeValue(ctx, proto);
+    if (JS_IsException(obj))
+        goto fail;
+
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (!s)
+        goto fail;
+
+    const static struct
     {
-        const char *s = JS_ToCString(ctx, argv[0]);
-        if (!s)
-            return JS_EXCEPTION;
+        const char *string_value;
+        enum BOX_TYPE enum_value;
+    } map[] = {
+        {"div", BOX_TYPE_DIV},
+        {"stack", BOX_TYPE_STACK},
+        {"canvas", BOX_TYPE_CANVAS},
+    };
 
-        const static struct
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
         {
-            const char *string_value;
-            enum BOX_TYPE enum_value;
-        } map[] = {
-            {"div", BOX_TYPE_DIV},
-            {"stack", BOX_TYPE_STACK},
-            {"canvas", BOX_TYPE_CANVAS},
-        };
-
-        for (int i = 0; i < countof(map); i++)
-        {
-            if (!strcmp(map[i].string_value, s))
-            {
-                type = map[i].enum_value;
-                break;
-            }
+            type = map[i].enum_value;
+            break;
         }
-
-        JS_FreeCString(ctx, s);
     }
+
+    JS_FreeCString(ctx, s);
+
     box_t box = box_new(type);
-    return js_createBoxFuncWithOpaque(ctx, box);
+
+    JS_SetOpaque(obj, box);
+    return obj;
+fail:
+    JS_FreeValue(ctx, obj);
+    return JS_EXCEPTION;
 }
 
-static const JSCFunctionListEntry entries[] = {
-    JS_CFUNC_DEF("createBox", 0, js_createBoxFunc)};
+
+static JSValue js_canvas_ctor(JSContext *ctx,
+                           JSValueConst new_target,
+                           int argc, JSValueConst *argv)
+{
+    enum BOX_TYPE type = BOX_TYPE_DIV;
+    if (argc != 1)
+        return JS_EXCEPTION;
+
+    /* using new_target to get the prototype is necessary when the
+       class is extended. */
+    JSValue proto = JS_GetPropertyStr(ctx, new_target, "prototype");
+    if (JS_IsException(proto))
+        goto fail;
+    JSValue obj = JS_NewObjectProtoClass(ctx, proto, js_box_class_id);
+    JS_FreeValue(ctx, proto);
+    if (JS_IsException(obj))
+        goto fail;
+
+    return obj;
+fail:
+    JS_FreeValue(ctx, obj);
+    return JS_EXCEPTION;
+}
+
+int js_canvas_define(JSContext *ctx, JSModuleDef *m);
 
 int js_box_class_define(JSContext *ctx, JSModuleDef *m)
 {
@@ -488,11 +430,15 @@ int js_box_class_define(JSContext *ctx, JSModuleDef *m)
 
     JSValue box_proto = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, box_proto, js_box_proto_funcs, countof(js_box_proto_funcs));
+    JSValue box_class = JS_NewCFunction2(ctx, js_box_ctor, "Box", 1, JS_CFUNC_constructor, 0);
+    JS_SetConstructor(ctx, box_class, box_proto);
     JS_SetClassProto(ctx, js_box_class_id, box_proto);
-    JS_SetModuleExportList(ctx, m, entries, countof(entries));
 
     JSValue js_box_state = JS_NewObject(ctx);
     JS_SetPropertyFunctionList(ctx, js_box_state, box_state_entries, countof(box_state_entries));
     JS_SetModuleExport(ctx, m, "BOX_STATE", js_box_state);
+    JS_SetModuleExport(ctx, m, "Box", box_class);
+
+    js_canvas_define(ctx, m);
     return 0;
 }

@@ -4,7 +4,7 @@ W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function -Wer
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
-SRC			+= src/*.c src/platform/*.c src/element/*.c src/bind/*.c  examples/*.c
+SRC			+= src/*.c src/platform/*.c src/element/*.c src/bind/*.c src/bind/element/*.c  examples/*.c
 
 # stb
 X_INCDIRS	+= lib/stb/include

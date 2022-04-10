@@ -1,16 +1,16 @@
-import ReactReconciler from 'react-reconciler';
-import { Box } from "./meui"
+import ReactReconciler from "react-reconciler"
+import { createBox } from "."
 
-const rootHostContext = {};
-const childHostContext = {};
+const rootHostContext = {}
+const childHostContext = {}
 
 // const log = console.log
-const log = () => { }
+const log = () => {}
 const hostConfig = {
     now: Date.now,
     getRootHostContext: () => {
         log("getRootHostContext")
-        return rootHostContext;
+        return rootHostContext
     },
     prepareForCommit: () => {
         log("prepareForCommit")
@@ -21,17 +21,26 @@ const hostConfig = {
     },
     getChildHostContext: () => {
         log("getChildHostContext")
-        return childHostContext;
+        return childHostContext
     },
     shouldSetTextContent: (type, props) => {
         log("# shouldSetTextContent", type, props.children)
-        return typeof props.children === 'string' || typeof props.children === 'number';
+        return (
+            typeof props.children === "string" ||
+            typeof props.children === "number"
+        )
     },
-    createInstance: (type, { style, children, ...newProps }, rootContainerInstance, _currentHostContext, workInProgress) => {
+    createInstance: (
+        type,
+        { style, children, ...newProps },
+        rootContainerInstance,
+        _currentHostContext,
+        workInProgress
+    ) => {
         log("createInstance " + type)
-        const domElement = new Box(type);
+        const domElement = createBox(type)
 
-        if (typeof children === 'string' || typeof children === 'number') {
+        if (typeof children === "string" || typeof children === "number") {
             domElement.setStyle({ text: children })
         }
 
@@ -39,8 +48,8 @@ const hostConfig = {
             domElement.setStyle(style)
         }
 
-        Object.keys(newProps).forEach(propName => {
-            const propValue = newProps[propName];
+        Object.keys(newProps).forEach((propName) => {
+            const propValue = newProps[propName]
             // if (propName === 'children') {
             //     if (typeof propValue === 'string' || typeof propValue === 'number') {
             //         domElement.textContent = propValue;
@@ -58,31 +67,30 @@ const hostConfig = {
             if (propName.startsWith("on")) {
                 const index = propName.indexOf("Capture")
 
-                let type, useCapture;
+                let type, useCapture
                 if (index !== -1) {
                     type = propName.toLowerCase().substring(2, index)
                     useCapture = true
-                }
-                else {
+                } else {
                     type = propName.toLowerCase().substring(2)
                     useCapture = false
                 }
-                domElement.addEventListener(type, propValue, useCapture);
+                domElement.addEventListener(type, propValue, useCapture)
             }
-        });
-        return domElement;
+        })
+        return domElement
     },
-    createTextInstance: text => {
+    createTextInstance: (text) => {
         log("createTextInstance", text)
-        return text;
+        return text
     },
     appendInitialChild: (parent, child) => {
         log("appendInitialChild", child)
-        parent.addChild(child);
+        parent.addChild(child)
     },
     appendChild(parent, child) {
         log("appendChild", child)
-        parent.addChild(child);
+        parent.addChild(child)
     },
     finalizeInitialChildren: (domElement, type, props) => {
         log("finalizeInitialChildren")
@@ -90,50 +98,62 @@ const hostConfig = {
     supportsMutation: true,
     appendChildToContainer: (parent, child) => {
         log("appendChildToContainer", child)
-        parent.addChild(child);
+        parent.addChild(child)
     },
     prepareUpdate(domElement, oldProps, newProps) {
         log("prepareUpdate")
 
-        return true;
+        return true
     },
-    commitUpdate(domElement, updatePayload, type, oldProps, { style, ...newProps }) {
+    commitUpdate(
+        domElement,
+        updatePayload,
+        type,
+        oldProps,
+        { style, ...newProps }
+    ) {
         log("commitUpdate")
         if (style) {
             domElement.setStyle(style)
         }
 
-        Object.keys(newProps).forEach(propName => {
-            const propValue = newProps[propName];
-            if (propName === 'children') {
-                if (typeof propValue === 'string' || typeof propValue === 'number') {
+        Object.keys(newProps).forEach((propName) => {
+            const propValue = newProps[propName]
+            if (propName === "children") {
+                if (
+                    typeof propValue === "string" ||
+                    typeof propValue === "number"
+                ) {
                     domElement.setStyle({ text: propValue })
                 }
             } else if (propName.startsWith("on")) {
                 const index = propName.indexOf("Capture")
-                let type, useCapture;
+                let type, useCapture
                 if (index !== -1) {
                     type = propName.toLowerCase().substring(2, index)
                     useCapture = true
-                }
-                else {
+                } else {
                     type = propName.toLowerCase().substring(2)
                     useCapture = false
                 }
-                domElement.removeEventListener(type, oldProps[propName], useCapture);
-                domElement.addEventListener(type, propValue, useCapture);
+                domElement.removeEventListener(
+                    type,
+                    oldProps[propName],
+                    useCapture
+                )
+                domElement.addEventListener(type, propValue, useCapture)
             }
-        });
+        })
     },
     commitTextUpdate(textInstance, oldText, newText) {
         log("commitTextUpdate")
     },
     removeChild(parentInstance, child) {
         log("removeChild")
-        parentInstance.removeChild(child);
+        parentInstance.removeChild(child)
     },
     removeChildFromContainer(container, child) {
-        container.removeChild(child);
+        container.removeChild(child)
     },
     clearContainer(container) {
         log("clearContainer")
@@ -147,16 +167,24 @@ const hostConfig = {
         log("getPublicInstance")
         return instance
     },
-};
+}
 
-const ReactReconcilerInst = ReactReconciler(hostConfig);
+const ReactReconcilerInst = ReactReconciler(hostConfig)
 
 export default {
     render: (reactElement, meui, callback) => {
-        const container = ReactReconcilerInst.createContainer(meui.getRoot(), false);
+        const container = ReactReconcilerInst.createContainer(
+            meui.getRoot(),
+            false
+        )
         // update the root Container
-        return ReactReconcilerInst.updateContainer(reactElement, container, null, callback);
-    }
-};
+        return ReactReconcilerInst.updateContainer(
+            reactElement,
+            container,
+            null,
+            callback
+        )
+    },
+}
 
-export { batchedUpdates } from 'react-reconciler';
+export { batchedUpdates } from "react-reconciler"

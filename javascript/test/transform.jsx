@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import ReactMEUI from "../ReactMEUI"
-import Button from "../button"
+import { ReactMEUI } from "../meui"
+import Button from "../components/button"
 import { MEUI } from "../meui"
 import { Root, Column, Center, MaterialDesignIcon } from "../components"
 
 import { parseTransform } from "../meui"
 
 console.log(parseTransform(" scale( 1.2 ,1.2)  scale(1.3)  scale(1.4)  "))
-console.log(parseTransform(" scaleX( 1.2) scaleY(1.2)  scale(1.3)  scale(1.4)  "))
+console.log(
+    parseTransform(" scaleX( 1.2) scaleY(1.2)  scale(1.3)  scale(1.4)  ")
+)
 console.log(parseTransform("rotate(0)"))
 console.log(parseTransform("rotate(1turn)"))
 console.log(parseTransform("rotate(3.14rad)"))
@@ -26,47 +28,54 @@ const transformArr = [
 
 function App() {
     const [index, setIndex] = useState(0)
-    return <Root style={{
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-    }}>
-
-        <div style={{
-            width: "100%",
-            height: 100,
-            flexGrow: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-        }}>
-            <div style={{
-                width: 200,
-                height: 200,
-                backgroundColor: "red",
-
-                transform: transformArr[index],
-            }}>
-                AAAAAAAAAABBBBBBBBBBBBBBB
-            </div>
-        </div>
-
-        <Button style={{
-            width: 100,
-            height: 50,
-            margin: [30, 30, 30, 30]
-        }}
-            onClick={() => {
-                setIndex((index + 1) % transformArr.length)
+    return (
+        <Root
+            style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
             }}
-        >Touch</Button>
+        >
+            <div
+                style={{
+                    width: "100%",
+                    height: 100,
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                }}
+            >
+                <div
+                    style={{
+                        width: 200,
+                        height: 200,
+                        backgroundColor: "red",
 
-    </Root >
+                        transform: transformArr[index],
+                    }}
+                >
+                    AAAAAAAAAABBBBBBBBBBBBBBB
+                </div>
+            </div>
+
+            <Button
+                style={{
+                    width: 100,
+                    height: 50,
+                    margin: [30, 30, 30, 30],
+                }}
+                onClick={() => {
+                    setIndex((index + 1) % transformArr.length)
+                }}
+            >
+                Touch
+            </Button>
+        </Root>
+    )
 }
 
 export function Main() {
     const meui = new MEUI(390, 844)
-    ReactMEUI.render(<div>
-        <App />
-    </div>, meui)
+    ReactMEUI.render(<App />, meui)
 }

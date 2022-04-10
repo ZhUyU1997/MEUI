@@ -5,7 +5,6 @@ for (let i = 0; i < 10000; i++) {
     const timer = os.setTimeout(() => {}, 100)
 }
 
-
 for (let i = 0; i < 10000; i++) {
     const timer = os.setTimeout(() => {}, 100)
 }
@@ -20,6 +19,6 @@ function test() {
     run()
 }
 
-test();
+test()
 
-std.gc();
+std.gc()

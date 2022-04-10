@@ -39,7 +39,11 @@ static const char *fileext(const char *filename)
 
 #define KAPPA90 (0.5522847493f)
 
-class_impl(Box){};
+static void box_draw_self(Box *box, plutovg_t *pluto);
+
+class_impl(Box){
+    .draw = box_draw_self,
+};
 
 constructor(Box)
 {
