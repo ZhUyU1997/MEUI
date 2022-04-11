@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import Button from "../../components/button"
-import { MEUI, ReactMEUI } from "../../meui"
+import { Div, MEUI, ReactMEUI } from "../../meui"
 import {
     useTransition,
     useSpring,
@@ -96,7 +96,6 @@ const data = [
         height: 200,
     },
 ]
-
 function App() {
     const [open, set] = useState(false)
 
@@ -126,7 +125,7 @@ function App() {
     ])
 
     return (
-        <div
+        <Div
             style={{
                 width: "100%",
                 height: "100%",
@@ -136,7 +135,7 @@ function App() {
                 justifyContent: "center",
             }}
         >
-            <animated.div
+            <animated.Div
                 style={{
                     backgroundColor: "white",
                     ...rest,
@@ -149,7 +148,7 @@ function App() {
                 onClick={() => set((open) => !open)}
             >
                 {transition((style, item) => (
-                    <animated.div
+                    <animated.Div
                         style={{
                             width: 190,
                             height: 43,
@@ -161,8 +160,8 @@ function App() {
                         }}
                     />
                 ))}
-            </animated.div>
-        </div>
+            </animated.Div>
+        </Div>
     )
 }
 

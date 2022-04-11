@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { ReactMEUI } from "../meui"
+import { Div, ReactMEUI } from "../meui"
 import { MEUI } from "../meui"
 import { Root, Column, Center, MaterialDesignIcon } from "../components"
 
 function Circle({ radius, style, children }) {
     return (
-        <div
+        <Div
             style={{
                 width: radius * 2,
                 height: radius * 2,
@@ -18,13 +18,13 @@ function Circle({ radius, style, children }) {
             }}
         >
             {children}
-        </div>
+        </Div>
     )
 }
 
 function Message({ isSelf, text, time }) {
     const dot = (
-        <div
+        <Div
             style={{
                 alignItems: "flex-end",
             }}
@@ -37,11 +37,11 @@ function Message({ isSelf, text, time }) {
                         : "rgb(210,210,210)",
                 }}
             ></Circle>
-        </div>
+        </Div>
     )
 
     const timehint = (
-        <div
+        <Div
             style={{
                 flexShrink: 0,
                 margin: [4, 15, 0, 15],
@@ -50,10 +50,10 @@ function Message({ isSelf, text, time }) {
             }}
         >
             {time}
-        </div>
+        </Div>
     )
     return (
-        <div
+        <Div
             style={{
                 width: "100%",
                 flexDirection: "column",
@@ -62,7 +62,7 @@ function Message({ isSelf, text, time }) {
                 flexShrink: 0,
             }}
         >
-            <div
+            <Div
                 style={{
                     width: "100%",
                     flexShrink: 0,
@@ -70,7 +70,7 @@ function Message({ isSelf, text, time }) {
                 }}
             >
                 {isSelf ? null : dot}
-                <div
+                <Div
                     style={{
                         // minWidth: 50,
                         minHeight: 40,
@@ -86,11 +86,11 @@ function Message({ isSelf, text, time }) {
                     }}
                 >
                     {text}
-                </div>
+                </Div>
                 {!isSelf ? null : dot}
-            </div>
+            </Div>
             {time ? timehint : null}
-        </div>
+        </Div>
     )
 }
 
@@ -171,7 +171,7 @@ function Whatsapp() {
                     }}
                 ></Circle>
                 <Column style={{ flexGrow: 1 }}>
-                    <div
+                    <Div
                         style={{
                             width: "100%",
                             textAlign: "center-left",
@@ -180,8 +180,8 @@ function Whatsapp() {
                         }}
                     >
                         Anil
-                    </div>
-                    <div
+                    </Div>
+                    <Div
                         style={{
                             width: "100%",
                             textAlign: "center-left",
@@ -190,7 +190,7 @@ function Whatsapp() {
                         }}
                     >
                         Online - Last seen, 2.02pm
-                    </div>
+                    </Div>
                 </Column>
                 <MaterialDesignIcon
                     width={30}
@@ -228,9 +228,10 @@ function Whatsapp() {
                     // flexWrap: "wrap",
                 }}
             >
-                {message.map((item) => {
+                {message.map((item, index) => {
                     return (
                         <Message
+                            key={item.text + item.time + index}
                             isSelf={item.isSelf}
                             text={item.text}
                             time={item.time}
@@ -271,7 +272,7 @@ function Whatsapp() {
                         color="#333333"
                         style={{ marginRight: 8 }}
                     ></MaterialDesignIcon>
-                    <div
+                    <Div
                         style={{
                             flexGrow: 1,
                             fontColor: "#303030",
@@ -279,7 +280,7 @@ function Whatsapp() {
                         }}
                     >
                         Type your message here
-                    </div>
+                    </Div>
                     <MaterialDesignIcon
                         width={24}
                         height={24}
@@ -316,13 +317,13 @@ function Whatsapp() {
                     flexShrink: 0,
                 }}
             >
-                <div
+                <Div
                     style={{
                         width: 179,
                         height: 4,
                         backgroundColor: "rgba(169,169,169,87%)",
                     }}
-                ></div>
+                ></Div>
             </Center>
         </Root>
     )
@@ -331,9 +332,9 @@ function Whatsapp() {
 export function Main() {
     const meui = new MEUI(390, 844)
     ReactMEUI.render(
-        <div>
+        <Div>
             <Whatsapp />
-        </div>,
+        </Div>,
         meui
     )
 }

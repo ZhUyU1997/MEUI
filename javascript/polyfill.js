@@ -69,18 +69,15 @@ if (!globalThis.setInterval) {
 if (!globalThis.requestAnimationFrame) {
     let frameArray = []
     function requestAnimationFrame(fn) {
-        frameArray.push(fn)
+        return frameArray.push(fn) - 1
     }
-    function cancelAnimationFrame(fn) {
-        const index = frameArray.indexOf(fn)
-        if (index !== -1) {
-            frameArray.splice(index, 1)
-        }
+    function cancelAnimationFrame(index) {
+        if (index >= 0 && index < frameArray.length) frameArray[index] = null
     }
     function triggerAnimationFrame() {
         const temp = frameArray
         frameArray = []
-        temp.forEach((fn) => fn())
+        temp.forEach((fn) => fn?.())
     }
 
     window.requestAnimationFrame = requestAnimationFrame

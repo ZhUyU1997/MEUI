@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { ReactMEUI } from "../meui"
-import Button from "../components/button"
+import React from "react"
+import { Div, ReactMEUI } from "../meui"
 import { MEUI } from "../meui"
-import { Root, Column, Center, MaterialDesignIcon } from "../components"
+import { Root } from "../components"
 
 function App() {
     return (
@@ -13,14 +12,14 @@ function App() {
                     height: 844,
                 }}
             >
-                <div
+                <Div
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                     }}
-                ></div>
-                <div
+                ></Div>
+                <Div
                     style={{
                         width: 100,
                         height: 100,
@@ -28,8 +27,8 @@ function App() {
                         top: 10,
                         left: 10,
                     }}
-                ></div>
-                <div
+                ></Div>
+                <Div
                     style={{
                         width: 100,
                         height: 100,
@@ -37,8 +36,8 @@ function App() {
                         top: 20,
                         left: 20,
                     }}
-                ></div>
-                <div
+                ></Div>
+                <Div
                     style={{
                         width: 100,
                         height: 100,
@@ -46,8 +45,8 @@ function App() {
                         top: 30,
                         left: 30,
                     }}
-                ></div>
-                <div
+                ></Div>
+                <Div
                     style={{
                         width: 100,
                         height: 100,
@@ -55,24 +54,24 @@ function App() {
                         top: 40,
                         left: 40,
                     }}
-                ></div>
-                <div
+                ></Div>
+                <Div
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                         right: 10,
                     }}
-                ></div>
+                ></Div>
 
-                <div
+                <Div
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                         bottom: 10,
                     }}
-                ></div>
+                ></Div>
             </stack>
         </Root>
     )
@@ -80,10 +79,5 @@ function App() {
 
 export function Main() {
     const meui = new MEUI(390, 844)
-    ReactMEUI.render(
-        <div>
-            <App />
-        </div>,
-        meui
-    )
+    ReactMEUI.render(<App />, meui)
 }

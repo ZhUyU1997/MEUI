@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import Button from "../../components/button"
+import React from "react"
 import { MEUI, ReactMEUI } from "../../meui"
-import { Root, Column, Center, MaterialDesignIcon } from "../../components"
 import { animated, useSpring } from "../../react-sping-meui"
 
 function App() {
@@ -12,7 +10,7 @@ function App() {
     })
 
     return (
-        <animated.div
+        <animated.Div
             style={{
                 width: 80,
                 height: 80,

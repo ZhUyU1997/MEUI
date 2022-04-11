@@ -1,18 +1,14 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
+import { Div } from "../meui"
 
 function Test() {
     const ref = useRef()
-    useEffect(() => {
-        setTimeout(() => {
-            meui.debug()
-        }, 1000)
-    }, [])
 
     useEffect(() => {
         console.log("ref", ref.current)
     }, [])
     return (
-        <div
+        <Div
             ref={ref}
             style={{
                 backgroundColor: "#FFFFFFFF",
@@ -31,9 +27,10 @@ function Test() {
         >
             {Array(100)
                 .fill(0)
-                .map(() => {
+                .map((index) => {
                     return (
-                        <div
+                        <Div
+                            key={index}
                             style={{
                                 textAlign: "center",
                                 fontSize: 20,
@@ -45,9 +42,9 @@ function Test() {
                                     Math.random() * 255
                                 )}, ${Math.round(Math.random() * 255)}, 1)`,
                             }}
-                        ></div>
+                        ></Div>
                     )
                 })}
-        </div>
+        </Div>
     )
 }

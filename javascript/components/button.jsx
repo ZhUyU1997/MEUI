@@ -1,4 +1,5 @@
 import React from "react"
+import { Div } from "../meui"
 
 const style_name = [
     "primary",
@@ -62,7 +63,7 @@ export default function Button({
     const index = style_name.indexOf(type)
     const list = style_color[index]
     return (
-        <div
+        <Div
             style={{
                 marginBottom: 10,
                 border: [1, 1, 1, 1],
@@ -86,6 +87,6 @@ export default function Button({
             {...props}
         >
             {children}
-        </div>
+        </Div>
     )
 }

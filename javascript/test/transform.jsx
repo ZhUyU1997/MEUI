@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { ReactMEUI } from "../meui"
+import React, { useState } from "react"
+import { Div, MEUI, ReactMEUI } from "../meui"
 import Button from "../components/button"
-import { MEUI } from "../meui"
-import { Root, Column, Center, MaterialDesignIcon } from "../components"
+import { Root } from "../components"
 
 import { parseTransform } from "../meui"
 
@@ -36,7 +35,7 @@ function App() {
                 flexDirection: "column",
             }}
         >
-            <div
+            <Div
                 style={{
                     width: "100%",
                     height: 100,
@@ -46,7 +45,7 @@ function App() {
                     flexDirection: "column",
                 }}
             >
-                <div
+                <Div
                     style={{
                         width: 200,
                         height: 200,
@@ -56,8 +55,8 @@ function App() {
                     }}
                 >
                     AAAAAAAAAABBBBBBBBBBBBBBB
-                </div>
-            </div>
+                </Div>
+            </Div>
 
             <Button
                 style={{

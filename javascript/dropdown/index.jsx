@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { MEUI, ReactMEUI } from "../meui"
+import { Div, MEUI, ReactMEUI, Stack } from "../meui"
 import { Root, Column, Center, MaterialDesignIcon } from "../components"
 
 function DropDownList({ option = [], style }) {
     return (
-        <div
+        <Div
             style={{
                 width: 163,
                 backgroundColor: "white",
@@ -16,10 +16,10 @@ function DropDownList({ option = [], style }) {
                 ...style,
             }}
         >
-            {option.map((text) => {
+            {option.map((text, index) => {
                 return (
                     <Center
-                        key={text}
+                        key={text + index}
                         style={{
                             width: 163,
                             height: 36,
@@ -27,7 +27,7 @@ function DropDownList({ option = [], style }) {
                             marginBottom: 4,
                         }}
                     >
-                        <div
+                        <Div
                             style={{
                                 fontColor: "#000000",
                                 fontSize: 16,
@@ -35,18 +35,18 @@ function DropDownList({ option = [], style }) {
                             }}
                         >
                             {text}
-                        </div>
-                        <div style={{ marginLeft: 8, width: 18 }}></div>
+                        </Div>
+                        <Div style={{ marginLeft: 8, width: 18 }}></Div>
                     </Center>
                 )
             })}
-        </div>
+        </Div>
     )
 }
 function DropDown({ option = [], style }) {
     const [open, setOpen] = useState(false)
     return (
-        <stack
+        <Stack
             style={{
                 width: 163,
                 height: 36,
@@ -65,7 +65,7 @@ function DropDown({ option = [], style }) {
                     setOpen((prev) => !prev)
                 }}
             >
-                <div
+                <Div
                     style={{
                         fontColor: "#5533FF",
                         fontSize: 16,
@@ -73,7 +73,7 @@ function DropDown({ option = [], style }) {
                     }}
                 >
                     Pick an option
-                </div>
+                </Div>
                 <MaterialDesignIcon
                     width={18}
                     height={18}
@@ -91,7 +91,7 @@ function DropDown({ option = [], style }) {
                     }}
                 />
             ) : null}
-        </stack>
+        </Stack>
     )
 }
 function App() {

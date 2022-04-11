@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
-import { MEUI, ReactMEUI } from "../meui"
+import { Div, MEUI, ReactMEUI } from "../meui"
 import path from "../path"
 
 import {
@@ -124,7 +124,7 @@ function FileExplorer() {
                     setCurPath(newPath)
                 }}
             />
-            <div
+            <Div
                 style={{
                     alignItems: "flex-start",
                     alignContent: "flex-start",
@@ -137,7 +137,7 @@ function FileExplorer() {
             >
                 {transition((style, { name, attribute, isDir }) => {
                     return (
-                        <animated.div
+                        <animated.Div
                             key={name}
                             style={{
                                 justifyContent: "center",
@@ -178,10 +178,10 @@ function FileExplorer() {
                             >
                                 {name}
                             </Center>
-                        </animated.div>
+                        </animated.Div>
                     )
                 })}
-            </div>
+            </Div>
         </Root>
     )
 }

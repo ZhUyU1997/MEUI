@@ -1,4 +1,6 @@
 import React, { useEffect } from "react"
+import { Root } from "../components"
+import { Div } from "../meui"
 
 export function Test() {
     return (
@@ -8,13 +10,13 @@ export function Test() {
                 flexWrap: "wrap",
             }}
         >
-            <div
+            <Div
                 style={{
                     backgroundColor: "red",
                 }}
             >
                 3213144444444444
-            </div>
+            </Div>
         </Root>
     )
 }

@@ -12,9 +12,10 @@ import { Primitives } from "./primitives"
 
 import type * as CSS from "csstype"
 export type { CSS }
+import { MeuiElements } from "../meui"
 
 type AnimatedPrimitives = {
-    [Tag in Primitives]: AnimatedComponent<Tag>
+    [Tag in Primitives]: AnimatedComponent<MeuiElements[Tag]>
 }
 
 /** The type of the `animated()` function */

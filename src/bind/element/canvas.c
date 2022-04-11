@@ -42,10 +42,28 @@ static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
     if (!node)
         return JS_EXCEPTION;
 
-    int width, height;
-    if (JS_ToInt32(ctx, &width, argv[1]))
+    int dx, dy;
+    if (JS_ToInt32(ctx, &dx, argv[1]))
         return JS_EXCEPTION;
-    if (JS_ToInt32(ctx, &height, argv[2]))
+    if (JS_ToInt32(ctx, &dy, argv[2]))
+        return JS_EXCEPTION;
+
+    int dirtyX, dirtyY;
+    if (JS_ToInt32(ctx, &dirtyX, argv[3]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &dirtyY, argv[4]))
+        return JS_EXCEPTION;
+
+    int dirtyWidth, dirtyHeight;
+    if (JS_ToInt32(ctx, &dirtyWidth, argv[5]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &dirtyHeight, argv[6]))
+        return JS_EXCEPTION;
+
+    int width, height;
+    if (JS_ToInt32(ctx, &width, argv[7]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &height, argv[8]))
         return JS_EXCEPTION;
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
@@ -60,8 +78,8 @@ static JSValue js_canvas_put_image(JSContext *ctx, JSValueConst this_val,
     plutovg_surface_t *img = plutovg_surface_create_for_data(buf, width, height, width * sizeof(uint32_t));
     plutovg_surface_t *convert = plutovg_surface_format_convert(img);
     plutovg_t *pluto = plutovg_create(e->surface);
-    plutovg_rect(pluto, 0, 0, width, height);
-    plutovg_set_source_surface(pluto, convert, 0, 0);
+    plutovg_rect(pluto, dx, dy, dirtyWidth, dirtyHeight);
+    plutovg_set_source_surface(pluto, convert, dx - dirtyX, dy - dirtyY);
     plutovg_fill(pluto);
     plutovg_destroy(pluto);
     plutovg_surface_destroy(img);
