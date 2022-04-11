@@ -13,11 +13,6 @@ static JSValue js_get_instance(JSContext *ctx, JSValueConst this_val,
 {
     return JS_UNDEFINED;
 }
-static JSValue js_register_callback(JSContext *ctx, JSValueConst this_val,
-                                    int argc, JSValueConst *argv)
-{
-    return JS_UNDEFINED;
-}
 
 static JSValue js_render(JSContext *ctx, JSValueConst this_val,
                          int argc, JSValueConst *argv)
@@ -214,7 +209,6 @@ fail:
 }
 
 static const JSCFunctionListEntry js_meui_proto_funcs[] = {
-    JS_CFUNC_DEF("registerCallback", 2, js_register_callback),
     JS_CFUNC_DEF("render", 1, js_render),
     JS_CFUNC_DEF("flush", 0, js_flush),
     JS_CFUNC_DEF("update", 0, js_update),
@@ -257,7 +251,6 @@ JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name)
         return NULL;
     JS_AddModuleExport(ctx, m, "NativeMEUI");
     JS_AddModuleExport(ctx, m, "Box");
-    JS_AddModuleExport(ctx, m, "createBox");
     JS_AddModuleExport(ctx, m, "BOX_STATE");
     JS_AddModuleExport(ctx, m, "Canvas");
     return m;
