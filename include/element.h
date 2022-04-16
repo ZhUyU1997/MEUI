@@ -11,6 +11,8 @@ class(CanvasEle, Box)
     int width;
     int height;
     plutovg_surface_t *surface;
+    plutovg_t *pluto;
+    plutovg_path_t *path;
 };
 
 int canvas_get_width(CanvasEle *e);

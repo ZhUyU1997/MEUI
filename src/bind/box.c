@@ -183,30 +183,6 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, 0);
 }
 
-static const plutovg_surface_t *plutovg_surface_format_convert(const plutovg_surface_t *surface)
-{
-    unsigned char *data = plutovg_surface_get_data(surface);
-    int width = plutovg_surface_get_width(surface);
-    int height = plutovg_surface_get_height(surface);
-    int stride = plutovg_surface_get_stride(surface);
-    unsigned char *image = malloc((size_t)(stride * height));
-
-    for (int y = 0; y < height; y++)
-    {
-        const uint32_t *src = (uint32_t *)(data + stride * y);
-        uint32_t *dst = (uint32_t *)(image + stride * y);
-        for (int x = 0; x < width; x++)
-        {
-            uint32_t b = ((src[x] >> 16) & 0xff);
-            uint32_t g = ((src[x] >> 8) & 0xff);
-            uint32_t r = ((src[x] >> 0) & 0xff);
-            dst[x] = 0xff000000 | (r << 16) | (g << 8) | b;
-        }
-    }
-
-    return plutovg_surface_create_for_data(image, width, height, width * sizeof(uint32_t));
-}
-
 static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
@@ -390,31 +366,6 @@ static JSValue js_box_ctor(JSContext *ctx,
     box_t box = box_new(type);
 
     JS_SetOpaque(obj, box);
-    return obj;
-fail:
-    JS_FreeValue(ctx, obj);
-    return JS_EXCEPTION;
-}
-
-
-static JSValue js_canvas_ctor(JSContext *ctx,
-                           JSValueConst new_target,
-                           int argc, JSValueConst *argv)
-{
-    enum BOX_TYPE type = BOX_TYPE_DIV;
-    if (argc != 1)
-        return JS_EXCEPTION;
-
-    /* using new_target to get the prototype is necessary when the
-       class is extended. */
-    JSValue proto = JS_GetPropertyStr(ctx, new_target, "prototype");
-    if (JS_IsException(proto))
-        goto fail;
-    JSValue obj = JS_NewObjectProtoClass(ctx, proto, js_box_class_id);
-    JS_FreeValue(ctx, proto);
-    if (JS_IsException(obj))
-        goto fail;
-
     return obj;
 fail:
     JS_FreeValue(ctx, obj);

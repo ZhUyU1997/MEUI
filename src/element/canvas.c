@@ -37,8 +37,10 @@ void canvas_set_width(CanvasEle *e, int width)
     plutovg_rect(pluto, 0, 0, e->width, e->height);
     plutovg_set_source_surface(pluto, e->surface, 0, 0);
     plutovg_fill(pluto);
-    plutovg_destroy(pluto);
     plutovg_surface_destroy(old_surface);
+
+    plutovg_destroy(e->pluto);
+    e->pluto = pluto;
 
     e->surface = new_surface;
     e->width = width;
@@ -53,8 +55,10 @@ void canvas_set_height(CanvasEle *e, int height)
     plutovg_rect(pluto, 0, 0, e->width, e->height);
     plutovg_set_source_surface(pluto, e->surface, 0, 0);
     plutovg_fill(pluto);
-    plutovg_destroy(pluto);
     plutovg_surface_destroy(old_surface);
+
+    plutovg_destroy(e->pluto);
+    e->pluto = pluto;
 
     e->surface = new_surface;
     e->height = height;
@@ -67,6 +71,13 @@ constructor(CanvasEle)
 
     box->draw = draw;
     this->surface = plutovg_surface_create(this->width, this->height);
+    this->pluto = plutovg_create(this->surface);
+    this->path = plutovg_path_create();
 }
 
-destructor(CanvasEle) {}
+destructor(CanvasEle)
+{
+    plutovg_path_destroy(this->path);
+    plutovg_destroy(this->pluto);
+    plutovg_surface_destroy(this->surface);
+}

@@ -1,6 +1,7 @@
 #ifndef PLUTOSVG_H
 #define PLUTOSVG_H
 
+#include <stddef.h>
 #include <plutovg.h>
 
 #ifdef __cplusplus
@@ -52,6 +53,8 @@ int plutosvg_dimensions_from_memory(const char* data, int size, plutovg_font_t* 
  * @return true on success, otherwise false
  */
 int plutosvg_dimensions_from_file(const char* filename, plutovg_font_t* font, int* width, int* height, double dpi);
+
+plutovg_path_t* plutosvg_parse_path(const char *svg_path, size_t len);
 
 #ifdef __cplusplus
 }

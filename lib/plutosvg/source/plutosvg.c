@@ -1,5 +1,6 @@
 #include "plutosvg.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -1570,14 +1571,9 @@ static void path_arc_to(plutovg_path_t* path, double current_x, double current_y
         path_arc_segment(path, xc, yc, th0 + i * th_arc / n_segs, th0 + (i + 1) * th_arc / n_segs, rx, ry, x_axis_rotation);
 }
 
-static int parse_path(const element_t* e, int id, plutovg_path_t* path)
+static int _parse_path(const char* ptr, size_t len, plutovg_path_t* path)
 {
-    const string_t* value = findvalue(e, id);
-    if(value == NULL)
-        return 0;
-
-    const char* ptr = value->start;
-    const char* end = value->end;
+    const char* end = ptr + len;
     if(ptr >= end || !(*ptr == 'M' || *ptr == 'm'))
         return 0;
 
@@ -1768,6 +1764,30 @@ static int parse_path(const element_t* e, int id, plutovg_path_t* path)
     }
 
     return 1;
+}
+
+static int parse_path(const element_t* e, int id, plutovg_path_t* path)
+{
+    const string_t* value = findvalue(e, id);
+    if(value == NULL)
+        return 0;
+
+    const char* ptr = value->start;
+    const char* end = value->end;
+
+    return _parse_path(ptr, end - ptr, path);
+}
+
+plutovg_path_t *plutosvg_parse_path(const char *svg_path, size_t len)
+{
+    plutovg_path_t *path = plutovg_path_create();
+    if (_parse_path(svg_path, len, path) == 0)
+    {
+        plutovg_path_destroy(path);
+        return NULL;
+    }
+
+    return path;
 }
 
 static int parse_points(const element_t* e, int id, plutovg_path_t* path, int closed)

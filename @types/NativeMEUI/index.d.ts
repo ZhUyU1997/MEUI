@@ -77,7 +77,58 @@ declare module "NativeMEUI" {
 
     export type UI_STATE = typeof BOX_STATE[keyof typeof BOX_STATE]
 
+    export class Path2D {
+        constructor(path?: Path2D | string)
+
+        arc(
+            x: number,
+            y: number,
+            radius: number,
+            startAngle: number,
+            endAngle: number,
+            counterclockwise?: boolean
+        ): void
+        arcTo(
+            x1: number,
+            y1: number,
+            x2: number,
+            y2: number,
+            radius: number
+        ): void
+        bezierCurveTo(
+            cp1x: number,
+            cp1y: number,
+            cp2x: number,
+            cp2y: number,
+            x: number,
+            y: number
+        ): void
+        closePath(): void
+        ellipse(
+            x: number,
+            y: number,
+            radiusX: number,
+            radiusY: number,
+            rotation: number,
+            startAngle: number,
+            endAngle: number,
+            counterclockwise?: boolean
+        ): void
+        lineTo(x: number, y: number): void
+        moveTo(x: number, y: number): void
+        quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void
+        rect(x: number, y: number, w: number, h: number): void
+        // addPath(path: Path2D, transform?: DOMMatrix2DInit): void
+    }
+
     export const Canvas: {
+        getImage(
+            sx: number,
+            sy: number,
+            sw: number,
+            sh: number,
+            settings?: ImageDataSettings
+        ): ArrayBuffer
         putImage(
             buffer: ArrayBuffer,
             dx: number,
@@ -88,10 +139,100 @@ declare module "NativeMEUI" {
             dirtyHeight: number,
             width: number,
             height: number,
+            format?: number
         ): void
         getWidth(): number
         setWidth(width: number): void
         getHeight(): number
         setHeight(height: number): void
+
+        beginPath(): void
+        closePath(): void
+
+        arc(
+            x: number,
+            y: number,
+            radius: number,
+            startAngle: number,
+            endAngle: number,
+            counterclockwise?: boolean
+        ): void
+        arcTo(
+            x1: number,
+            y1: number,
+            x2: number,
+            y2: number,
+            radius: number
+        ): void
+        bezierCurveTo(
+            cp1x: number,
+            cp1y: number,
+            cp2x: number,
+            cp2y: number,
+            x: number,
+            y: number
+        ): void
+        ellipse(
+            x: number,
+            y: number,
+            radiusX: number,
+            radiusY: number,
+            rotation: number,
+            startAngle: number,
+            endAngle: number,
+            counterclockwise?: boolean
+        ): void
+        lineTo(x: number, y: number): void
+        moveTo(x: number, y: number): void
+
+        quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void
+        rect(x: number, y: number, w: number, h: number): void
+
+        stroke(): void
+        stroke(path: Path2D): void
+
+        fill(fillRule?: "evenodd" | "nonzero"): void
+        fill(path: Path2D, fillRule?: "evenodd" | "nonzero"): void
+        clip(fillRule?: "evenodd" | "nonzero"): void
+        clip(path: Path2D, fillRule?: "evenodd" | "nonzero"): void
+
+        clearRect(x: number, y: number, w: number, h: number): void
+        strokeRect(x: number, y: number, w: number, h: number): void
+        fillRect(x: number, y: number, w: number, h: number): void
+
+        setStrokeStyle(r: number, g: number, b: number, a: number): void
+        setFillStyle(r: number, g: number, b: number, a: number): void
+
+        setLineCap(lineCap: "butt" | "round" | "square"): void
+        setLineJoin(lineJoin: "bevel" | "miter" | "round"): void
+        setMiterLimit(miterLimit: number): void
+        setLineWidth(lineWidth: number): void
+        setLineDash(lineDashOffset: number, segments: number[]): void
+
+        getTransform(): [number, number, number, number, number, number]
+        resetTransform(): void
+        rotate(angle: number): void
+        scale(x: number, y: number): void
+        setTransform(
+            a: number,
+            b: number,
+            c: number,
+            d: number,
+            e: number,
+            f: number
+        ): void
+        setTransform(
+            transform?: [number, number, number, number, number, number]
+        ): void
+        setTransform(a?: any, b?: any, c?: any, d?: any, e?: any, f?: any): void
+        transform(
+            a: number,
+            b: number,
+            c: number,
+            d: number,
+            e: number,
+            f: number
+        ): void
+        translate(x: number, y: number): void
     }
 }

@@ -7,7 +7,7 @@ import { Root } from "../components"
 import jsnes from "jsnes"
 import path from "../path"
 import * as std from "std"
-import { CanvasElement, ImageData } from "../meui/canvas"
+import { CanvasElement, COLOR_FORMAT, ImageData } from "../meui/canvas"
 
 const SCREEN_WIDTH = 256
 const SCREEN_HEIGHT = 240
@@ -58,7 +58,12 @@ function App() {
                         SCREEN_HEIGHT
                     ),
                     0,
-                    0
+                    0,
+                    0,
+                    0,
+                    SCREEN_WIDTH,
+                    SCREEN_HEIGHT,
+                    COLOR_FORMAT.COLOR_BGR
                 )
             }
         }

@@ -236,10 +236,13 @@ static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)
 }
 
 extern int js_box_class_define(JSContext *ctx, JSModuleDef *m);
+extern int js_path2d_class_define(JSContext *ctx, JSModuleDef *m);
+
 static int js_meui_module_init(JSContext *ctx, JSModuleDef *m)
 {
     js_meui_class_define(ctx, m);
     js_box_class_define(ctx, m);
+    js_path2d_class_define(ctx, m);
     return 0;
 }
 
@@ -253,5 +256,6 @@ JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name)
     JS_AddModuleExport(ctx, m, "Box");
     JS_AddModuleExport(ctx, m, "BOX_STATE");
     JS_AddModuleExport(ctx, m, "Canvas");
+    JS_AddModuleExport(ctx, m, "Path2D");
     return m;
 }

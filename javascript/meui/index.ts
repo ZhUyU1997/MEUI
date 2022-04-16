@@ -1,6 +1,6 @@
 import { NativeMEUI, BOX_STATE } from "NativeMEUI"
 import * as os from "os"
-import React, { PropsWithChildren, PropsWithRef, RefAttributes } from "react"
+import React, { PropsWithChildren, RefAttributes } from "react"
 import { Box, CustomEvent, MeuiMouseEvent } from "./box"
 import { CanvasElement } from "./canvas"
 import { DivElement } from "./div"

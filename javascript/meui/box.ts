@@ -3,7 +3,7 @@ import * as colorString from "color-string"
 import valueParser from "postcss-value-parser"
 import { MeuiStyle, MeuiStyleValue } from "./style"
 
-type Matrix2D = [number, number, number, number, number, number]
+export type Matrix2D = [number, number, number, number, number, number]
 function matrix_multiply(_a: Matrix2D, _b: Matrix2D): Matrix2D {
     let a, b
     {
@@ -219,9 +219,9 @@ export interface MeuiWheelEvent extends MeuiMouseEvent {
 }
 
 interface MeuiEventMap {
-    mousedown: MeuiEvent
-    mouseup: MeuiEvent
-    mousemove: MeuiEvent
+    mousedown: MeuiMouseEvent
+    mouseup: MeuiMouseEvent
+    mousemove: MeuiMouseEvent
     mousewheel: MeuiWheelEvent
 }
 
