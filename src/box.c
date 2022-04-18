@@ -3,6 +3,7 @@
 #include "image.h"
 #include "meui.h"
 #include "log.h"
+#include "text.h"
 #include "list.h"
 #include "pqueue.h"
 
@@ -366,95 +367,6 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
     plutovg_restore(pluto);
 }
 
-static inline int decode_utf8(const char **begin, const char *end, int *codepoint)
-{
-    static const int trailing[256] = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
-
-    static const uint32_t offsets[6] = {
-        0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080};
-
-    const char *ptr = *begin;
-
-    int trailing_bytes = trailing[(uint8_t)(*ptr)];
-    if (ptr + trailing_bytes >= end)
-        return 0;
-
-    uint32_t output = 0;
-    switch (trailing_bytes)
-    {
-    case 5:
-        output += (uint8_t)(*ptr++);
-        output <<= 6;
-    case 4:
-        output += (uint8_t)(*ptr++);
-        output <<= 6;
-    case 3:
-        output += (uint8_t)(*ptr++);
-        output <<= 6;
-    case 2:
-        output += (uint8_t)(*ptr++);
-        output <<= 6;
-    case 1:
-        output += (uint8_t)(*ptr++);
-        output <<= 6;
-    case 0:
-        output += (uint8_t)(*ptr++);
-    }
-
-    output -= offsets[trailing_bytes];
-    *begin = ptr;
-    *codepoint = output;
-    return 1;
-}
-
-static plutovg_path_t *draw_font_get_textn_oneline_path(const plutovg_font_t *font, const char **utf8, const char *end, double w, double *out_w)
-{
-    plutovg_path_t *result = plutovg_path_create();
-    double advance = 0;
-    double scale = plutovg_font_get_scale(font);
-    plutovg_font_face_t *face = plutovg_font_get_face(font);
-
-    while (*utf8 < end)
-    {
-        int ch = 0;
-        const char *start = *utf8;
-        if (!decode_utf8(utf8, end, &ch))
-            break;
-
-        if (ch == '\n')
-            break;
-
-        plutovg_matrix_t matrix;
-        plutovg_matrix_init_translate(&matrix, advance, 0);
-        plutovg_matrix_scale(&matrix, scale, -scale);
-
-        double char_advance = plutovg_font_get_char_advance(font, ch);
-
-        if (advance + char_advance > w)
-        {
-            *utf8 = start;
-            break;
-        }
-
-        advance += char_advance;
-        plutovg_path_t *path = plutovg_font_face_get_char_path(face, ch);
-        plutovg_path_add_path(result, path, &matrix);
-        plutovg_path_destroy(path);
-    }
-
-    *out_w = advance;
-
-    return result;
-}
-
 static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h, double *text_h)
 {
     plutovg_path_t *result = plutovg_path_create();
@@ -477,7 +389,7 @@ static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT
         y += ascent;
 
         double line_width = 0;
-        plutovg_path_t *line_path = draw_font_get_textn_oneline_path(font, &utf8, end, w, &line_width);
+        plutovg_path_t *line_path = get_textn_oneline_path(font, &utf8, end, w, &line_width);
 
         plutovg_matrix_t matrix;
 
@@ -529,33 +441,6 @@ static void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double
     plutovg_restore(pluto);
 }
 
-static void measure_font_get_textn_oneline_path(const plutovg_font_t *font, const char **utf8, const char *end, double w, double *out_w)
-{
-    double advance = 0;
-    while (*utf8 < end)
-    {
-        int ch = 0;
-        const char *start = *utf8;
-        if (!decode_utf8(utf8, end, &ch))
-            break;
-
-        if (ch == '\n')
-            break;
-
-        double char_advance = plutovg_font_get_char_advance(font, ch);
-
-        if (advance + char_advance > w)
-        {
-            *utf8 = start;
-            break;
-        }
-
-        advance += char_advance;
-    }
-
-    *out_w = advance;
-}
-
 static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
 {
     FlexSize outSize = {.width = 0, .height = 0};
@@ -578,7 +463,7 @@ static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALI
         y += ascent;
 
         double line_width = 0;
-        draw_font_get_textn_oneline_path(font, &utf8, end, w, &line_width);
+        measure_textn_oneline_path(font, &utf8, end, w, &line_width);
 
         if (line_width > outSize.width)
         {
