@@ -1382,6 +1382,20 @@ double plutovg_font_get_line_gap(const plutovg_font_t* font);
 double plutovg_font_get_leading(const plutovg_font_t* font);
 
 /**
+ * @brief plutovg_font_get_x_height
+ * @param font
+ * @return
+ */
+double plutovg_font_get_x_height(const plutovg_font_t* font);
+
+/**
+ * @brief plutovg_font_get_cap_height
+ * @param font
+ * @return
+ */
+double plutovg_font_get_cap_height(const plutovg_font_t* font);
+
+/**
  * @brief plutovg_font_get_kerning
  * @param font
  * @param ch1

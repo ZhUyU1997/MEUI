@@ -83,6 +83,7 @@ typedef struct {
 struct plutovg_font_face {
     int ref;
     int ascent, descent, linegap;
+    int x_height, cap_height;
     int x1, y1, x2, y2;
     stbtt_fontinfo info;
     plutovg_font_data_t* data;
@@ -120,6 +121,17 @@ plutovg_font_face_t* plutovg_font_face_load_from_data(plutovg_font_data_t* data,
     fontface->info = info;
     stbtt_GetFontVMetrics(&fontface->info, &fontface->ascent, &fontface->descent, &fontface->linegap);
     stbtt_GetFontBoundingBox(&fontface->info, &fontface->x1, &fontface->y1, &fontface->x2, &fontface->y2);
+
+    if(!stbtt_GetFontXHeightOS2(&fontface->info, &fontface->x_height))
+    {
+        fontface->x_height = 0;
+    }
+
+    if(!stbtt_GetFontCapHeightOS2(&fontface->info, &fontface->cap_height))
+    {
+        fontface->cap_height = 0;
+    }
+
     memset(fontface->cache, 0, sizeof(fontface->cache));
     return fontface;
 }
@@ -255,6 +267,16 @@ double plutovg_font_face_get_line_gap(const plutovg_font_face_t* face)
 double plutovg_font_face_get_leading(const plutovg_font_face_t* face)
 {
     return (face->ascent - face->descent + face->linegap);
+}
+
+double plutovg_font_face_get_x_height(const plutovg_font_face_t* face)
+{
+    return face->x_height;
+}
+
+double plutovg_font_face_get_cap_height(const plutovg_font_face_t* face)
+{
+    return face->cap_height;
 }
 
 double plutovg_font_face_get_kerning(const plutovg_font_face_t* face, int ch1, int ch2)
@@ -397,6 +419,18 @@ double plutovg_font_get_leading(const plutovg_font_t* font)
 {
     double scale = plutovg_font_get_scale(font);
     return plutovg_font_face_get_leading(font->face) * scale;
+}
+
+double plutovg_font_get_x_height(const plutovg_font_t* font)
+{
+    double scale = plutovg_font_get_scale(font);
+    return plutovg_font_face_get_x_height(font->face) * scale;
+}
+
+double plutovg_font_get_cap_height(const plutovg_font_t* font)
+{
+    double scale = plutovg_font_get_scale(font);
+    return plutovg_font_face_get_cap_height(font->face) * scale;
 }
 
 double plutovg_font_get_kerning(const plutovg_font_t* font, int ch1, int ch2)

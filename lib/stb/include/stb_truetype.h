@@ -761,6 +761,10 @@ STBTT_DEF void stbtt_GetFontVMetrics(const stbtt_fontinfo *info, int *ascent, in
 //   the scale factor for a given size
 
 STBTT_DEF int  stbtt_GetFontVMetricsOS2(const stbtt_fontinfo *info, int *typoAscent, int *typoDescent, int *typoLineGap);
+
+STBTT_DEF int  stbtt_GetFontXHeightOS2(const stbtt_fontinfo *info, int *xHeight);
+STBTT_DEF int  stbtt_GetFontCapHeightOS2(const stbtt_fontinfo *info, int *capHeight);
+
 // analogous to GetFontVMetrics, but returns the "typographic" values from the OS/2
 // table (specific to MS/Windows TTF files).
 //
@@ -2574,6 +2578,24 @@ STBTT_DEF int  stbtt_GetFontVMetricsOS2(const stbtt_fontinfo *info, int *typoAsc
    if (typoAscent ) *typoAscent  = ttSHORT(info->data+tab + 68);
    if (typoDescent) *typoDescent = ttSHORT(info->data+tab + 70);
    if (typoLineGap) *typoLineGap = ttSHORT(info->data+tab + 72);
+   return 1;
+}
+
+STBTT_DEF int  stbtt_GetFontXHeightOS2(const stbtt_fontinfo *info, int *xHeight)
+{
+   int tab = stbtt__find_table(info->data, info->fontstart, "OS/2");
+   if (!tab)
+      return 0;
+   if (xHeight ) *xHeight  = ttSHORT(info->data+tab + 86);
+   return 1;
+}
+
+STBTT_DEF int  stbtt_GetFontCapHeightOS2(const stbtt_fontinfo *info, int *capHeight)
+{
+   int tab = stbtt__find_table(info->data, info->fontstart, "OS/2");
+   if (!tab)
+      return 0;
+   if (capHeight ) *capHeight  = ttSHORT(info->data+tab + 88);
    return 1;
 }
 
