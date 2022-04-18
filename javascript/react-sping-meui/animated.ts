@@ -15,7 +15,7 @@ export type { CSS }
 import { MeuiElements } from "../meui"
 
 type AnimatedPrimitives = {
-    [Tag in Primitives]: AnimatedComponent<MeuiElements[Tag]>
+    [Tag in Primitives]: AnimatedComponent<Tag>
 }
 
 /** The type of the `animated()` function */
