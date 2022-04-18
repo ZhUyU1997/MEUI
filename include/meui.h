@@ -49,6 +49,7 @@ void meui_update(struct meui_t *);
 void meui_end(struct meui_t *);
 
 void meui_set_default_font_family(struct meui_t *meui, const char *font_family);
+const char *meui_get_default_font_family(struct meui_t *meui);
 void meui_add_font_face(struct meui_t *meui, const char *font_family, const char *file);
 plutovg_font_t *meui_get_font(struct meui_t *meui, const char *font_family, double size);
 plutovg_surface_t *meui_get_surface(struct meui_t *);

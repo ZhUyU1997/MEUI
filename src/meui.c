@@ -286,6 +286,17 @@ void meui_set_default_font_family(struct meui_t *meui, const char *font_family)
     meui->render_context.default_font_family = strdup(font_family);
 }
 
+const char *meui_get_default_font_family(struct meui_t *meui)
+{
+    if (!meui)
+    {
+        LOGE("meui == NULL");
+        return NULL;
+    }
+
+    return meui->render_context.default_font_family;
+}
+
 void meui_add_font_face(struct meui_t *meui, const char *font_family, const char *file)
 {
     if (!meui)
@@ -332,10 +343,16 @@ plutovg_font_t *meui_get_font(struct meui_t *meui, const char *font_family, doub
 
     font_map_t *map = &meui->render_context.font_map;
     plutovg_font_face_t *font_face = hashmap_get(map, font_family == NULL ? meui->render_context.default_font_family : font_family);
+    
     if (font_face == NULL)
     {
-        LOGE("font family " $(font_family) " not existed");
-        return NULL;
+        // fallback
+        font_face = hashmap_get(map, meui->render_context.default_font_family);
+        if (font_face == NULL)
+        {
+            LOGE("default font family not existed");
+            return NULL;
+        }
     }
 
     return plutovg_font_load_from_face(font_face, size);
