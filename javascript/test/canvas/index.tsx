@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react"
 import { Canvas, MEUI, ReactMEUI } from "../../meui"
 import { Root } from "../../components"
 import { CanvasElement } from "../../meui/canvas"
-import Test from "./getImageData"
+import Test from "./font"
 
 function App() {
     const ref = useRef<CanvasElement>(null)

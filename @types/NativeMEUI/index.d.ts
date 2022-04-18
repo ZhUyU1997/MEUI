@@ -121,7 +121,28 @@ declare module "NativeMEUI" {
         // addPath(path: Path2D, transform?: DOMMatrix2DInit): void
     }
 
+    /** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
+    interface TextMetrics {
+        /** Returns the measurement described below. */
+        readonly actualBoundingBoxAscent: number
+        /** Returns the measurement described below. */
+        readonly actualBoundingBoxDescent: number
+        /** Returns the measurement described below. */
+        readonly actualBoundingBoxLeft: number
+        /** Returns the measurement described below. */
+        readonly actualBoundingBoxRight: number
+        /** Returns the measurement described below. */
+        readonly fontBoundingBoxAscent: number
+        /** Returns the measurement described below. */
+        readonly fontBoundingBoxDescent: number
+        /** Returns the measurement described below. */
+        readonly width: number
+    }
+
     export const Canvas: {
+        restore(): void
+        save(): void 
+
         getImage(
             sx: number,
             sy: number,
@@ -148,6 +169,27 @@ declare module "NativeMEUI" {
 
         beginPath(): void
         closePath(): void
+
+        fillText(text: string, x: number, y: number, maxWidth?: number): void
+        strokeText(text: string, x: number, y: number, maxWidth?: number): void
+        measureText(text: string): TextMetrics
+
+        setFontSize(fontSize: number): void
+        setFontFamily(fontFamily: string): void
+        setDirection(dir: "inherit" | "ltr" | "rtl"): void
+        // setFont(font: string): void
+        setTextAlign(
+            textAlign: "center" | "end" | "left" | "right" | "start"
+        ): void
+        setTextBaseline(
+            textBaseline:
+                | "alphabetic"
+                | "bottom"
+                | "hanging"
+                | "ideographic"
+                | "middle"
+                | "top"
+        ): void
 
         arc(
             x: number,

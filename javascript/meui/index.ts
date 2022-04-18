@@ -34,13 +34,13 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
         interface IntrinsicElements {
-            ["Div"]: PropsWithChildren<
+            Div: PropsWithChildren<
                 ComponentProps & RefAttributes<DivElement>
             >
-            ["Canvas"]: PropsWithChildren<
+            Canvas: PropsWithChildren<
                 ComponentProps & RefAttributes<CanvasElement>
             >
-            ["Stack"]: PropsWithChildren<
+            Stack: PropsWithChildren<
                 ComponentProps & RefAttributes<StackElement>
             >
         }

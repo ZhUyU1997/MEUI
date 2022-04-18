@@ -1,6 +1,8 @@
 import { Canvas as NativeCanvas, Path2D as NativePath2D } from "NativeMEUI"
-import { Box, Matrix2D } from "./box"
-import { MeuiStyle } from "./style"
+import { Box } from "./box"
+import { Matrix2D } from "./style"
+
+import { MeuiStyle, parseFont } from "./style"
 import * as colorString from "color-string"
 
 export enum COLOR_FORMAT {
@@ -8,6 +10,24 @@ export enum COLOR_FORMAT {
     COLOR_RGB = 1,
     COLOR_BGRA = 2,
     COLOR_BGR = 3,
+}
+
+/** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
+interface TextMetrics {
+    /** Returns the measurement described below. */
+    readonly actualBoundingBoxAscent: number
+    /** Returns the measurement described below. */
+    readonly actualBoundingBoxDescent: number
+    /** Returns the measurement described below. */
+    readonly actualBoundingBoxLeft: number
+    /** Returns the measurement described below. */
+    readonly actualBoundingBoxRight: number
+    /** Returns the measurement described below. */
+    readonly fontBoundingBoxAscent: number
+    /** Returns the measurement described below. */
+    readonly fontBoundingBoxDescent: number
+    /** Returns the measurement described below. */
+    readonly width: number
 }
 
 /** The underlying pixel data of an area of a <canvas> element. It is created using the ImageData() constructor or creator methods on the CanvasRenderingContext2D object associated with a canvas: createImageData() and getImageData(). It can also be used to set a part of the canvas by using putImageData(). */
@@ -378,19 +398,45 @@ interface CanvasUserInterface {
     drawFocusIfNeeded(path: Path2D, element: Element): void
 }
 
+interface CanvasSavedState {
+    strokeStyle: string | CanvasGradient | CanvasPattern
+    fillStyle: string | CanvasGradient | CanvasPattern
+    globalAlpha: number
+    lineWidth: number
+    lineCap: CanvasLineCap
+    lineJoin: CanvasLineJoin
+    miterLimit: number
+    lineDashOffset: number
+    shadowOffsetX: number
+    shadowOffsetY: number
+    shadowBlur: number
+    shadowColor: string
+    globalCompositeOperation: GlobalCompositeOperation
+    font: string
+    textAlign: CanvasTextAlign
+    textBaseline: CanvasTextBaseline
+    direction: CanvasDirection
+    imageSmoothingEnabled: boolean
+}
+
 export class CanvasRenderingContext2D
     implements
+        CanvasCompositing,
         CanvasDrawImage,
-        CanvasTransform,
-        CanvasGradient,
-        CanvasText,
-        CanvasShadowStyles,
+        CanvasDrawPath,
+        CanvasFillStrokeStyles,
+        CanvasFilters,
+        CanvasImageData,
+        CanvasImageSmoothing,
+        CanvasPath,
         CanvasPathDrawingStyles,
         CanvasRect,
-        CanvasFillStrokeStyles,
-        CanvasDrawPath,
-        CanvasPath,
-        CanvasImageData
+        CanvasShadowStyles,
+        CanvasState,
+        CanvasText,
+        CanvasTextDrawingStyles,
+        CanvasTransform,
+        CanvasUserInterface
 {
     contextType: string
     contextAttributes?: Record<string, string>
@@ -398,6 +444,30 @@ export class CanvasRenderingContext2D
 
     _fillStyle: string | CanvasGradient | CanvasPattern
     _strokeStyle: string | CanvasGradient | CanvasPattern
+
+    private _lineCap: CanvasLineCap
+    private _lineDashOffset: number
+    private _lineJoin: CanvasLineJoin
+    private _lineWidth: number
+    private _miterLimit: number
+    private _lineDashSegments: number[]
+
+    shadowBlur: number
+    shadowColor: string
+    shadowOffsetX: number
+    shadowOffsetY: number
+
+    _direction: CanvasDirection
+    _font: string
+    _textAlign: CanvasTextAlign
+    _textBaseline: CanvasTextBaseline
+
+    globalAlpha: number
+    globalCompositeOperation: GlobalCompositeOperation
+    filter: string
+
+    imageSmoothingEnabled: boolean
+    imageSmoothingQuality: ImageSmoothingQuality
 
     private _beginPath: () => void
     private _closePath: () => void
@@ -466,17 +536,6 @@ export class CanvasRenderingContext2D
     private _setMiterLimit: (miterLimit: number) => void
     private _setLineDash: (lineDashOffset: number, segments: number[]) => void
 
-    private _lineCap: CanvasLineCap
-    private _lineDashOffset: number
-    private _lineJoin: CanvasLineJoin
-    private _lineWidth: number
-    private _miterLimit: number
-    private _lineDashSegments: number[]
-
-    shadowBlur: number
-    shadowColor: string
-    shadowOffsetX: number
-    shadowOffsetY: number
     private _stroke: { (): void; (path: NativePath2D): void }
     private _fill: {
         (fillRule?: "evenodd" | "nonzero" | undefined): void
@@ -536,14 +595,58 @@ export class CanvasRenderingContext2D
         settings?: ImageDataSettings | undefined
     ) => ArrayBuffer
 
+    private _fillText: (
+        text: string,
+        x: number,
+        y: number,
+        maxWidth?: number | undefined
+    ) => void
+    _setFontSize: (fontSize: number) => void
+    _setFontFamily: (fontFamily: string) => void
+    _setTextAlign: (
+        textAlign: "center" | "end" | "left" | "right" | "start"
+    ) => void
+    _setTextBaseline: (
+        textBaseline:
+            | "alphabetic"
+            | "bottom"
+            | "hanging"
+            | "ideographic"
+            | "middle"
+            | "top"
+    ) => void
+    _setDirection: (dir: "inherit" | "ltr" | "rtl") => void
+    private _strokeText: (
+        text: string,
+        x: number,
+        y: number,
+        maxWidth?: number | undefined
+    ) => void
+    private _measureText: (text: string) => import("NativeMEUI").TextMetrics
+
+    _save: () => void
+    _restore: () => void
+
+    private stateStack: CanvasSavedState[]
     constructor(
         canvas: CanvasElement,
         contextType: string,
         contextAttributes?: Record<string, string>
     ) {
+        this.stateStack = []
         this.canvas = canvas
         this.contextType = contextType
         this.contextAttributes = contextAttributes
+        this.filter = ""
+
+        this.globalAlpha = 1.0
+        this.globalCompositeOperation = "source-over"
+        this.imageSmoothingEnabled = true
+        this.imageSmoothingQuality = "medium"
+        this._direction = "inherit"
+        this._font = "10px sans-serif"
+        this._textAlign = "start"
+        this._textBaseline = "alphabetic"
 
         this.shadowBlur = 0
         this.shadowColor = "#00000000"
@@ -559,11 +662,32 @@ export class CanvasRenderingContext2D
         this._fillStyle = "#000000"
         this._strokeStyle = "#000000"
 
+        this._save = NativeCanvas.save.bind(this.canvas.nativeBox)
+        this._restore = NativeCanvas.restore.bind(this.canvas.nativeBox)
+
         this._putImage = NativeCanvas.putImage.bind(this.canvas.nativeBox)
         this._getImage = NativeCanvas.getImage.bind(this.canvas.nativeBox)
 
         this._beginPath = NativeCanvas.beginPath.bind(this.canvas.nativeBox)
         this._closePath = NativeCanvas.closePath.bind(this.canvas.nativeBox)
+
+        this._fillText = NativeCanvas.fillText.bind(this.canvas.nativeBox)
+        this._strokeText = NativeCanvas.strokeText.bind(this.canvas.nativeBox)
+        this._measureText = NativeCanvas.measureText.bind(this.canvas.nativeBox)
+
+        this._setFontSize = NativeCanvas.setFontSize.bind(this.canvas.nativeBox)
+        this._setFontFamily = NativeCanvas.setFontFamily.bind(
+            this.canvas.nativeBox
+        )
+        this._setTextAlign = NativeCanvas.setTextAlign.bind(
+            this.canvas.nativeBox
+        )
+        this._setTextBaseline = NativeCanvas.setTextBaseline.bind(
+            this.canvas.nativeBox
+        )
+        this._setDirection = NativeCanvas.setDirection.bind(
+            this.canvas.nativeBox
+        )
 
         this._scale = NativeCanvas.scale.bind(this.canvas.nativeBox)
         this._rotate = NativeCanvas.rotate.bind(this.canvas.nativeBox)
@@ -628,6 +752,63 @@ export class CanvasRenderingContext2D
         this.lineWidth = this._lineWidth
         this.miterLimit = this._miterLimit
     }
+
+    restore(): void {
+        this._restore()
+
+        const state = this.stateStack.pop()
+
+        if (!state) return
+
+        this.strokeStyle = state.strokeStyle
+        this.fillStyle = state.fillStyle
+        this.globalAlpha = state.globalAlpha
+        this.lineWidth = state.lineWidth
+        this.lineCap = state.lineCap
+        this.lineJoin = state.lineJoin
+        this.miterLimit = state.miterLimit
+        this.lineDashOffset = state.lineDashOffset
+        this.shadowOffsetX = state.shadowOffsetX
+        this.shadowOffsetY = state.shadowOffsetY
+        this.shadowBlur = state.shadowBlur
+        this.shadowColor = state.shadowColor
+        this.globalCompositeOperation = state.globalCompositeOperation
+        this.font = state.font
+        this.textAlign = state.textAlign
+        this.textBaseline = state.textBaseline
+        this.direction = state.direction
+        this.imageSmoothingEnabled = state.imageSmoothingEnabled
+    }
+    save(): void {
+        const state: CanvasSavedState = {
+            strokeStyle: this.strokeStyle,
+            fillStyle: this.fillStyle,
+            globalAlpha: this.globalAlpha,
+            lineWidth: this.lineWidth,
+            lineCap: this.lineCap,
+            lineJoin: this.lineJoin,
+            miterLimit: this.miterLimit,
+            lineDashOffset: this.lineDashOffset,
+            shadowOffsetX: this.shadowOffsetX,
+            shadowOffsetY: this.shadowOffsetY,
+            shadowBlur: this.shadowBlur,
+            shadowColor: this.shadowColor,
+            globalCompositeOperation: this.globalCompositeOperation,
+            font: this.font,
+            textAlign: this.textAlign,
+            textBaseline: this.textBaseline,
+            direction: this.direction,
+            imageSmoothingEnabled: this.imageSmoothingEnabled,
+        }
+        this.stateStack.push(state)
+        this._save()
+    }
+    drawFocusIfNeeded(element: Element): void
+    drawFocusIfNeeded(path: Path2D, element: Element): void
+    drawFocusIfNeeded(path: any, element?: any): void {
+        throw new Error("Method not implemented.")
+    }
+
     drawImage(image: CanvasImageSource, dx: number, dy: number): void
     drawImage(
         image: CanvasImageSource,
@@ -710,13 +891,13 @@ export class CanvasRenderingContext2D
     }
 
     fillText(text: string, x: number, y: number, maxWidth?: number): void {
-        throw new Error("Method not implemented.")
+        this._fillText(text, x, y, maxWidth)
     }
     measureText(text: string): TextMetrics {
-        throw new Error("Method not implemented.")
+        return this._measureText(text)
     }
     strokeText(text: string, x: number, y: number, maxWidth?: number): void {
-        throw new Error("Method not implemented.")
+        this._strokeText(text, x, y, maxWidth)
     }
 
     getLineDash(): number[] {
@@ -792,6 +973,42 @@ export class CanvasRenderingContext2D
     set fillStyle(val: string | CanvasGradient | CanvasPattern) {
         this._fillStyle = val
         this.updateFillStyle()
+    }
+
+    get font(): string {
+        return this._font
+    }
+    set font(val: string) {
+        this._font = val
+        const { fontSize, fontFamily } = parseFont(val)
+        this._setFontSize(fontSize)
+        this._setFontFamily(fontFamily)
+    }
+
+    get direction(): CanvasDirection {
+        return this._direction
+    }
+    set direction(direction: CanvasDirection) {
+        this._direction = direction
+
+        this._setDirection(direction)
+    }
+    get textAlign(): CanvasTextAlign {
+        return this._textAlign
+    }
+
+    set textAlign(textAlign: CanvasTextAlign) {
+        this._textAlign = textAlign
+        this._setTextAlign(textAlign)
+    }
+
+    get textBaseline(): CanvasTextBaseline {
+        return this._textBaseline
+    }
+
+    set textBaseline(textBaseline: CanvasTextBaseline) {
+        this._textBaseline = textBaseline
+        this._setTextBaseline(textBaseline)
     }
 
     clearRect(x: number, y: number, w: number, h: number): void {

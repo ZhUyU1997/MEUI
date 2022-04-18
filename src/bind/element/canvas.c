@@ -1,8 +1,11 @@
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
+#include <text.h>
+#include <meui.h>
 #include <box.h>
 #include <element.h>
+#include <float.h>
 #include <string.h>
 #include <bind/style.h>
 
@@ -111,7 +114,7 @@ static JSValue js_canvas_putImage(JSContext *ctx, JSValueConst this_val,
 
     int format = COLOR_RGBA;
 
-    if (argc == 10)
+    if (argc == 10 && !JS_IsUndefined(argv[9]))
     {
         if (JS_ToInt32(ctx, &format, argv[9]))
             return JS_EXCEPTION;
@@ -434,8 +437,12 @@ static JSValue js_canvas_ellipse(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &endAngle, argv[6]))
         return JS_EXCEPTION;
-    if (argc == 8 && JS_ToInt32(ctx, &counterclockwise, argv[7]))
-        return JS_EXCEPTION;
+
+    if (argc == 8 && !JS_IsUndefined(argv[7]))
+    {
+        if (JS_ToInt32(ctx, &counterclockwise, argv[7]))
+            return JS_EXCEPTION;
+    }
 
     printf("%f %f %f %f %f %f %f\n", x, y, radiusX, radiusY, rotation, startAngle, endAngle);
     // https://github.com/nilzona/path2d-polyfill/blob/main/src/path2d-polyfill.js
@@ -474,8 +481,13 @@ static JSValue js_canvas_arc(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &endAngle, argv[4]))
         return JS_EXCEPTION;
-    if (argc == 6 && JS_ToInt32(ctx, &counterclockwise, argv[5]))
-        return JS_EXCEPTION;
+
+    if (argc == 6 && !JS_IsUndefined(argv[5]))
+    {
+        if (JS_ToInt32(ctx, &counterclockwise, argv[5]))
+            return JS_EXCEPTION;
+    }
+
     plutovg_path_add_arc(e->path, x, y, radius, startAngle, endAngle, counterclockwise);
     return JS_UNDEFINED;
 }
@@ -618,15 +630,19 @@ static JSValue js_canvas_stroke(JSContext *ctx, JSValueConst this_val,
             return JS_EXCEPTION;
 
         plutovg_add_path(e->pluto, path);
-        plutovg_stroke(e->pluto);
         plutovg_path_destroy(path);
     }
     else
     {
         plutovg_add_path(e->pluto, e->path);
-        plutovg_stroke(e->pluto);
     }
 
+    plutovg_save(e->pluto);
+
+    plutovg_set_source_color(e->pluto, &e->strokeColor);
+    plutovg_stroke(e->pluto);
+
+    plutovg_restore(e->pluto);
     return JS_UNDEFINED;
 }
 
@@ -654,8 +670,8 @@ static plutovg_fill_rule_t get_fill_rule(const char *s)
     return rule;
 }
 
-static JSValue js_canvas_fill(JSContext *ctx, JSValueConst this_val,
-                              int argc, JSValueConst *argv)
+static JSValue js_canvas_fill_clip(JSContext *ctx, JSValueConst this_val,
+                                   int argc, JSValueConst *argv, int magic)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
 
@@ -664,10 +680,14 @@ static JSValue js_canvas_fill(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
+    if (argc > 2)
+        return JS_EXCEPTION;
+
+    plutovg_save(e->pluto);
+
     if (argc == 0)
     {
         plutovg_add_path(e->pluto, e->path);
-        plutovg_fill(e->pluto);
     }
     else if (argc == 1)
     {
@@ -680,13 +700,8 @@ static JSValue js_canvas_fill(JSContext *ctx, JSValueConst this_val,
             plutovg_fill_rule_t rule = get_fill_rule(s);
             JS_FreeCString(ctx, s);
 
-            plutovg_save(e->pluto);
-
             plutovg_set_fill_rule(e->pluto, rule);
             plutovg_add_path(e->pluto, e->path);
-            plutovg_fill(e->pluto);
-
-            plutovg_restore(e->pluto);
         }
         else
         {
@@ -696,7 +711,6 @@ static JSValue js_canvas_fill(JSContext *ctx, JSValueConst this_val,
                 return JS_EXCEPTION;
 
             plutovg_add_path(e->pluto, path);
-            plutovg_fill(e->pluto);
             plutovg_path_destroy(path);
         }
     }
@@ -714,26 +728,29 @@ static JSValue js_canvas_fill(JSContext *ctx, JSValueConst this_val,
         plutovg_fill_rule_t rule = get_fill_rule(s);
         JS_FreeCString(ctx, s);
 
-        plutovg_save(e->pluto);
-
         plutovg_set_fill_rule(e->pluto, rule);
         plutovg_add_path(e->pluto, path);
+
+        plutovg_path_destroy(path);
+    }
+
+    if (magic == 0)
+    {
+        plutovg_set_source_color(e->pluto, &e->fillColor);
         plutovg_fill(e->pluto);
-
-        plutovg_restore(e->pluto);
-
-        plutovg_path_destroy(path);
     }
     else
     {
-        return JS_EXCEPTION;
+        plutovg_clip(e->pluto);
     }
+
+    plutovg_restore(e->pluto);
 
     return JS_UNDEFINED;
 }
 
-static JSValue js_canvas_clip(JSContext *ctx, JSValueConst this_val,
-                              int argc, JSValueConst *argv)
+static JSValue js_canvas_fillRect_strokeRect_clearRect(JSContext *ctx, JSValueConst this_val,
+                                                       int argc, JSValueConst *argv, int magic)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
 
@@ -742,76 +759,47 @@ static JSValue js_canvas_clip(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
-    if (argc == 0)
+    double x, y, w, h;
+    if (JS_ToFloat64(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToFloat64(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+    if (JS_ToFloat64(ctx, &w, argv[2]))
+        return JS_EXCEPTION;
+    if (JS_ToFloat64(ctx, &h, argv[3]))
+        return JS_EXCEPTION;
+
+    plutovg_save(e->pluto);
+
+    plutovg_path_t *path = plutovg_path_create();
+    plutovg_path_add_rect(path, x, y, w, h);
+    plutovg_add_path(e->pluto, path);
+
+    if (magic == 0)
     {
-        plutovg_add_path(e->pluto, e->path);
-        plutovg_clip(e->pluto);
+        plutovg_set_source_color(e->pluto, &e->fillColor);
+        plutovg_fill(e->pluto);
     }
-    else if (argc == 1)
+    else if (magic == 1)
     {
-        if (JS_IsString(argv[0]))
-        {
-            const char *s = JS_ToCString(ctx, argv[0]);
-            if (s == NULL)
-                return JS_EXCEPTION;
-
-            plutovg_fill_rule_t rule = get_fill_rule(s);
-            JS_FreeCString(ctx, s);
-
-            plutovg_save(e->pluto);
-
-            plutovg_set_fill_rule(e->pluto, rule);
-            plutovg_add_path(e->pluto, e->path);
-            plutovg_clip(e->pluto);
-
-            plutovg_restore(e->pluto);
-        }
-        else
-        {
-            plutovg_path_t *path = JS_GetOpaque2(ctx, argv[0], get_js_path2d_class_id());
-
-            if (!path)
-                return JS_EXCEPTION;
-
-            plutovg_add_path(e->pluto, path);
-            plutovg_clip(e->pluto);
-            plutovg_path_destroy(path);
-        }
-    }
-    else if (argc == 2)
-    {
-        plutovg_path_t *path = JS_GetOpaque2(ctx, argv[0], get_js_path2d_class_id());
-
-        if (!path)
-            return JS_EXCEPTION;
-
-        const char *s = JS_ToCString(ctx, argv[0]);
-        if (s == NULL)
-            return JS_EXCEPTION;
-
-        plutovg_fill_rule_t rule = get_fill_rule(s);
-        JS_FreeCString(ctx, s);
-
-        plutovg_save(e->pluto);
-
-        plutovg_set_fill_rule(e->pluto, rule);
-        plutovg_add_path(e->pluto, path);
-        plutovg_clip(e->pluto);
-
-        plutovg_restore(e->pluto);
-
-        plutovg_path_destroy(path);
+        plutovg_set_source_color(e->pluto, &e->strokeColor);
+        plutovg_stroke(e->pluto);
     }
     else
     {
-        return JS_EXCEPTION;
+        plutovg_set_operator(e->pluto, plutovg_operator_dst_in);
+        plutovg_set_source_rgba(e->pluto, 0, 0, 0, 0);
+        plutovg_fill(e->pluto);
     }
 
+    plutovg_path_destroy(path);
+
+    plutovg_restore(e->pluto);
     return JS_UNDEFINED;
 }
 
-static JSValue js_canvas_strokeRect(JSContext *ctx, JSValueConst this_val,
-                                    int argc, JSValueConst *argv)
+static JSValue js_canvas_measureText(JSContext *ctx, JSValueConst this_val,
+                                     int argc, JSValueConst *argv)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
 
@@ -820,32 +808,34 @@ static JSValue js_canvas_strokeRect(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
-    double x, y, w, h;
-    if (JS_ToFloat64(ctx, &x, argv[0]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &y, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &w, argv[2]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &h, argv[3]))
+    size_t len = 0;
+    const char *s = JS_ToCStringLen(ctx, &len, argv[0]);
+    if (s == NULL)
         return JS_EXCEPTION;
 
-    plutovg_save(e->pluto);
+    double width;
+    struct meui_t *meui = meui_get_instance();
+    plutovg_font_t *font = meui_get_font(meui, e->font_family, e->font_size);
+    double ascent = plutovg_font_get_ascent(font);
+    double descent = plutovg_font_get_descent(font);
 
-    plutovg_path_t *path = plutovg_path_create();
-    plutovg_path_add_rect(path, x, y, w, h);
-    plutovg_add_path(e->pluto, path);
+    const char *begin = s;
+    plutovg_rect_t rect = measure_textn_oneline_path(font, &begin, s + len, DBL_MAX, &width);
+    JS_FreeCString(ctx, s);
 
-    plutovg_stroke(e->pluto);
-
-    plutovg_path_destroy(path);
-
-    plutovg_restore(e->pluto);
-    return JS_UNDEFINED;
+    JSValue obj = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, obj, "actualBoundingBoxAscent", JS_NewFloat64(ctx, -rect.y));
+    JS_SetPropertyStr(ctx, obj, "actualBoundingBoxDescent", JS_NewFloat64(ctx, rect.h + rect.y));
+    JS_SetPropertyStr(ctx, obj, "actualBoundingBoxLeft", JS_NewFloat64(ctx, rect.x));
+    JS_SetPropertyStr(ctx, obj, "actualBoundingBoxRight", JS_NewFloat64(ctx, rect.x + rect.w));
+    JS_SetPropertyStr(ctx, obj, "fontBoundingBoxAscent", JS_NewFloat64(ctx, ascent));
+    JS_SetPropertyStr(ctx, obj, "fontBoundingBoxDescent", JS_NewFloat64(ctx, -descent));
+    JS_SetPropertyStr(ctx, obj, "width", JS_NewFloat64(ctx, width));
+    return obj;
 }
 
-static JSValue js_canvas_fillRect(JSContext *ctx, JSValueConst this_val,
-                                  int argc, JSValueConst *argv)
+static JSValue js_canvas_fillText_strokeText(JSContext *ctx, JSValueConst this_val,
+                                             int argc, JSValueConst *argv, int magic)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
 
@@ -854,63 +844,120 @@ static JSValue js_canvas_fillRect(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
-    double x, y, w, h;
-    if (JS_ToFloat64(ctx, &x, argv[0]))
+    double x, y;
+    if (JS_ToFloat64(ctx, &x, argv[1]))
         return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &y, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &w, argv[2]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &h, argv[3]))
+    if (JS_ToFloat64(ctx, &y, argv[2]))
         return JS_EXCEPTION;
 
-    plutovg_save(e->pluto);
+    double maxWidth = DBL_MAX;
 
-    plutovg_path_t *path = plutovg_path_create();
-    plutovg_path_add_rect(path, x, y, w, h);
+    if (argc == 4 && !JS_IsUndefined(argv[3]))
+    {
+        if (JS_ToFloat64(ctx, &maxWidth, argv[3]))
+            return JS_EXCEPTION;
+    }
+
+    size_t len = 0;
+    const char *s = JS_ToCStringLen(ctx, &len, argv[0]);
+    if (s == NULL)
+        return JS_EXCEPTION;
+
+    double width;
+
+    struct meui_t *meui = meui_get_instance();
+    plutovg_font_t *font = meui_get_font(meui, e->font_family, e->font_size);
+    double ascent = plutovg_font_get_ascent(font);
+    double descent = plutovg_font_get_descent(font);
+    double line_gap = plutovg_font_get_line_gap(font);
+    double leading = plutovg_font_get_leading(font);
+    double x_height = plutovg_font_get_x_height(font);
+    double cap_height = plutovg_font_get_cap_height(font);
+
+    const char *begin = s;
+    plutovg_path_t *path = get_textn_oneline_path(font, &begin, s + len, DBL_MAX, &width);
+    JS_FreeCString(ctx, s);
+
+    plutovg_matrix_t m;
+    plutovg_matrix_init_identity(&m);
+
+    // https://www.w3.org/TR/css-inline-3/#baseline-types
+
+    switch (e->text_baseline)
+    {
+    case CANVAS_TEXT_BASELINE_ALPHABETIC:
+        break;
+    case CANVAS_TEXT_BASELINE_BOTTOM:
+        plutovg_matrix_translate(&m, 0, descent);
+        break;
+    case CANVAS_TEXT_BASELINE_HANGING:
+        // TODO
+        plutovg_matrix_translate(&m, 0, cap_height);
+        break;
+    case CANVAS_TEXT_BASELINE_IDEOGRAPHIC:
+        // TODO
+        break;
+    case CANVAS_TEXT_BASELINE_MIDDLE:
+        plutovg_matrix_translate(&m, 0, x_height / 2);
+        break;
+    case CANVAS_TEXT_BASELINE_TOP:
+        plutovg_matrix_translate(&m, 0, cap_height);
+        break;
+    default:
+        break;
+    }
+
+    switch (e->text_align)
+    {
+    case CANVAS_TEXT_ALIGN_CENTER:
+        plutovg_matrix_translate(&m, -width / 2, 0);
+        break;
+    case CANVAS_TEXT_ALIGN_END:
+        // TODO
+        plutovg_matrix_translate(&m, -width, 0);
+        break;
+    case CANVAS_TEXT_ALIGN_LEFT:
+        plutovg_matrix_translate(&m, 0, 0);
+        break;
+    case CANVAS_TEXT_ALIGN_RIGHT:
+        plutovg_matrix_translate(&m, -width, 0);
+        break;
+    case CANVAS_TEXT_ALIGN_START:
+        // TODO
+        plutovg_matrix_translate(&m, 0, 0);
+        break;
+    default:
+        break;
+    }
+
+    plutovg_matrix_translate(&m, x, y);
+
+    if (maxWidth < width)
+        plutovg_matrix_scale(&m, maxWidth / width, 1);
+
+    plutovg_path_transform(path, &m);
+
     plutovg_add_path(e->pluto, path);
 
-    plutovg_fill(e->pluto);
-
-    plutovg_path_destroy(path);
-
-    plutovg_restore(e->pluto);
-    return JS_UNDEFINED;
-}
-
-static JSValue js_canvas_clearRect(JSContext *ctx, JSValueConst this_val,
-                                   int argc, JSValueConst *argv)
-{
-    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
-
-    if (!node)
-        return JS_EXCEPTION;
-
-    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
-
-    double x, y, w, h;
-    if (JS_ToFloat64(ctx, &x, argv[0]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &y, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &w, argv[2]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &h, argv[3]))
-        return JS_EXCEPTION;
-
     plutovg_save(e->pluto);
+    plutovg_set_source_color(e->pluto, &e->fillColor);
 
-    plutovg_path_t *path = plutovg_path_create();
-    plutovg_path_add_rect(path, x, y, w, h);
-    plutovg_add_path(e->pluto, path);
-
-    plutovg_set_source_rgba(e->pluto, 0, 0, 0, 0);
-    plutovg_set_operator(e->pluto, plutovg_operator_dst_in);
-    plutovg_fill(e->pluto);
-
-    plutovg_path_destroy(path);
+    if (magic == 0)
+    {
+        plutovg_set_source_color(e->pluto, &e->fillColor);
+        plutovg_fill(e->pluto);
+    }
+    else
+    {
+        plutovg_set_source_color(e->pluto, &e->strokeColor);
+        plutovg_stroke(e->pluto);
+    }
 
     plutovg_restore(e->pluto);
+
+    plutovg_font_destroy(font);
+    plutovg_path_destroy(path);
+
     return JS_UNDEFINED;
 }
 
@@ -934,7 +981,7 @@ static JSValue js_canvas_setStrokeStyle(JSContext *ctx, JSValueConst this_val,
     if (JS_ToFloat64(ctx, &a, argv[3]))
         return JS_EXCEPTION;
 
-    plutovg_set_source_rgba(e->pluto, r, g, b, a);
+    plutovg_color_init_rgba(&e->strokeColor, r, g, b, a);
     return JS_UNDEFINED;
 }
 
@@ -958,7 +1005,7 @@ static JSValue js_canvas_setFillStyle(JSContext *ctx, JSValueConst this_val,
     if (JS_ToFloat64(ctx, &a, argv[3]))
         return JS_EXCEPTION;
 
-    plutovg_set_source_rgba(e->pluto, r, g, b, a);
+    plutovg_color_init_rgba(&e->fillColor, r, g, b, a);
     return JS_UNDEFINED;
 }
 
@@ -1116,7 +1163,227 @@ static JSValue js_canvas_setLineDash(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_canvas_setDirection(JSContext *ctx, JSValueConst this_val,
+                                      int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (s == NULL)
+        return JS_EXCEPTION;
+
+    const static struct
+    {
+        const char *string_value;
+        enum CANVAS_TEXT_DIRECTION enum_value;
+    } map[] = {
+        {"inherit", CANVAS_TEXT_DIRECTION_INHERIT},
+        {"ltr", CANVAS_TEXT_DIRECTION_LTR},
+        {"rtl", CANVAS_TEXT_DIRECTION_RTL},
+    };
+
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
+        {
+            e->direction = map[i].enum_value;
+            ret = JS_UNDEFINED;
+            break;
+        }
+    }
+
+    JS_FreeCString(ctx, s);
+    return ret;
+}
+
+static JSValue js_canvas_setTextAlign(JSContext *ctx, JSValueConst this_val,
+                                      int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (s == NULL)
+        return JS_EXCEPTION;
+
+    const static struct
+    {
+        const char *string_value;
+        enum CANVAS_TEXT_ALIGN enum_value;
+    } map[] = {
+        {"center", CANVAS_TEXT_ALIGN_CENTER},
+        {"end", CANVAS_TEXT_ALIGN_END},
+        {"left", CANVAS_TEXT_ALIGN_LEFT},
+        {"right", CANVAS_TEXT_ALIGN_RIGHT},
+        {"start", CANVAS_TEXT_ALIGN_START},
+    };
+
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
+        {
+            e->text_align = map[i].enum_value;
+            ret = JS_UNDEFINED;
+            break;
+        }
+    }
+
+    JS_FreeCString(ctx, s);
+    return ret;
+}
+
+static JSValue js_canvas_setTextBaseline(JSContext *ctx, JSValueConst this_val,
+                                         int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (s == NULL)
+        return JS_EXCEPTION;
+
+    const static struct
+    {
+        const char *string_value;
+        enum CANVAS_TEXT_BASELINE enum_value;
+    } map[] = {
+        {"alphabetic", CANVAS_TEXT_BASELINE_ALPHABETIC},
+        {"bottom", CANVAS_TEXT_BASELINE_BOTTOM},
+        {"hanging", CANVAS_TEXT_BASELINE_HANGING},
+        {"ideographic", CANVAS_TEXT_BASELINE_IDEOGRAPHIC},
+        {"middle", CANVAS_TEXT_BASELINE_MIDDLE},
+        {"top", CANVAS_TEXT_BASELINE_TOP},
+    };
+
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
+        {
+            e->text_baseline = map[i].enum_value;
+            ret = JS_UNDEFINED;
+            break;
+        }
+    }
+
+    JS_FreeCString(ctx, s);
+    return ret;
+}
+
+static JSValue js_canvas_setFontSize(JSContext *ctx, JSValueConst this_val,
+                                     int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    double font_size;
+    if (JS_ToFloat64(ctx, &font_size, argv[0]))
+        return JS_EXCEPTION;
+
+    e->font_size = font_size;
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_setFontWeight(JSContext *ctx, JSValueConst this_val,
+                                       int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    double font_weight;
+    if (JS_ToFloat64(ctx, &font_weight, argv[0]))
+        return JS_EXCEPTION;
+
+    e->font_weight = font_weight;
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_setFontFamily(JSContext *ctx, JSValueConst this_val,
+                                       int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    const char *s = JS_ToCString(ctx, argv[0]);
+    if (s == NULL)
+        return JS_EXCEPTION;
+
+    if (e->font_family)
+        free(e->font_family);
+    e->font_family = strdup(s);
+
+    JS_FreeCString(ctx, s);
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_restore(JSContext *ctx, JSValueConst this_val,
+                                 int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    plutovg_restore(e->pluto);
+    return JS_UNDEFINED;
+}
+
+static JSValue js_canvas_save(JSContext *ctx, JSValueConst this_val,
+                              int argc, JSValueConst *argv)
+{
+    JSValue ret = JS_EXCEPTION;
+
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    plutovg_save(e->pluto);
+    return JS_UNDEFINED;
+}
+
 static const JSCFunctionListEntry js_canvas_funcs[] = {
+    JS_CFUNC_DEF("restore", 0, js_canvas_restore),
+    JS_CFUNC_DEF("save", 0, js_canvas_save),
+
     JS_CFUNC_DEF("getImage", 4, js_canvas_getImage),
     JS_CFUNC_DEF("putImage", 9, js_canvas_putImage),
     JS_CFUNC_DEF("getWidth", 0, js_canvas_getWidth),
@@ -1147,12 +1414,17 @@ static const JSCFunctionListEntry js_canvas_funcs[] = {
     JS_CFUNC_DEF("rect", 4, js_canvas_rect),
 
     JS_CFUNC_DEF("stroke", 1, js_canvas_stroke),
-    JS_CFUNC_DEF("fill", 2, js_canvas_fill),
-    JS_CFUNC_DEF("clip", 2, js_canvas_clip),
+    JS_CFUNC_MAGIC_DEF("fill", 2, js_canvas_fill_clip, 0),
+    JS_CFUNC_MAGIC_DEF("clip", 2, js_canvas_fill_clip, 1),
 
-    JS_CFUNC_DEF("strokeRect", 4, js_canvas_strokeRect),
-    JS_CFUNC_DEF("fillRect", 4, js_canvas_fillRect),
-    JS_CFUNC_DEF("clearRect", 4, js_canvas_clearRect),
+    JS_CFUNC_MAGIC_DEF("fillRect", 4, js_canvas_fillRect_strokeRect_clearRect, 0),
+    JS_CFUNC_MAGIC_DEF("strokeRect", 4, js_canvas_fillRect_strokeRect_clearRect, 1),
+    JS_CFUNC_MAGIC_DEF("clearRect", 4, js_canvas_fillRect_strokeRect_clearRect, 2),
+
+    JS_CFUNC_DEF("measureText", 1, js_canvas_measureText),
+
+    JS_CFUNC_MAGIC_DEF("fillText", 4, js_canvas_fillText_strokeText, 0),
+    JS_CFUNC_MAGIC_DEF("strokeText", 4, js_canvas_fillText_strokeText, 1),
 
     JS_CFUNC_DEF("setStrokeStyle", 4, js_canvas_setStrokeStyle),
     JS_CFUNC_DEF("setFillStyle", 4, js_canvas_setFillStyle),
@@ -1161,7 +1433,16 @@ static const JSCFunctionListEntry js_canvas_funcs[] = {
     JS_CFUNC_DEF("setLineJoin", 1, js_canvas_setLineJoin),
     JS_CFUNC_DEF("setMiterLimit", 1, js_canvas_setMiterLimit),
     JS_CFUNC_DEF("setLineWidth", 1, js_canvas_setLineWidth),
-    JS_CFUNC_DEF("setLineDash", 2, js_canvas_setLineDash),
+    JS_CFUNC_DEF("setLineDash", 1, js_canvas_setLineDash),
+
+    JS_CFUNC_DEF("setDirection", 1, js_canvas_setDirection),
+    JS_CFUNC_DEF("setTextAlign", 1, js_canvas_setTextAlign),
+    JS_CFUNC_DEF("setTextBaseline", 1, js_canvas_setTextBaseline),
+
+    JS_CFUNC_DEF("setFontSize", 1, js_canvas_setFontSize),
+    JS_CFUNC_DEF("setFontWeight", 1, js_canvas_setFontWeight),
+    JS_CFUNC_DEF("setFontFamily", 1, js_canvas_setFontFamily),
+
 };
 
 int js_canvas_define(JSContext *ctx, JSModuleDef *m)

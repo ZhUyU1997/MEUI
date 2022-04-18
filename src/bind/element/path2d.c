@@ -33,8 +33,12 @@ static JSValue js_path2d_arc(JSContext *ctx, JSValueConst this_val,
     if (JS_ToFloat64(ctx, &endAngle, argv[4]))
         return JS_EXCEPTION;
 
-    if (argc == 6 && JS_ToInt32(ctx, &counterclockwise, argv[5]))
-        return JS_EXCEPTION;
+    if (argc == 6 && !JS_IsUndefined(argv[5]))
+    {
+        if (JS_ToInt32(ctx, &counterclockwise, argv[5]))
+            return JS_EXCEPTION;
+    }
+
     plutovg_path_add_arc(path, x, y, radius, startAngle, endAngle, counterclockwise);
     return JS_UNDEFINED;
 }
@@ -110,8 +114,12 @@ static JSValue js_path2d_ellipse(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &endAngle, argv[6]))
         return JS_EXCEPTION;
-    if (argc == 8 && JS_ToInt32(ctx, &counterclockwise, argv[7]))
-        return JS_EXCEPTION;
+
+    if (argc == 8 && !JS_IsUndefined(argv[7]))
+    {
+        if (JS_ToInt32(ctx, &counterclockwise, argv[7]))
+            return JS_EXCEPTION;
+    }
 
     // https://github.com/nilzona/path2d-polyfill/blob/main/src/path2d-polyfill.js
     plutovg_matrix_t matrix;
