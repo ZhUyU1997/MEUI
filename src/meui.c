@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PROFILE
-
 #ifdef PROFILE
 #include <gperftools/profiler.h>
 #endif

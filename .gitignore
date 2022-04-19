@@ -8,5 +8,4 @@ fixdep*
 /.vscode
 /node_modules
 /include/gen
-/package-lock.json
 /dist
