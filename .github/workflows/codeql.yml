@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp', 'javascript', 'python' ]
+        language: [ 'cpp', 'javascript' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
@@ -50,7 +50,7 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
     - run: |
-        ./style-gen.py &&make
+        ./style-gen.py && make
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
