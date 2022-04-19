@@ -4,7 +4,7 @@ import "./polyfill"
 // import { Main } from "./nes"
 // import { Main } from "./dropdown"
 // import { Main } from "./whatsapp"
-// import { Main } from "./test/canvas"
-import { Main } from "./test/canvas/particle/3000"
+// import { Main } from "./test/canvas/particle/3000"
+import { Main } from "./test/canvas"
 
 Main()

@@ -7,8 +7,9 @@ import typescript from 'rollup-plugin-typescript2'
 export default {
 	input: 'javascript/index.jsx',
 	output: {
-		file: 'dist/app.js',
-		format: 'esm'
+		format: 'esm',
+		dir: "dist",
+		entryFileNames: 'app.js'
 	},
 	external: ['NativeMEUI', 'os', 'renderer'],
 	plugins: [

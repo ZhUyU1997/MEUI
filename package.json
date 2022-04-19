@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "make -j16 && rollup -c && ./meui dist/app.js",
-    "build": "make -j16 && rollup -c",
-    "profile": "make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/app.js",
+    "dev": "rm -f dist/* && make -j16 && rollup -c && ./meui dist/app.js",
+    "build": "rm -f dist/* && make -j16 && rollup -c",
+    "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/app.js",
     "gen": "./style-gen.py",
     "format": "prettier --write javascript"
   },

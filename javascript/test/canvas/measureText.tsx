@@ -7,7 +7,6 @@ export default function Test(ctx: CanvasRenderingContext2D) {
     ctx.fillText("┃ぬabc中国kⅧ ", 0, y)
 
     const m = ctx.measureText("┃ぬabc中国kⅧ ")
-    console.log(JSON.stringify(m, null, 4))
 
     ctx.beginPath()
     ctx.moveTo(0, y)
