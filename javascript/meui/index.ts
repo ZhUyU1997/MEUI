@@ -1,7 +1,7 @@
 import { NativeMEUI, BOX_STATE } from "NativeMEUI"
 import * as os from "os"
 import React, { PropsWithChildren, RefAttributes } from "react"
-import { Box, CustomEvent, MeuiMouseEvent } from "./box"
+import { Box, CustomEvent, MeuiMouseEvent, MeuiWheelEvent } from "./box"
 import { CanvasElement } from "./canvas"
 import { DivElement } from "./div"
 import { StackElement } from "./stack"
@@ -34,9 +34,7 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
         interface IntrinsicElements {
-            Div: PropsWithChildren<
-                ComponentProps & RefAttributes<DivElement>
-            >
+            Div: PropsWithChildren<ComponentProps & RefAttributes<DivElement>>
             Canvas: PropsWithChildren<
                 ComponentProps & RefAttributes<CanvasElement>
             >
@@ -122,6 +120,14 @@ export class MEUI {
                             clientX: event.x,
                             clientY: event.y,
                             button: event.button,
+                        })
+                    )
+                } else if (event.type === "mousewheel") {
+                    box.dispatchEvent(
+                        new MeuiWheelEvent(event.type, {
+                            deltaX: event.deltaX,
+                            deltaY: event.deltaY,
+                            deltaZ: event.deltaZ,
                         })
                     )
                 }
