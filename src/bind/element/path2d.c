@@ -21,7 +21,7 @@ static JSValue js_path2d_arc(JSContext *ctx, JSValueConst this_val,
     assert(path);
 
     double x, y, radius, startAngle, endAngle;
-    int counterclockwise = 1;
+    int counterclockwise = 0;
     if (JS_ToFloat64(ctx, &x, argv[0]))
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &y, argv[1]))
@@ -99,7 +99,7 @@ static JSValue js_path2d_ellipse(JSContext *ctx, JSValueConst this_val,
     assert(path);
 
     double x, y, radiusX, radiusY, rotation, startAngle, endAngle;
-    int counterclockwise = 1;
+    int counterclockwise = 0;
     if (JS_ToFloat64(ctx, &x, argv[0]))
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &y, argv[1]))

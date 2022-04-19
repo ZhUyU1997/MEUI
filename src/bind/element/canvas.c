@@ -363,7 +363,7 @@ static JSValue js_canvas_resetTransform(JSContext *ctx, JSValueConst this_val,
 
     plutovg_matrix_t matrix;
     plutovg_matrix_init_identity(&matrix);
-    plutovg_transform(e->pluto, &matrix);
+    plutovg_set_matrix(e->pluto, &matrix);
     return JS_UNDEFINED;
 }
 
@@ -422,7 +422,7 @@ static JSValue js_canvas_ellipse(JSContext *ctx, JSValueConst this_val,
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
     double x, y, radiusX, radiusY, rotation, startAngle, endAngle;
-    int counterclockwise = 1;
+    int counterclockwise = 0;
     if (JS_ToFloat64(ctx, &x, argv[0]))
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &y, argv[1]))
@@ -470,7 +470,7 @@ static JSValue js_canvas_arc(JSContext *ctx, JSValueConst this_val,
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
     double x, y, radius, startAngle, endAngle;
-    int counterclockwise = 1;
+    int counterclockwise = 0;
     if (JS_ToFloat64(ctx, &x, argv[0]))
         return JS_EXCEPTION;
     if (JS_ToFloat64(ctx, &y, argv[1]))
@@ -630,7 +630,6 @@ static JSValue js_canvas_stroke(JSContext *ctx, JSValueConst this_val,
             return JS_EXCEPTION;
 
         plutovg_add_path(e->pluto, path);
-        plutovg_path_destroy(path);
     }
     else
     {
@@ -711,7 +710,6 @@ static JSValue js_canvas_fill_clip(JSContext *ctx, JSValueConst this_val,
                 return JS_EXCEPTION;
 
             plutovg_add_path(e->pluto, path);
-            plutovg_path_destroy(path);
         }
     }
     else if (argc == 2)
@@ -730,8 +728,6 @@ static JSValue js_canvas_fill_clip(JSContext *ctx, JSValueConst this_val,
 
         plutovg_set_fill_rule(e->pluto, rule);
         plutovg_add_path(e->pluto, path);
-
-        plutovg_path_destroy(path);
     }
 
     if (magic == 0)
@@ -739,7 +735,7 @@ static JSValue js_canvas_fill_clip(JSContext *ctx, JSValueConst this_val,
         plutovg_set_source_color(e->pluto, &e->fillColor);
         plutovg_fill(e->pluto);
     }
-    else
+    else if (magic == 1)
     {
         plutovg_clip(e->pluto);
     }
@@ -769,11 +765,15 @@ static JSValue js_canvas_fillRect_strokeRect_clearRect(JSContext *ctx, JSValueCo
     if (JS_ToFloat64(ctx, &h, argv[3]))
         return JS_EXCEPTION;
 
+    if (magic > 2)
+        return JS_EXCEPTION;
+
     plutovg_save(e->pluto);
 
     plutovg_path_t *path = plutovg_path_create();
     plutovg_path_add_rect(path, x, y, w, h);
     plutovg_add_path(e->pluto, path);
+    plutovg_path_destroy(path);
 
     if (magic == 0)
     {
@@ -791,8 +791,6 @@ static JSValue js_canvas_fillRect_strokeRect_clearRect(JSContext *ctx, JSValueCo
         plutovg_set_source_rgba(e->pluto, 0, 0, 0, 0);
         plutovg_fill(e->pluto);
     }
-
-    plutovg_path_destroy(path);
 
     plutovg_restore(e->pluto);
     return JS_UNDEFINED;
