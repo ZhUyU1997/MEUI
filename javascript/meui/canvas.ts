@@ -442,8 +442,8 @@ export class CanvasRenderingContext2D
     contextAttributes?: Record<string, string>
     canvas: CanvasElement
 
-    _fillStyle: string | CanvasGradient | CanvasPattern
-    _strokeStyle: string | CanvasGradient | CanvasPattern
+    private _fillStyle: string | CanvasGradient | CanvasPattern
+    private _strokeStyle: string | CanvasGradient | CanvasPattern
 
     private _lineCap: CanvasLineCap
     private _lineDashOffset: number
@@ -457,10 +457,10 @@ export class CanvasRenderingContext2D
     shadowOffsetX: number
     shadowOffsetY: number
 
-    _direction: CanvasDirection
-    _font: string
-    _textAlign: CanvasTextAlign
-    _textBaseline: CanvasTextBaseline
+    private _direction: CanvasDirection
+    private _font: string
+    private _textAlign: CanvasTextAlign
+    private _textBaseline: CanvasTextBaseline
 
     globalAlpha: number
     globalCompositeOperation: GlobalCompositeOperation
@@ -601,12 +601,12 @@ export class CanvasRenderingContext2D
         y: number,
         maxWidth?: number | undefined
     ) => void
-    _setFontSize: (fontSize: number) => void
-    _setFontFamily: (fontFamily: string) => void
-    _setTextAlign: (
+    private _setFontSize: (fontSize: number) => void
+    private _setFontFamily: (fontFamily: string) => void
+    private _setTextAlign: (
         textAlign: "center" | "end" | "left" | "right" | "start"
     ) => void
-    _setTextBaseline: (
+    private _setTextBaseline: (
         textBaseline:
             | "alphabetic"
             | "bottom"
@@ -615,7 +615,7 @@ export class CanvasRenderingContext2D
             | "middle"
             | "top"
     ) => void
-    _setDirection: (dir: "inherit" | "ltr" | "rtl") => void
+    private _setDirection: (dir: "inherit" | "ltr" | "rtl") => void
     private _strokeText: (
         text: string,
         x: number,
@@ -624,8 +624,8 @@ export class CanvasRenderingContext2D
     ) => void
     private _measureText: (text: string) => import("NativeMEUI").TextMetrics
 
-    _save: () => void
-    _restore: () => void
+    private _save: () => void
+    private _restore: () => void
 
     private stateStack: CanvasSavedState[]
     constructor(
