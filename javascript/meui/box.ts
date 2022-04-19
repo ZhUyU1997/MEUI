@@ -2,12 +2,6 @@ import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
 import * as colorString from "color-string"
 import { MeuiStyle, parseTransform } from "./style"
 
-export interface MeuiWheelEvent extends MeuiMouseEvent {
-    deltaX: number
-    deltaY: number
-    deltaZ: number
-}
-
 interface MeuiEventMap {
     mousedown: MeuiMouseEvent
     mouseup: MeuiMouseEvent
@@ -32,6 +26,12 @@ interface MouseEventInit {
     screenY?: number
 }
 
+interface WheelEventInit extends MouseEventInit {
+    deltaMode?: number
+    deltaX?: number
+    deltaY?: number
+    deltaZ?: number
+}
 export class MeuiEvent implements MeuiEvent {
     readonly bubbles: boolean
     // cancelBubble: boolean;
@@ -72,6 +72,19 @@ export class MeuiMouseEvent extends MeuiEvent {
         // TODO:
         this.offsetX = 0
         this.offsetY = 0
+    }
+}
+
+export class MeuiWheelEvent extends MeuiMouseEvent {
+    deltaX: number
+    deltaY: number
+    deltaZ: number
+
+    constructor(type: string, eventInitDict: WheelEventInit = {}) {
+        super(type, eventInitDict)
+        this.deltaX = eventInitDict.deltaX ?? 0.0
+        this.deltaY = eventInitDict.deltaY ?? 0.0
+        this.deltaZ = eventInitDict.deltaZ ?? 0.0
     }
 }
 
