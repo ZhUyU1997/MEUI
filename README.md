@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml"><img src="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
   <img src="https://img.shields.io/github/issues/ZhUyU1997/MEUI">
-  <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/rollup">
+  <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/dev/rollup">
   <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/react">
   <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/@react-spring/core">
 </p>
