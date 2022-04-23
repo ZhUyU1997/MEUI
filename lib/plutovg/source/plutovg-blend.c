@@ -239,21 +239,37 @@ static void fetch_radial_gradient(uint32_t* buffer, const radial_gradient_values
     const uint32_t* end = buffer + length;
     if(v->extended)
     {
-        while(buffer < end)
+        if(v->dr >= 0)
         {
-            uint32_t result = 0;
-            if(det >= 0)
+            while(buffer < end)
             {
-                double w = sqrt(det) - b;
-                if(gradient->radial.fr + v->dr * w >= 0)
-                    result = gradient_pixel(gradient, w);
+                uint32_t result = 0;
+                if(det >= 0)
+                {
+                    result = gradient_pixel(gradient, sqrt(det) - b);
+                }
+                *buffer = result;
+                det += delta_det;
+                delta_det += delta_delta_det;
+                b += delta_b;
+                ++buffer;
             }
-
-            *buffer = result;
-            det += delta_det;
-            delta_det += delta_delta_det;
-            b += delta_b;
-            ++buffer;
+        }
+        else
+        {
+            while(buffer < end)
+            {
+                uint32_t result = 0;
+                if(det >= 0)
+                {
+                    result = gradient_pixel(gradient, -sqrt(det) - b);
+                }
+                *buffer = result;
+                det += delta_det;
+                delta_det += delta_delta_det;
+                b += delta_b;
+                ++buffer;
+            }
         }
     }
     else
