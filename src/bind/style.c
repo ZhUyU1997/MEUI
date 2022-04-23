@@ -379,7 +379,7 @@ static JSValue js_box_style_margin(JSContext *ctx, box_style_t *style, JSValue v
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     js_box_style_marginTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
@@ -395,7 +395,7 @@ static JSValue js_box_style_border(JSContext *ctx, box_style_t *style, JSValue v
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     js_box_style_borderTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
@@ -411,7 +411,7 @@ static JSValue js_box_style_padding(JSContext *ctx, box_style_t *style, JSValue 
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     js_box_style_paddingTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
@@ -427,7 +427,7 @@ static JSValue js_box_style_borderRadius(JSContext *ctx, box_style_t *style, JSV
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     js_box_style_borderTopLeftRadius_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
@@ -443,7 +443,7 @@ static JSValue js_set_style_border_radius(JSContext *ctx, box_style_t *style, JS
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     double d[4];
@@ -465,7 +465,7 @@ static JSValue js_set_style_border_color(JSContext *ctx, box_style_t *style, JSV
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     double d[4];
@@ -485,7 +485,7 @@ static JSValue js_set_style_fill_color(JSContext *ctx, box_style_t *style, JSVal
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     double d[4];
@@ -505,7 +505,7 @@ static JSValue js_set_style_font_color(JSContext *ctx, box_style_t *style, JSVal
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     double d[4];
@@ -678,7 +678,7 @@ static JSValue js_set_style_transform_matrix(JSContext *ctx, box_style_t *style,
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     double d[6];
@@ -698,7 +698,7 @@ static JSValue js_set_style_transform_origin(JSContext *ctx, box_style_t *style,
     if (!style)
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, val) < 0)
+    if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
     const static struct
