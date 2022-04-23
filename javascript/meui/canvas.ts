@@ -4,7 +4,10 @@ import { Matrix2D } from "./style"
 
 import { MeuiStyle, parseFont } from "./style"
 import * as colorString from "color-string"
+import { Path2D, CanvasPath } from "./path-2d"
+import { CanvasGradient } from "./canvas-gradient"
 
+export { Path2D } from "./path-2d"
 export enum COLOR_FORMAT {
     COLOR_RGBA = 0,
     COLOR_RGB = 1,
@@ -104,89 +107,6 @@ interface CanvasDrawImage {
     ): void
 }
 
-/** This Canvas 2D API interface is used to declare a path that can then be used on a CanvasRenderingContext2D object. The path methods of the CanvasRenderingContext2D interface are also present on this interface, which gives you the convenience of being able to retain and replay your path whenever desired. */
-export class Path2D implements CanvasPath {
-    native: NativePath2D
-    constructor(path?: Path2D | string) {
-        if (!path) {
-            this.native = new NativePath2D()
-        } else if (path instanceof Path2D) {
-            this.native = new NativePath2D((path as Path2D).native)
-        } else if (typeof path === "string") {
-            this.native = new NativePath2D(path)
-        } else {
-            throw new Error("Invalid paramter type")
-        }
-    }
-    arc(
-        x: number,
-        y: number,
-        radius: number,
-        startAngle: number,
-        endAngle: number,
-        counterclockwise?: boolean
-    ): void {
-        this.native.arc(x, y, radius, startAngle, endAngle, counterclockwise)
-    }
-    arcTo(
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        radius: number
-    ): void {
-        this.native.arcTo(x1, y1, x2, y2, radius)
-    }
-    bezierCurveTo(
-        cp1x: number,
-        cp1y: number,
-        cp2x: number,
-        cp2y: number,
-        x: number,
-        y: number
-    ): void {
-        this.native.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
-    }
-    closePath(): void {
-        this.native.closePath()
-    }
-    ellipse(
-        x: number,
-        y: number,
-        radiusX: number,
-        radiusY: number,
-        rotation: number,
-        startAngle: number,
-        endAngle: number,
-        counterclockwise?: boolean
-    ): void {
-        this.native.ellipse(
-            x,
-            y,
-            radiusX,
-            radiusY,
-            rotation,
-            startAngle,
-            endAngle,
-            counterclockwise
-        )
-    }
-    lineTo(x: number, y: number): void {
-        this.native.lineTo(x, y)
-    }
-    moveTo(x: number, y: number): void {
-        this.native.moveTo(x, y)
-    }
-    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
-        this.native.quadraticCurveTo(cpx, cpy, x, y)
-    }
-    rect(x: number, y: number, w: number, h: number): void {
-        this.native.rect(x, y, w, h)
-    }
-    /** Adds to the path the path given by the argument. */
-    addPath(path: Path2D, transform?: DOMMatrix2DInit): void {}
-}
-
 interface CanvasDrawPath {
     beginPath(): void
     clip(fillRule?: CanvasFillRule): void
@@ -238,17 +158,6 @@ interface CanvasFilters {
     filter: string
 }
 
-/** An opaque object describing a gradient. It is returned by the methods CanvasRenderingContext2D.createLinearGradient() or CanvasRenderingContext2D.createRadialGradient(). */
-class CanvasGradient {
-    constructor() {}
-    /**
-     * Adds a color stop with the given color to the gradient at the given offset. 0.0 is the offset at one end of the gradient, 1.0 is the offset at the other end.
-     *
-     * Throws an "IndexSizeError" DOMException if the offset is out of range. Throws a "SyntaxError" DOMException if the color cannot be parsed.
-     */
-    addColorStop(offset: number, color: string): void {}
-}
-
 interface CanvasImageData {
     createImageData(
         sw: number,
@@ -278,41 +187,6 @@ interface CanvasImageData {
 interface CanvasImageSmoothing {
     imageSmoothingEnabled: boolean
     imageSmoothingQuality: ImageSmoothingQuality
-}
-
-interface CanvasPath {
-    arc(
-        x: number,
-        y: number,
-        radius: number,
-        startAngle: number,
-        endAngle: number,
-        counterclockwise?: boolean
-    ): void
-    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void
-    bezierCurveTo(
-        cp1x: number,
-        cp1y: number,
-        cp2x: number,
-        cp2y: number,
-        x: number,
-        y: number
-    ): void
-    closePath(): void
-    ellipse(
-        x: number,
-        y: number,
-        radiusX: number,
-        radiusY: number,
-        rotation: number,
-        startAngle: number,
-        endAngle: number,
-        counterclockwise?: boolean
-    ): void
-    lineTo(x: number, y: number): void
-    moveTo(x: number, y: number): void
-    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void
-    rect(x: number, y: number, w: number, h: number): void
 }
 
 interface CanvasPathDrawingStyles {
@@ -489,13 +363,6 @@ export class CanvasRenderingContext2D
         y: number
     ) => void
 
-    private _setStrokeStyle: (
-        r: number,
-        g: number,
-        b: number,
-        a: number
-    ) => void
-    private _setFillStyle: (r: number, g: number, b: number, a: number) => void
     private _strokeRect: (x: number, y: number, w: number, h: number) => void
     private _fillRect: (x: number, y: number, w: number, h: number) => void
     private _clearRect: (x: number, y: number, w: number, h: number) => void
@@ -628,6 +495,14 @@ export class CanvasRenderingContext2D
     private _restore: () => void
 
     private stateStack: CanvasSavedState[]
+    _setStrokeStyle: {
+        (r: number, g: number, b: number, a: number): void
+        (strokeStyle: import("NativeMEUI").CanvasGradient): void
+    }
+    _setFillStyle: {
+        (r: number, g: number, b: number, a: number): void
+        (strokeStyle: import("NativeMEUI").CanvasGradient): void
+    }
     constructor(
         canvas: CanvasElement,
         contextType: string,
@@ -874,7 +749,7 @@ export class CanvasRenderingContext2D
             this._setTransform(transform)
             return
         }
-        throw new Error("Method not implemented.")
+        throw new Error("Invalid parameter")
     }
     transform(
         a: number,
@@ -908,17 +783,23 @@ export class CanvasRenderingContext2D
         this._setLineDash(this._lineDashOffset, segments)
     }
     private updateStrokeStyle() {
-        const [r, g, b, a] = colorString.get.rgb(
-            this._strokeStyle as string
-        ) ?? [0, 0, 0, 1]
-        this._setStrokeStyle(r / 255.0, g / 255.0, b / 255.0, a)
+        if (typeof this._strokeStyle === "string") {
+            const [r, g, b, a] = colorString.get.rgb(
+                this._strokeStyle as string
+            )
+            this._setStrokeStyle(r / 255.0, g / 255.0, b / 255.0, a)
+        } else if (this._strokeStyle instanceof CanvasGradient) {
+            this._setStrokeStyle(this._strokeStyle.native)
+        }
     }
 
     private updateFillStyle() {
-        const [r, g, b, a] = colorString.get.rgb(this._fillStyle as string) ?? [
-            0, 0, 0, 1,
-        ]
-        this._setFillStyle(r / 255.0, g / 255.0, b / 255.0, a)
+        if (typeof this._fillStyle === "string") {
+            const [r, g, b, a] = colorString.get.rgb(this._fillStyle as string)
+            this._setFillStyle(r / 255.0, g / 255.0, b / 255.0, a)
+        } else if (this._fillStyle instanceof CanvasGradient) {
+            this._setFillStyle(this._fillStyle.native)
+        }
     }
 
     get lineCap(): CanvasLineCap {
@@ -1034,7 +915,7 @@ export class CanvasRenderingContext2D
         x1: number,
         y1: number
     ): CanvasGradient {
-        throw new Error("Method not implemented.")
+        return new CanvasGradient(x0, y0, x1, y1)
     }
     createPattern(
         image: CanvasImageSource,
@@ -1050,7 +931,7 @@ export class CanvasRenderingContext2D
         y1: number,
         r1: number
     ): CanvasGradient {
-        throw new Error("Method not implemented.")
+        return new CanvasGradient(x0, y0, r0, x1, y1, r1)
     }
     beginPath(): void {
         this._beginPath()
@@ -1076,7 +957,7 @@ export class CanvasRenderingContext2D
             this._clip(path.native, fillRule)
             return
         }
-        throw new Error("Method not implemented.")
+        throw new Error("Invalid parameter")
     }
     fill(fillRule?: CanvasFillRule): void
     fill(path: Path2D, fillRule?: CanvasFillRule): void
@@ -1098,7 +979,7 @@ export class CanvasRenderingContext2D
             this._fill(path.native, fillRule)
             return
         }
-        throw new Error("Method not implemented.")
+        throw new Error("Invalid parameter")
     }
     isPointInPath(x: number, y: number, fillRule?: CanvasFillRule): boolean
     isPointInPath(
@@ -1125,7 +1006,7 @@ export class CanvasRenderingContext2D
             this._stroke(path.native)
             return
         }
-        throw new Error("Method not implemented.")
+        throw new Error("Invalid parameter")
     }
 
     arc(

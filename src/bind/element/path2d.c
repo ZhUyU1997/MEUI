@@ -201,6 +201,38 @@ static JSValue js_path2d_rect(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_path2d_addPath(JSContext *ctx, JSValueConst this_val,
+                                 int argc, JSValueConst *argv)
+{
+    plutovg_path_t *path = JS_GetOpaque2(ctx, this_val, js_path2d_class_id);
+    assert(path);
+
+    plutovg_path_t *source = JS_GetOpaque2(ctx, argv[0], js_path2d_class_id);
+
+    plutovg_matrix_t matrix;
+
+    plutovg_matrix_init_identity(&matrix);
+
+    if (argc == 2 && !JS_IsUndefined(argv[1]))
+    {
+        if (JS_IsArray(ctx, argv[1]) <= 0)
+            return JS_EXCEPTION;
+
+        double m[6];
+        for (int i = 0; i < 6; i++)
+        {
+            JSValue v = JS_GetPropertyUint32(ctx, argv[1], i);
+            if (JS_ToFloat64(ctx, &m[i], v))
+                return JS_EXCEPTION;
+            JS_FreeValue(ctx, v);
+        }
+        plutovg_matrix_init(&matrix, m[0], m[1], m[2], m[3], m[4], m[5]);
+    }
+
+    plutovg_path_add_path(path, source, &matrix);
+    return JS_UNDEFINED;
+}
+
 static const JSCFunctionListEntry js_path2d_proto_funcs[] = {
     JS_CFUNC_DEF("arc", 6, js_path2d_arc),
     JS_CFUNC_DEF("arcTo", 5, js_path2d_arcTo),
@@ -211,6 +243,7 @@ static const JSCFunctionListEntry js_path2d_proto_funcs[] = {
     JS_CFUNC_DEF("moveTo", 2, js_path2d_moveTo),
     JS_CFUNC_DEF("quadraticCurveTo", 4, js_path2d_quadraticCurveTo),
     JS_CFUNC_DEF("rect", 4, js_path2d_rect),
+    JS_CFUNC_DEF("addPath", 2, js_path2d_addPath),
 };
 
 static void js_path2d_finalizer(JSRuntime *rt, JSValue val)

@@ -13,6 +13,7 @@
 
 JSClassID get_js_box_class_id();
 JSClassID get_js_path2d_class_id();
+JSClassID get_js_gradient_class_id();
 
 enum COLOR_FORMAT
 {
@@ -303,7 +304,7 @@ static JSValue js_canvas_setTransform(JSContext *ctx, JSValueConst this_val,
 
     double m[6];
 
-    if (JS_IsArray(ctx, argv[0]))
+    if (JS_IsArray(ctx, argv[0]) == 1)
     {
         for (int i = 0; i < 6; i++)
         {
@@ -638,8 +639,7 @@ static JSValue js_canvas_stroke(JSContext *ctx, JSValueConst this_val,
 
     plutovg_save(e->pluto);
 
-    plutovg_set_source_color(e->pluto, &e->strokeColor);
-    plutovg_stroke(e->pluto);
+    canvas_stroke(e);
 
     plutovg_restore(e->pluto);
     return JS_UNDEFINED;
@@ -732,8 +732,7 @@ static JSValue js_canvas_fill_clip(JSContext *ctx, JSValueConst this_val,
 
     if (magic == 0)
     {
-        plutovg_set_source_color(e->pluto, &e->fillColor);
-        plutovg_fill(e->pluto);
+        canvas_fill(e);
     }
     else if (magic == 1)
     {
@@ -777,13 +776,11 @@ static JSValue js_canvas_fillRect_strokeRect_clearRect(JSContext *ctx, JSValueCo
 
     if (magic == 0)
     {
-        plutovg_set_source_color(e->pluto, &e->fillColor);
-        plutovg_fill(e->pluto);
+        canvas_fill(e);
     }
     else if (magic == 1)
     {
-        plutovg_set_source_color(e->pluto, &e->strokeColor);
-        plutovg_stroke(e->pluto);
+        canvas_stroke(e);
     }
     else
     {
@@ -938,17 +935,14 @@ static JSValue js_canvas_fillText_strokeText(JSContext *ctx, JSValueConst this_v
     plutovg_add_path(e->pluto, path);
 
     plutovg_save(e->pluto);
-    plutovg_set_source_color(e->pluto, &e->fillColor);
 
     if (magic == 0)
     {
-        plutovg_set_source_color(e->pluto, &e->fillColor);
-        plutovg_fill(e->pluto);
+        canvas_fill(e);
     }
     else
     {
-        plutovg_set_source_color(e->pluto, &e->strokeColor);
-        plutovg_stroke(e->pluto);
+        canvas_stroke(e);
     }
 
     plutovg_restore(e->pluto);
@@ -969,17 +963,29 @@ static JSValue js_canvas_setStrokeStyle(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
-    double r, g, b, a;
-    if (JS_ToFloat64(ctx, &r, argv[0]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &g, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &b, argv[2]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &a, argv[3]))
-        return JS_EXCEPTION;
+    if (argc == 1)
+    {
+        plutovg_gradient_t *gradient = JS_GetOpaque2(ctx, argv[0], get_js_gradient_class_id());
+        if (gradient == NULL)
+        {
+            return JS_EXCEPTION;
+        }
 
-    plutovg_color_init_rgba(&e->strokeColor, r, g, b, a);
+        canvas_set_stroke_gradient(e, gradient);
+    }
+    else if (argc == 4)
+    {
+        double r, g, b, a;
+        if (JS_ToFloat64(ctx, &r, argv[0]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &g, argv[1]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &b, argv[2]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &a, argv[3]))
+            return JS_EXCEPTION;
+        canvas_set_stroke_color(e, r, g, b, a);
+    }
     return JS_UNDEFINED;
 }
 
@@ -993,17 +999,30 @@ static JSValue js_canvas_setFillStyle(JSContext *ctx, JSValueConst this_val,
 
     CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
 
-    double r, g, b, a;
-    if (JS_ToFloat64(ctx, &r, argv[0]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &g, argv[1]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &b, argv[2]))
-        return JS_EXCEPTION;
-    if (JS_ToFloat64(ctx, &a, argv[3]))
-        return JS_EXCEPTION;
+    if (argc == 1)
+    {
+        plutovg_gradient_t *gradient = JS_GetOpaque2(ctx, argv[0], get_js_gradient_class_id());
+        if (gradient == NULL)
+        {
+            return JS_EXCEPTION;
+        }
 
-    plutovg_color_init_rgba(&e->fillColor, r, g, b, a);
+        canvas_set_fill_gradient(e, gradient);
+    }
+    else if (argc == 4)
+    {
+        double r, g, b, a;
+        if (JS_ToFloat64(ctx, &r, argv[0]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &g, argv[1]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &b, argv[2]))
+            return JS_EXCEPTION;
+        if (JS_ToFloat64(ctx, &a, argv[3]))
+            return JS_EXCEPTION;
+        canvas_set_fill_color(e, r, g, b, a);
+    }
+
     return JS_UNDEFINED;
 }
 
@@ -1137,7 +1156,7 @@ static JSValue js_canvas_setLineDash(JSContext *ctx, JSValueConst this_val,
     if (JS_ToFloat64(ctx, &offset, argv[0]))
         return JS_EXCEPTION;
 
-    if (JS_IsArray(ctx, argv[0]))
+    if (JS_IsArray(ctx, argv[1]) <= 0)
         return JS_EXCEPTION;
 
     uint32_t length;

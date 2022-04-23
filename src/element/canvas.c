@@ -2,6 +2,7 @@
 #include "meui.h"
 #include <string.h>
 #include <malloc.h>
+#include <assert.h>
 
 class_impl(CanvasEle, Box){
     .width = 300,
@@ -73,13 +74,55 @@ void canvas_set_height(CanvasEle *e, int height)
     e->height = height;
 }
 
+void canvas_set_fill_color(CanvasEle *e, double r, double g, double b, double a)
+{
+    assert(e->fillPaint);
+    plutovg_paint_destroy(e->fillPaint);
+    e->fillPaint = plutovg_paint_create_rgba(r, g, b, a);
+}
+
+void canvas_set_fill_gradient(CanvasEle *e, plutovg_gradient_t *gradient)
+{
+    assert(e->fillPaint);
+    plutovg_paint_destroy(e->fillPaint);
+    e->fillPaint = plutovg_paint_create_gradient(gradient);
+}
+
+void canvas_set_stroke_color(CanvasEle *e, double r, double g, double b, double a)
+{
+    assert(e->strokePaint);
+    plutovg_paint_destroy(e->strokePaint);
+    e->strokePaint = plutovg_paint_create_rgba(r, g, b, a);
+}
+
+void canvas_set_stroke_gradient(CanvasEle *e, plutovg_gradient_t *gradient)
+{
+    assert(e->strokePaint);
+    plutovg_paint_destroy(e->strokePaint);
+    e->strokePaint = plutovg_paint_create_gradient(gradient);
+}
+
+void canvas_fill(CanvasEle *e)
+{
+    assert(e->fillPaint);
+    plutovg_set_source(e->pluto, e->fillPaint);
+    plutovg_fill(e->pluto);
+}
+
+void canvas_stroke(CanvasEle *e)
+{
+    assert(e->strokePaint);
+    plutovg_set_source(e->pluto, e->strokePaint);
+    plutovg_stroke(e->pluto);
+}
+
 constructor(CanvasEle)
 {
     Box *box = dynamic_cast(Box)(this);
     Flex_setMeasureFunc(box->node, box_measure_text);
 
-    plutovg_color_init_rgb8(&this->fillColor, 0, 0, 0);
-    plutovg_color_init_rgb8(&this->strokeColor, 0, 0, 0);
+    this->fillPaint = plutovg_paint_create_rgba(0, 0, 0, 1);
+    this->strokePaint = plutovg_paint_create_rgba(0, 0, 0, 1);
 
     box->draw = draw;
     this->surface = plutovg_surface_create(this->width, this->height);
@@ -90,6 +133,9 @@ constructor(CanvasEle)
 
 destructor(CanvasEle)
 {
+    plutovg_paint_destroy(this->fillPaint);
+    plutovg_paint_destroy(this->strokePaint);
+
     if (this->font_family)
         free(this->font_family);
     plutovg_path_destroy(this->path);

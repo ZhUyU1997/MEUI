@@ -40,8 +40,9 @@ class(CanvasEle, Box)
     plutovg_surface_t *surface;
     plutovg_t *pluto;
     plutovg_path_t *path;
-    plutovg_color_t fillColor;
-    plutovg_color_t strokeColor;
+
+    plutovg_paint_t *fillPaint;
+    plutovg_paint_t *strokePaint;
 
     enum CANVAS_TEXT_DIRECTION direction;
     enum CANVAS_TEXT_ALIGN text_align;
@@ -55,3 +56,10 @@ int canvas_get_width(CanvasEle *e);
 int canvas_get_height(CanvasEle *e);
 void canvas_set_width(CanvasEle *e, int width);
 void canvas_set_height(CanvasEle *e, int height);
+
+void canvas_set_fill_color(CanvasEle *e, double r, double g, double b, double a);
+void canvas_set_fill_gradient(CanvasEle *e, plutovg_gradient_t *gradient);
+void canvas_set_stroke_color(CanvasEle *e, double r, double g, double b, double a);
+void canvas_set_stroke_gradient(CanvasEle *e, plutovg_gradient_t *gradient);
+void canvas_fill(CanvasEle *e);
+void canvas_stroke(CanvasEle *e);

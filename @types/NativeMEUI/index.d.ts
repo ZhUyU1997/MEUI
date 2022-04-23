@@ -118,7 +118,37 @@ declare module "NativeMEUI" {
         moveTo(x: number, y: number): void
         quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void
         rect(x: number, y: number, w: number, h: number): void
-        // addPath(path: Path2D, transform?: DOMMatrix2DInit): void
+        addPath(
+            path: Path2D,
+            transform?: [number, number, number, number, number, number]
+        ): void
+    }
+
+    export class CanvasGradient {
+        constructor(
+            type: "linear",
+            x1: number,
+            y1: number,
+            x2: number,
+            y2: number
+        )
+        constructor(
+            type: "radial",
+            cx: number,
+            cy: number,
+            cr: number,
+            fx: number,
+            fy: number,
+            fr: number
+        )
+
+        addColorStop(
+            offset: number,
+            r: number,
+            g: number,
+            b: number,
+            a: number
+        ): void
     }
 
     /** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
@@ -141,7 +171,7 @@ declare module "NativeMEUI" {
 
     export const Canvas: {
         restore(): void
-        save(): void 
+        save(): void
 
         getImage(
             sx: number,
@@ -243,7 +273,10 @@ declare module "NativeMEUI" {
         fillRect(x: number, y: number, w: number, h: number): void
 
         setStrokeStyle(r: number, g: number, b: number, a: number): void
+        setStrokeStyle(strokeStyle: CanvasGradient): void
+
         setFillStyle(r: number, g: number, b: number, a: number): void
+        setFillStyle(strokeStyle: CanvasGradient): void
 
         setLineCap(lineCap: "butt" | "round" | "square"): void
         setLineJoin(lineJoin: "bevel" | "miter" | "round"): void
