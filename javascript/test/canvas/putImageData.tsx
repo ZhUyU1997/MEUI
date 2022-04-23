@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D } from "../../meui/canvas"
+import { CanvasRenderingContext2D, ImageData } from "../../meui/canvas"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     function ColorRect(color: number, width: number, height: number) {
