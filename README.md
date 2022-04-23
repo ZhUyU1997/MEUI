@@ -2,6 +2,15 @@
 <h3 align="center">A modern embedded UI library giving your extraordinary development experience<h3>
 <h3 align="center">现代嵌入式用户界面库，非凡的开发体验<h3>
 
+<p align="center">
+  <a href="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml"><img src="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
+  <img src="https://img.shields.io/github/issues/ZhUyU1997/MEUI">
+  <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/rollup">
+  <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/react">
+  <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/@react-spring/core">
+</p>
+
+
 
 `MEUI` is a modern ui library for embedded platform based on `quickjs` and `React.js`
 
@@ -43,6 +52,7 @@ ReactMEUI.render(<App />, new MEUI(300, 300))
 - Support `React.js` to build UI
 - Support `flex` layout
 - Support partical `css` style
+- Support `Material Design Icons`
 - Support `React Spring` to build animation
 - Support `ES2020`
 - Support `canvas` api
