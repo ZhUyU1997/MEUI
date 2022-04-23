@@ -23,6 +23,6 @@ function App() {
 }
 
 export function Main() {
-    const meui = new MEUI(390, 844)
+    const meui = new MEUI(300, 300)
     ReactMEUI.render(<App />, meui)
 }
