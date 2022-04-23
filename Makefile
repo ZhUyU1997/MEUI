@@ -1,6 +1,8 @@
 sinclude scripts/env.mk
 
-W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function -Werror=return-type -Wno-unused-but-set-variable -Wno-unused-variable
+W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function \
+				-Werror=return-type -Wno-unused-but-set-variable -Wno-unused-variable \
+				-Werror=incompatible-pointer-types
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
