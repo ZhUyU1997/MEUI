@@ -8,6 +8,7 @@ const childHostContext = {}
 const log = () => {}
 const hostConfig = {
     now: Date.now,
+    supportsMutation: true,
     getRootHostContext: () => {
         log("getRootHostContext")
         return rootHostContext
@@ -16,7 +17,7 @@ const hostConfig = {
         log("prepareForCommit")
         return null
     },
-    resetAfterCommit: () => {
+    resetAfterCommit: (containerInfo) => {
         log("resetAfterCommit")
     },
     getChildHostContext: () => {
@@ -95,12 +96,11 @@ const hostConfig = {
     finalizeInitialChildren: (domElement, type, props) => {
         log("finalizeInitialChildren")
     },
-    supportsMutation: true,
     appendChildToContainer: (parent, child) => {
         log("appendChildToContainer", child)
         parent.addChild(child)
     },
-    prepareUpdate(domElement, oldProps, newProps) {
+    prepareUpdate(domElement, oldProps, newProps, rootContainer, hostContext) {
         log("prepareUpdate")
 
         return true

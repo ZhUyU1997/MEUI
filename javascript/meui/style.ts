@@ -2,6 +2,9 @@ import { Property } from "csstype"
 import { BOX_STATE } from "NativeMEUI"
 import valueParser from "postcss-value-parser"
 
+// @ts-ignore
+import cssfontparser from "cssfontparser"
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Length<T = (string & {}) | 0> = number | "auto" | T
 
@@ -172,37 +175,50 @@ const Transform = {
     },
 }
 
+const lengthReg = /^(\d*\.?\d+)([a-zA-Z]*)?$/
 export function parseLength(value: string): number {
-    if (value.endsWith("px")) {
-        const num = parseFloat(value.slice(0, -"px".length))
+    console.log(value)
+    const found = lengthReg.exec(value)
+
+    if (!found) throw new Error("Invalid value")
+
+    const num = parseFloat(found[1])
+    const unit = found[2]
+
+    if (!unit) {
         return num
-    } else {
-        const num = parseFloat(value)
+    } else if (unit === "px") {
         return num
     }
+    throw new Error("Unexcepted unit " + unit)
 }
 
+const degReg = /^(\d*\.?\d+)(deg|grad|rad|turn)?$/
 export function parseAngle(value: string) {
-    if (value.endsWith("deg")) {
-        const num = parseFloat(value.slice(0, -"deg".length))
-        return num * (Math.PI / 180)
-    } else if (value.endsWith("grad")) {
-        const num = parseFloat(value.slice(0, -"grad".length))
-        return num * (Math.PI / 200)
-    } else if (value.endsWith("rad")) {
-        const num = parseFloat(value.slice(0, -"rad".length))
-        return num
-    } else if (value.endsWith("turn")) {
-        const num = parseFloat(value.slice(0, -"turn".length))
-        return num * (2 * Math.PI)
-    } else {
+    const found = degReg.exec(value)
+
+    if (!found) throw new Error("Invalid value")
+
+    const num = parseFloat(found[1])
+    const unit = found[2]
+
+    if (!unit) {
         const num = parseFloat(value)
 
         if (num !== 0.0) {
             throw new Error("should be zero")
         }
         return num
+    } else if (value === "deg") {
+        return num * (Math.PI / 180)
+    } else if (value === "grad") {
+        return num * (Math.PI / 200)
+    } else if (value === "rad") {
+        return num
+    } else if (value === "turn") {
+        return num * (2 * Math.PI)
     }
+    throw new Error("Unexcepted unit " + unit)
 }
 
 export function parseTransform(value: string) {
@@ -314,22 +330,11 @@ export function parseTransform(value: string) {
 }
 
 export function parseFont(value: string) {
-    const item = valueParser(value).nodes.filter((node) =>
-        ["function", "word"].includes(node.type)
-    )
+    const {style, variant, weight, size, lineHeight, family} = cssfontparser(value, /* existing, dpi */)
 
-    if (item.length === 3) {
-        item.shift()
-    }
-
-    if (item.length !== 2) throw new Error("Not supported format " + value)
-
-    const fontSize = parseLength(item[0].value)
-
-    const fontFamily = item[1].value
     return {
         //TODO:
-        fontSize,
-        fontFamily,
+        fontSize:size,
+        fontFamily:family,
     }
 }
