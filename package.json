@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "rm -f dist/* && make -j16 && rollup -c --input examples/file-explorer/index.jsx && ./meui dist/index.js",
+    "dev": "rm -f dist/* && make -j16 && rollup -c --input examples/hello/index.jsx && ./meui dist/index.js",
     "build": "rm -f dist/* && make -j16 && rollup -c",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "gen": "./style-gen.py",

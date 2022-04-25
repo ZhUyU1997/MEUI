@@ -14,35 +14,38 @@
 
 `MEUI` is a modern ui library for embedded platform based on `quickjs` and `React.js`
 
-## Example
+## [Example](examples/hello/index.jsx)
 
 ```tsx
-import "./polyfill"
 import React from "react"
-import { MEUI, ReactMEUI } from "./meui"
-import { animated, useSpring } from "./react-sping-meui"
+import { MEUI, ReactMEUI } from "@/meui"
+import { animated, useSpring } from "@/react-sping-meui"
 
 function App() {
     const styles = useSpring({
         loop: true,
         from: { rotateZ: 0 },
-        to: { rotateZ: 180 },
+        to: { rotateZ: 360 },
     })
 
     return (
         <animated.Div
             style={{
-                width: 80,
-                height: 80,
+                width: 120,
+                height: 120,
                 backgroundColor: "#46e891",
                 borderRadius: 16,
+                textAlign: "center",
                 ...styles,
             }}
-        />
+        >
+            Hello MEUI!
+        </animated.Div>
     )
 }
 
-ReactMEUI.render(<App />, new MEUI(300, 300))
+const meui = new MEUI(300, 300)
+ReactMEUI.render(<App />, meui)
 ```
 
 
@@ -80,11 +83,9 @@ sudo apt install gcc make
 
 ```sh
 npm install
-npm run gen   #generate necessary c header files
+npm run gen   # generate necessary c header files
 npm run dev
 ```
-
-if want to run above sample, just copy it to /javascript/index.jsx file
 
 ## API References
 
