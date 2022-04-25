@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from "react"
-import { Canvas, Div, ReactMEUI } from "../meui"
-import { MEUI } from "../meui"
-import { Root } from "../components"
+import { Canvas, Div, ReactMEUI } from "@/meui"
+import { MEUI } from "@/meui"
+import { Root } from "@/components"
 
 // @ts-ignore
 import jsnes from "jsnes"
-import path from "../path"
+import path from "@/path"
 import * as std from "std"
-import { CanvasElement, COLOR_FORMAT, ImageData } from "../meui/canvas"
+import { CanvasElement, COLOR_FORMAT, ImageData } from "@/meui/canvas"
 
 const SCREEN_WIDTH = 256
 const SCREEN_HEIGHT = 240
@@ -77,7 +77,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
+ReactMEUI.render(<App />, meui)

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import { Div } from "../meui"
+import { Div } from "@/meui"
 
 function Test() {
     const ref = useRef()

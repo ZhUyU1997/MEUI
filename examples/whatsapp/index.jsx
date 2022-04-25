@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, ReactMEUI } from "../meui"
-import { MEUI } from "../meui"
-import { Root, Column, Center, MaterialDesignIcon } from "../components"
+import { Div, ReactMEUI, MEUI } from "@/meui"
+import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function Circle({ radius, style, children }) {
     return (
@@ -329,12 +328,5 @@ function Whatsapp() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(390, 844)
-    ReactMEUI.render(
-        <Div>
-            <Whatsapp />
-        </Div>,
-        meui
-    )
-}
+const meui = new MEUI(390, 844)
+ReactMEUI.render(<Whatsapp />, meui)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import Button from "../../components/button"
-import { Div, MEUI, ReactMEUI } from "../../meui"
+import Button from "@/components/button"
+import { Div, MEUI, ReactMEUI } from "@/meui"
 import {
     useTransition,
     useSpring,
@@ -8,7 +8,7 @@ import {
     config,
     animated,
     useSpringRef,
-} from "../../react-sping-meui"
+} from "@/react-sping-meui"
 
 const data = [
     {
@@ -165,7 +165,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(1060, 340)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(1060, 340)
+ReactMEUI.render(<App />, meui)

@@ -1,5 +1,5 @@
 import React from "react"
-import { Div } from "../meui"
+import { Div } from "@/meui"
 
 const style_name = [
     "primary",

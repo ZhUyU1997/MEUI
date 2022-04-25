@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
-import { Canvas, Div, MEUI, ReactMEUI } from "../../meui"
-import { Root, Button } from "../../components"
-import { CanvasElement } from "../../meui/canvas"
+import { Canvas, Div, MEUI, ReactMEUI } from "@/meui"
+import { Root, Button } from "@/components"
+import { CanvasElement } from "@/meui/canvas"
 
 const Test: any = {
     arc: () => import("./arc"),
@@ -136,7 +136,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(1100, 500)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(1100, 500)
+ReactMEUI.render(<App />, meui)

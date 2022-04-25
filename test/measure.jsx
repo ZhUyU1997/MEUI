@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
-import { Root } from "../components"
-import { Div } from "../meui"
+import { Root } from "@/components"
+import { Div } from "@/meui"
 
 export function Test() {
     return (

@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D, Path2D } from "../../meui/canvas"
+import { CanvasRenderingContext2D, Path2D } from "@/meui/canvas"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     const path = new Path2D()

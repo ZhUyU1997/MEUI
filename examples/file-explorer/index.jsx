@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
-import { Div, MEUI, ReactMEUI } from "../meui"
-import path from "../path"
+import { Div, MEUI, ReactMEUI } from "@/meui"
+import path from "@/path"
 
 import {
     useTransition,
@@ -11,9 +11,10 @@ import {
     config,
     animated,
     useSpringRef,
-} from "../react-sping-meui"
+} from "@/react-sping-meui"
 
-import { Center, Row, Column, Root, MaterialDesignIcon } from "../components"
+import { Center, Row, Column, Root, MaterialDesignIcon } from "@/components"
+
 function PathBar({ fullPath, onChange }) {
     const pathArray = fullPath.split(path.sep)
     const { root } = path.parse(fullPath)
@@ -186,7 +187,5 @@ function FileExplorer() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(1200, 800)
-    ReactMEUI.render(<FileExplorer />, meui)
-}
+const meui = new MEUI(1200, 800)
+ReactMEUI.render(<FileExplorer />, meui)

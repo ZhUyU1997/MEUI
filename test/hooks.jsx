@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Div } from "../meui"
-import { Root, Button } from "../components"
+import { Div } from "@/meui"
+import { Root, Button } from "@/components"
 export function Test() {
     const [dollar, setDollar] = useState(0)
     const [rmb, setRMB] = useState(0)

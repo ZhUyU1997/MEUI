@@ -15,10 +15,11 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
-        "typeRoots": [
-            "@types",
-            "node_modules/@types",
-        ]
+        "typeRoots": ["@types", "node_modules/@types"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["framework/*"]
+        }
     },
-    "include": ["framework"],
+    "include": ["framework", "test", "examples"]
 }

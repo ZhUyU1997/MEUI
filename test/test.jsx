@@ -1,5 +1,5 @@
 import React from "react"
-import { Div } from "../meui"
+import { Div } from "@/meui"
 
 function Flex_Test() {
     function TestItem() {

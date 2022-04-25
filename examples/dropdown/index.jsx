@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, MEUI, ReactMEUI, Stack } from "../meui"
-import { Root, Column, Center, MaterialDesignIcon } from "../components"
+import { Div, MEUI, ReactMEUI, Stack } from "@/meui"
+import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function DropDownList({ option = [], style }) {
     return (
@@ -127,7 +127,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(248, 360)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(248, 360)
+ReactMEUI.render(<App />, meui)

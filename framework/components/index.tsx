@@ -1,7 +1,7 @@
 import React from "react"
-import { Div } from "../meui"
-import { DivElement } from "../meui/div"
-import { MeuiStyle } from "../meui/style"
+import { Div } from "@/meui"
+import { DivElement } from "@/meui/div"
+import { MeuiStyle } from "@/meui/style"
 
 type RootProps = {
     children?: React.ReactNode

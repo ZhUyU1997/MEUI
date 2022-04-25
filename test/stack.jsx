@@ -1,7 +1,7 @@
 import React from "react"
-import { Div, ReactMEUI } from "../meui"
-import { MEUI } from "../meui"
-import { Root } from "../components"
+import { Div, ReactMEUI } from "@/meui"
+import { MEUI } from "@/meui"
+import { Root } from "@/components"
 
 function App() {
     return (
@@ -77,7 +77,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(390, 844)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(390, 844)
+ReactMEUI.render(<App />, meui)

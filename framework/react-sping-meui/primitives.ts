@@ -1,6 +1,6 @@
 // export type Primitives = 'div' | 'stack'
 import { ElementType } from "react"
-import { MeuiElements } from "../meui"
+import { MeuiElements } from "@/meui"
 
 export type Primitives = {
     [P in keyof MeuiElements]: P extends ElementType ? P : never

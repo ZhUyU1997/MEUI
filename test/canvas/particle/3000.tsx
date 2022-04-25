@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react"
-import { Canvas, MEUI, ReactMEUI } from "../../../meui"
-import { Root } from "../../../components"
-import { CanvasElement } from "../../../meui/canvas"
+import { Canvas, MEUI, ReactMEUI } from "@/meui"
+import { Root } from "@/components"
+import { CanvasElement } from "@/meui/canvas"
 
 const ROWS = 100
 const COLS = 300
@@ -115,7 +115,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
+ReactMEUI.render(<App />, meui)

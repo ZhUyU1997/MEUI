@@ -1,9 +1,8 @@
 import React, { useState } from "react"
-import { Div, MEUI, ReactMEUI } from "../meui"
-import Button from "../components/button"
-import { Root } from "../components"
+import { Div, MEUI, ReactMEUI } from "@/meui"
+import { Root, Button } from "@/components"
 
-import { parseTransform } from "../meui"
+import { parseTransform } from "@/meui"
 
 console.log(parseTransform(" scale( 1.2 ,1.2)  scale(1.3)  scale(1.4)  "))
 console.log(
@@ -74,7 +73,5 @@ function App() {
     )
 }
 
-export function Main() {
-    const meui = new MEUI(390, 844)
-    ReactMEUI.render(<App />, meui)
-}
+const meui = new MEUI(390, 844)
+ReactMEUI.render(<App />, meui)
