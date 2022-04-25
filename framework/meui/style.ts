@@ -190,7 +190,7 @@ export function parseLength(value: string): number {
     } else if (unit === "px") {
         return num
     }
-    throw new Error("Unexcepted unit " + unit)
+    throw new Error(`Unexcepted unit [${unit}]`)
 }
 
 const degReg = /^(\d*\.?\d+)(deg|grad|rad|turn)?$/
@@ -209,16 +209,16 @@ export function parseAngle(value: string) {
             throw new Error("should be zero")
         }
         return num
-    } else if (value === "deg") {
+    } else if (unit === "deg") {
         return num * (Math.PI / 180)
-    } else if (value === "grad") {
+    } else if (unit === "grad") {
         return num * (Math.PI / 200)
-    } else if (value === "rad") {
+    } else if (unit === "rad") {
         return num
-    } else if (value === "turn") {
+    } else if (unit === "turn") {
         return num * (2 * Math.PI)
     }
-    throw new Error("Unexcepted unit " + unit)
+    throw new Error(`Unexcepted unit [${unit}]`)
 }
 
 export function parseTransform(value: string) {
@@ -330,11 +330,13 @@ export function parseTransform(value: string) {
 }
 
 export function parseFont(value: string) {
-    const {style, variant, weight, size, lineHeight, family} = cssfontparser(value, /* existing, dpi */)
+    const { style, variant, weight, size, lineHeight, family } = cssfontparser(
+        value /* existing, dpi */
+    )
 
     return {
         //TODO:
-        fontSize:size,
-        fontFamily:family,
+        fontSize: size,
+        fontFamily: family,
     }
 }
