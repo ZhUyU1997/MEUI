@@ -20,5 +20,5 @@
             "node_modules/@types",
         ]
     },
-    "include": ["javascript"],
+    "include": ["framework"],
 }
