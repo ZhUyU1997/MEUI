@@ -56,7 +56,7 @@ export class MEUI {
     root: DivElement | StackElement | CanvasElement
     mouseX: number
     mouseY: number
-
+    mouseHit: Box | null
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
         this.root = createBox("Div", {
@@ -77,9 +77,9 @@ export class MEUI {
         )
 
         this.nativeMEUI.render(this.root.getNativeObject())
-        this.mouseX = 0
-        this.mouseY = 0
-
+        this.mouseX = -1
+        this.mouseY = -1
+        this.mouseHit = null
         os.setReadHandler(this.getConnectNumber(), this.onEvent.bind(this))
         setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
@@ -88,22 +88,28 @@ export class MEUI {
         while (this.pending() > 0) {
             const event = this.nextEvent()
             if (!event) continue
-            let box = null
+
+            let box = this.mouseHit
 
             if (
                 event.type === "mousedown" ||
                 event.type === "mouseup" ||
                 event.type === "mousemove"
             ) {
-                box = this.searchNode(event.x, event.y, (hit, box) => {
-                    box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
+                if (box && (this.mouseX != event.x || this.mouseY != event.y)) {
+                    box.getPath().forEach((item) => {
+                        item.setState(BOX_STATE.DEFAULT)
+                    })
+                }
+
+                this.mouseHit = box = this.searchNode(event.x, event.y)
+
+                box?.getPath().forEach((item) => {
+                    item.setState(BOX_STATE.HOVER)
                 })
+
                 this.mouseX = event.x
                 this.mouseY = event.y
-            } else {
-                box = this.searchNode(this.mouseX, this.mouseY, (hit, box) => {
-                    box.setState(hit ? BOX_STATE.HOVER : BOX_STATE.DEFAULT)
-                })
             }
 
             if (box) {
@@ -173,32 +179,24 @@ export class MEUI {
     nextEvent() {
         return this.nativeMEUI.nextEvent()
     }
-    _searchNode(
-        node: Box,
-        x: number,
-        y: number,
-        callback: (hit: boolean, node: Box) => void
-    ): Box | null {
+
+    private _searchNode(node: Box, x: number, y: number): Box | null {
         let target = null
+        const len = node.children.length
+        for (let i = len - 1; i >= 0; i--) {
+            const ret = this._searchNode(node.children[i], x, y)
+            if (ret) return ret
+        }
+
         if (node.hit(x, y)) {
             target = node
         }
 
-        if (callback) callback(target === node, node)
-
-        for (const item of node.children) {
-            const ret = this._searchNode(item, x, y, callback)
-            target = ret ? ret : target
-        }
         return target
     }
 
-    searchNode(
-        x: number,
-        y: number,
-        callback: (hit: boolean, node: Box) => void
-    ): Box | null {
-        return this._searchNode(this.root, x, y, callback)
+    searchNode(x: number, y: number): Box | null {
+        return this._searchNode(this.root, x, y)
     }
 }
 

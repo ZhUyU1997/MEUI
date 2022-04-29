@@ -162,21 +162,37 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
 
     Box *box = Flex_getContext(node);
 
-    double content_width = width - Flex_getResultPaddingLeft(node) - Flex_getResultPaddingRight(node);
-    double content_height = height - Flex_getResultPaddingTop(node) - Flex_getResultPaddingBottom(node);
-    double content_left = Flex_getResultPaddingLeft(node);
-    double content_top = Flex_getResultPaddingTop(node);
+    box_t target = node;
 
-    box_t target = NULL;
-
-    plutovg_matrix_t m = box->result.to_screen_matrix;
-    plutovg_matrix_invert(&m);
+    plutovg_matrix_t to_local = box->result.to_screen_matrix;
+    plutovg_matrix_invert(&to_local);
 
     plutovg_point_t dst;
-    plutovg_matrix_map_point(&m, &(plutovg_point_t){x, y}, &dst);
+    plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
 
     if (dst.x >= 0 && dst.x < width && dst.y >= 0 && dst.y < height)
     {
+        for (box_t node = Flex_getParent(target); node != NULL; node = Flex_getParent(node))
+        {
+            Box *box = Flex_getContext(node);
+            if (box->style.overflow != CSS_OVERFLOW_VISIBLE)
+            {
+                plutovg_matrix_t to_local = box->result.to_screen_matrix;
+                plutovg_matrix_invert(&to_local);
+                plutovg_point_t dst;
+                plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
+                float width = Flex_getResultWidth(node);
+                float height = Flex_getResultHeight(node);
+
+                int x = dst.x - Flex_getResultBorderLeft(node);
+                int y = dst.y - Flex_getResultBorderTop(node);
+
+                if (x >= 0 && x < box->client_width && y >= 0 && y < box->client_height)
+                    continue;
+                else
+                    return JS_NewBool(ctx, 0);
+            }
+        }
         return JS_NewBool(ctx, 1);
     }
 
@@ -273,7 +289,7 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("removeChild", 1, js_remove_child),
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
-    JS_CFUNC_DEF("hit", 1, js_hit),
+    JS_CFUNC_DEF("hit", 2, js_hit),
 
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),

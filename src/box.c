@@ -253,9 +253,13 @@ static void draw_image(plutovg_t *pluto, const char *path, plutovg_rect_t *r)
     {
         plutovg_set_source_surface(pluto, img, r->x, r->y);
         plutovg_fill_preserve(pluto);
+        plutovg_surface_destroy(img);
+    }
+    else
+    {
+        LOGE("Unable to load image: %s\n", path);
     }
 
-    plutovg_surface_destroy(img);
     plutovg_restore(pluto);
 }
 
@@ -314,6 +318,8 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
         draw_image(pluto, box->style.backgroundImage, rect);
     }
 
+    plutovg_path_t *clip_path = NULL;
+
     if (border != NULL)
     {
         plutovg_new_path(pluto);
@@ -360,11 +366,23 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
         plutovg_set_source_color(pluto, &border_color);
 
         plutovg_fill(pluto);
+
+        if (box->style.overflow != CSS_OVERFLOW_VISIBLE)
+        {
+            clip_path = plutovg_path_reference(inner_path);
+        }
         plutovg_path_destroy(inner_path);
     }
     plutovg_path_destroy(outer_path);
 
     plutovg_restore(pluto);
+
+    if (clip_path)
+    {
+        plutovg_add_path(pluto, clip_path);
+        plutovg_path_destroy(clip_path);
+        plutovg_clip(pluto);
+    }
 }
 
 static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h, double *text_h)
@@ -577,9 +595,25 @@ static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *
         y_off = box->style.transformOrigin.y.offset;
     }
 
-    plutovg_translate(pluto, rect->x + x_off, rect->y + y_off);
-    plutovg_transform(pluto, &box->style.transform);
-    plutovg_translate(pluto, -x_off, -y_off);
+    plutovg_matrix_t m;
+    plutovg_matrix_init_identity(&m);
+    plutovg_matrix_translate(&m, rect->x + x_off, rect->y + y_off);
+    plutovg_matrix_multiply(&m, &box->style.transform, &m);
+    plutovg_matrix_translate(&m, -x_off, -y_off);
+
+    plutovg_transform(pluto, &m);
+
+    box_t parent = Flex_getParent(box->node);
+    if (parent)
+    {
+        // For supporting scroll, must transfrom by parent's martrix, because pluto has been changed
+        Box *parentBox = Flex_getContext(parent);
+        plutovg_matrix_multiply(&box->result.to_screen_matrix, &m, &parentBox->result.to_screen_matrix);
+    }
+    else
+    {
+        plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
+    }
 }
 
 static void merge_styles(Box *box)
@@ -686,8 +720,6 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 
     box_transform_by_origin(box, pluto, &(plutovg_rect_t){left, top, width, height});
 
-    plutovg_get_matrix(pluto, &box->result.to_screen_matrix);
-
     if (box->draw)
         box->draw(box, pluto);
 
@@ -707,16 +739,20 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
         plutovg_save(pluto);
         // printf("%f %f\n", box->client_width, box->client_height);
         plutovg_surface_t *surface = plutovg_surface_create(box->client_width, box->client_height);
-        plutovg_translate(pluto, Flex_getResultBorderLeft(node), Flex_getResultBorderTop(node));
 
         {
             plutovg_t *pluto = plutovg_create(surface);
-            plutovg_translate(pluto, -box->scroll_left - Flex_getResultBorderLeft(node), -box->scroll_top - Flex_getResultBorderTop(node));
+            plutovg_translate(pluto, -box->scroll_left, -box->scroll_top);
+
+            // Fix scroll offset
+            plutovg_matrix_translate(&box->result.to_screen_matrix, -box->scroll_left, -box->scroll_top);
             box_draw_child(node, pluto, pq);
+            plutovg_matrix_translate(&box->result.to_screen_matrix, box->scroll_left, box->scroll_top);
+
             plutovg_destroy(pluto);
         }
 
-        plutovg_rect(pluto, 0, 0, box->client_width, box->client_height);
+        plutovg_rect(pluto, Flex_getResultBorderLeft(node), Flex_getResultBorderLeft(node), box->client_width, box->client_height);
         plutovg_set_source_surface(pluto, surface, 0, 0);
         plutovg_fill(pluto);
 
@@ -785,6 +821,9 @@ void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
 void box_draw(box_t root)
 {
     plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
+    Box *box = Flex_getContext(root);
+    plutovg_matrix_init_identity(&box->result.to_screen_matrix);
+
     box_drawRecursiveQueue(pluto, root);
     plutovg_destroy(pluto);
 }

@@ -69,7 +69,7 @@ class(Box)
 
     size_t queue_pos;
 
-    void (*draw)(Box *this, plutovg_t *pluto);
+    void (*draw)(Box * this, plutovg_t * pluto);
 };
 
 box_t box_new(enum BOX_TYPE type);

@@ -1262,6 +1262,7 @@ void Flex_insertChild(FlexNodeRef node, FlexNodeRef child, size_t index) {
     }
     flex_markDirty(node);
     FlexVector_insert(FlexNodeRef, node->children, Flex_reference(child), index);
+    child->parent = node;
 }
 
 void Flex_addChild(FlexNodeRef node, FlexNodeRef child) {

@@ -132,7 +132,7 @@ export class Box {
     getStyle(state: UI_STATE) {
         return this.nativeBox.getStyle(state)
     }
-    _setStyle(style: MeuiStyle, state: UI_STATE) {
+    private _setStyle(style: MeuiStyle, state: UI_STATE) {
         const nativeStyle: Record<string, any> = style
         if (style.borderColor) {
             const [r, g, b, a] = colorString.get.rgb(style.borderColor) ?? [
@@ -296,6 +296,17 @@ export class Box {
         event.target = this
         this.capturingPhase(this, event)
         this.bubblingPhase(this, event)
+    }
+
+    getPath(): Box[] {
+        const path: Box[] = []
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let box: Box | null = this
+        while (box) {
+            path.unshift(box)
+            box = box.parent
+        }
+        return path
     }
 
     get scrollWidth() {
