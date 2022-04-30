@@ -18,6 +18,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+#define KAPPA90 (0.5522847493f)
+
 static const char *fileext(const char *filename)
 {
     const char *ret = NULL;
@@ -38,9 +40,45 @@ static const char *fileext(const char *filename)
     return ret;
 }
 
-#define KAPPA90 (0.5522847493f)
-
 static void box_draw_self(Box *box, plutovg_t *pluto);
+
+static void box_image_cache_free(box_image_cache_t *cache)
+{
+    if (cache->image)
+    {
+        plutovg_surface_destroy(cache->image);
+    }
+
+    if (cache->path)
+    {
+        free(cache->path);
+    }
+}
+
+static void box_image_cache_set(box_image_cache_t *cache, const char *path, plutovg_rect_t *r, plutovg_surface_t *img)
+{
+    if (!img || !path)
+    {
+        LOGE("Invalid parameter");
+        return;
+    }
+
+    box_image_cache_free(cache);
+
+    cache->width = r->w;
+    cache->height = r->h;
+    cache->path = strdup(path);
+    cache->image = plutovg_surface_reference(img);
+}
+
+static plutovg_surface_t *box_image_cache_get(box_image_cache_t *cache, const char *path, plutovg_rect_t *r)
+{
+    if (cache->path && strcmp(cache->path, path) == 0 && cache->width == (int)(r->w) && cache->height == (int)(r->h))
+    {
+        return plutovg_surface_reference(cache->image);
+    }
+    return NULL;
+}
 
 class_impl(Box){
     .draw = box_draw_self,
@@ -50,7 +88,6 @@ constructor(Box)
 {
     this->node = Flex_newNode();
     this->style_array[BOX_STATE_DEFAULT] = box_style_new();
-    init_list_head(&this->event_list);
     Flex_setContext(this->node, this);
 }
 
@@ -66,6 +103,10 @@ destructor(Box)
 
         box_style_clear(&this->style);
     }
+
+    box_image_cache_free(&this->bg_image_cache);
+    box_image_cache_free(&this->content_image_cache);
+
     Flex_setContext(this->node, NULL);
     Flex_freeNode(this->node);
 }
@@ -234,32 +275,43 @@ static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
     return path;
 }
 
-static void draw_image(plutovg_t *pluto, const char *path, plutovg_rect_t *r)
+static void draw_image(box_image_cache_t *cache, plutovg_t *pluto, const char *path, plutovg_rect_t *r)
 {
-    plutovg_save(pluto);
-
-    plutovg_surface_t *img = NULL;
-
-    if (strcmp(fileext(path), "svg") == 0)
+    if (!cache || !pluto || !path || !r)
     {
-        img = plutosvg_load_from_file(path, NULL, r->w, r->h, 96.0);
-    }
-    else
-    {
-        img = pluto_load_image_from_file(path, r->w, r->h);
+        LOGE("Invalid parameter");
+        return;
     }
 
-    if (img)
+    plutovg_surface_t *img = box_image_cache_get(cache, path, r);
+
+    if (!img)
     {
-        plutovg_set_source_surface(pluto, img, r->x, r->y);
-        plutovg_fill_preserve(pluto);
-        plutovg_surface_destroy(img);
+        if (strcmp(fileext(path), "svg") == 0)
+        {
+            img = plutosvg_load_from_file(path, NULL, r->w, r->h, 96.0);
+        }
+        else
+        {
+            img = pluto_load_image_from_file(path, r->w, r->h);
+        }
+
+        if (img)
+        {
+            box_image_cache_set(cache, path, r, img);
+        }
     }
-    else
+
+    if (!img)
     {
         LOGE("Unable to load image: %s\n", path);
+        return;
     }
 
+    plutovg_save(pluto);
+    plutovg_set_source_surface(pluto, img, r->x, r->y);
+    plutovg_fill_preserve(pluto);
+    plutovg_surface_destroy(img);
     plutovg_restore(pluto);
 }
 
@@ -315,7 +367,7 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
 
     if (box->style.backgroundImage && box->style.backgroundImage[0] != '\0')
     {
-        draw_image(pluto, box->style.backgroundImage, rect);
+        draw_image(&box->bg_image_cache, pluto, box->style.backgroundImage, rect);
     }
 
     plutovg_path_t *clip_path = NULL;
@@ -357,7 +409,7 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
 
         if (box->style.contentImage && box->style.contentImage[0] != '\0')
         {
-            draw_image(pluto, box->style.contentImage, content_rect);
+            draw_image(&box->content_image_cache, pluto, box->style.contentImage, content_rect);
         }
 
         plutovg_add_path(pluto, outer_path);
@@ -538,47 +590,6 @@ FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constr
             Flex_setResultTop(item, top);
     }
     return (FlexSize){.width = constrainedWidth, .height = constrainedHeight};
-}
-
-void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb)
-{
-    Box *box = Flex_getContext(node);
-    if (!box)
-        return;
-
-    box_event_dsc_t *dsc = malloc(sizeof(box_event_dsc_t));
-
-    if (!dsc)
-        return;
-
-    init_list_head(&dsc->node);
-    dsc->type = type;
-    dsc->cb = cb;
-
-    list_add_tail(&dsc->node, &box->event_list);
-}
-
-void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e)
-{
-    Box *box = Flex_getContext(node);
-    if (!box)
-        return;
-
-    box_event_dsc_t *i;
-    list_for_each_entry(i, &box->event_list, node)
-    {
-        if (i->type == type && i->cb)
-        {
-            box_event_t event = {
-                .e = *e,
-                .type = type,
-                .target = node,
-                .currentTarget = node,
-            };
-
-            i->cb(&event);
-        }
-    }
 }
 
 static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *rect)

@@ -12,23 +12,6 @@ typedef FlexNodeRef box_t;
 #include "style.h"
 #include "pqueue.h"
 
-typedef struct box_event_t
-{
-    meui_event_t e;
-    enum MEUI_EVENT_TYPE type;
-    box_t target;
-    box_t currentTarget;
-} box_event_t;
-
-typedef void (*box_event_cb_t)(box_event_t *e);
-
-typedef struct box_event_dsc_t
-{
-    struct list_head node;
-    enum MEUI_EVENT_TYPE type;
-    box_event_cb_t cb;
-} box_event_dsc_t;
-
 enum BOX_TYPE
 {
     BOX_TYPE_DIV,
@@ -48,6 +31,14 @@ enum BOX_STATE
     BOX_STATE_MAX,
 };
 
+typedef struct box_image_cache_t
+{
+    int width;
+    int height;
+    const char *path;
+    plutovg_surface_t *image;
+} box_image_cache_t;
+
 class(Box)
 {
     box_t node;
@@ -60,7 +51,8 @@ class(Box)
     double client_width, client_height;
     double offset_width, offset_height;
 
-    struct list_head event_list;
+    box_image_cache_t bg_image_cache;
+    box_image_cache_t content_image_cache;
 
     struct
     {
@@ -89,9 +81,6 @@ int box_get_scroll_top(box_t node);
 void box_set_scroll_top(box_t node, int scroll_top);
 int box_get_scroll_left(box_t node);
 void box_set_scroll_left(box_t node, int scroll_left);
-
-void box_add_event_listener(box_t node, enum MEUI_EVENT_TYPE type, box_event_cb_t cb);
-void box_dispatch_event(box_t node, enum MEUI_EVENT_TYPE type, meui_event_t *e);
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
 FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
