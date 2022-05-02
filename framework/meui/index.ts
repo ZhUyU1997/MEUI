@@ -1,5 +1,7 @@
-import { NativeMEUI, BOX_STATE } from "NativeMEUI"
+import { NativeMEUI, BOX_STATE, MeuiMouseRawEvent } from "NativeMEUI"
 import * as os from "os"
+import * as std from "std"
+
 import React, { PropsWithChildren, RefAttributes } from "react"
 import { Box, CustomEvent, MeuiMouseEvent, MeuiWheelEvent } from "./box"
 import { CanvasElement } from "./canvas"
@@ -15,6 +17,7 @@ export function createBox(type = "Div", style: MeuiStyle = {}) {
     else if (type === "Canvas") return new CanvasElement(style)
     return new DivElement(style)
 }
+
 export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
@@ -51,11 +54,12 @@ export interface MeuiElements {
 }
 
 export class MEUI {
-    nativeMEUI: NativeMEUI
-    root: DivElement | StackElement | CanvasElement
-    mouseX: number
-    mouseY: number
-    mouseHit: Box | null
+    private nativeMEUI: NativeMEUI
+    private root: DivElement | StackElement | CanvasElement
+    private mouseX: number
+    private mouseY: number
+    private mouseHit: Box | null
+    onunload: () => void
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
         this.root = createBox("Div", {
@@ -79,36 +83,55 @@ export class MEUI {
         this.mouseX = -1
         this.mouseY = -1
         this.mouseHit = null
+        this.onunload = () => {}
         os.setReadHandler(this.getConnectNumber(), this.onEvent.bind(this))
         setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
 
+    onExit() {
+        this.onunload?.()
+        std.gc()
+        std.exit(0)
+    }
     onEvent() {
+        const eventList = []
         while (this.pending() > 0) {
             const event = this.nextEvent()
             if (!event) continue
 
+            eventList.push(event)
+        }
+
+        for (const event of eventList) {
             let box = this.mouseHit
 
             if (
-                event.type === "mousedown" ||
-                event.type === "mouseup" ||
-                event.type === "mousemove"
+                event.type &&
+                ["mousedown", "mouseup", "mousemove"].includes(event.type)
             ) {
-                if (box && (this.mouseX != event.x || this.mouseY != event.y)) {
-                    box.getPath().forEach((item) => {
-                        item.setState(BOX_STATE.DEFAULT)
-                    })
-                }
+                const mouseEvent = event as MeuiMouseRawEvent
+                this.mouseX = mouseEvent.x
+                this.mouseY = mouseEvent.y
 
-                this.mouseHit = box = this.searchNode(event.x, event.y)
+                this.mouseHit?.getPath().forEach((item) => {
+                    item.setState(BOX_STATE.DEFAULT)
+                })
+                this.mouseHit = box = this.searchNode(this.mouseX, this.mouseY)
 
-                box?.getPath().forEach((item) => {
+                this.mouseHit?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.HOVER)
                 })
+            } else if (event.type === "mousewheel") {
+                this.mouseHit?.getPath().forEach((item) => {
+                    item.setState(BOX_STATE.DEFAULT)
+                })
+                this.mouseHit = box = this.searchNode(this.mouseX, this.mouseY)
 
-                this.mouseX = event.x
-                this.mouseY = event.y
+                this.mouseHit?.getPath().forEach((item) => {
+                    item.setState(BOX_STATE.HOVER)
+                })
+            } else if (event.type === "unload") {
+                this.onExit()
             }
 
             if (box) {
@@ -116,15 +139,16 @@ export class MEUI {
                     box.setState(BOX_STATE.ACTIVE)
                 }
                 if (
-                    event.type === "mousedown" ||
-                    event.type === "mouseup" ||
-                    event.type === "mousemove"
+                    event.type &&
+                    ["mousedown", "mouseup", "mousemove"].includes(event.type)
                 ) {
+                    const mouseEvent = event as MeuiMouseRawEvent
+
                     box.dispatchEvent(
                         new MeuiMouseEvent(event.type, {
-                            clientX: event.x,
-                            clientY: event.y,
-                            button: event.button,
+                            clientX: mouseEvent.x,
+                            clientY: mouseEvent.y,
+                            button: mouseEvent.button,
                         })
                     )
                 } else if (event.type === "mousewheel") {
@@ -157,6 +181,16 @@ export class MEUI {
         this.nativeMEUI.flush()
     }
     update() {
+        this.mouseHit?.getPath().forEach((item) => {
+            item.setState(BOX_STATE.DEFAULT)
+        })
+
+        this.mouseHit = this.searchNode(this.mouseX, this.mouseY)
+
+        this.mouseHit?.getPath().forEach((item) => {
+            item.setState(BOX_STATE.HOVER)
+        })
+
         this.nativeMEUI.update()
     }
     debug() {
@@ -179,23 +213,16 @@ export class MEUI {
         return this.nativeMEUI.nextEvent()
     }
 
-    private _searchNode(node: Box, x: number, y: number): Box | null {
-        let target = null
-        const len = node.children.length
-        for (let i = len - 1; i >= 0; i--) {
-            const ret = this._searchNode(node.children[i], x, y)
-            if (ret) return ret
-        }
-
-        if (node.hit(x, y)) {
-            target = node
-        }
-
-        return target
-    }
-
     searchNode(x: number, y: number): Box | null {
-        return this._searchNode(this.root, x, y)
+        const path = this.root.search(x, y)
+
+        let target = this.root
+
+        for (const i of path) {
+            if (i === -1) break
+            target = target.children[i]
+        }
+        return target
     }
 }
 

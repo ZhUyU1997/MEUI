@@ -113,7 +113,7 @@ export class Box {
     parent: Box | null
     eventListeners: EventCollection
     text: string
-    constructor(type = "div", style: MeuiStyle) {
+    constructor(type = "Div", style?: MeuiStyle) {
         this.nativeBox = new NativeBox(type)
         this.children = []
         this.parent = null
@@ -186,27 +186,43 @@ export class Box {
         this._setStyle(defaultStyle, BOX_STATE.DEFAULT)
     }
 
+    checkConsistency() {
+        if (this.children.length !== this.nativeBox.getChildCount()) {
+            throw new Error("Failed to pass consistency check")
+        }
+    }
+
+    remove() {
+        this.parent?.removeChild(this)
+    }
+
     addChild(child: Box) {
         if (typeof child === "string" || typeof child === "number") {
             this.text += child
             this.setStyle({ text: this.text })
         } else {
-            child.parent = this
+            child.remove()
             this.nativeBox.addChild(child.nativeBox)
             this.children.push(child)
+            child.parent = this
+            this.checkConsistency()
         }
     }
     insertChild(child: Box, index: number) {
+        child.remove()
+
         this.nativeBox.insertChild(child.nativeBox, index)
         this.children.splice(index, 0, child)
+        child.parent = this
+        this.checkConsistency()
     }
 
     insertBefore(child: Box, beforeChild: Box) {
-        if (this.children.indexOf(child) !== -1) this.removeChild(child)
-
+        child.remove()
         const index = this.children.indexOf(beforeChild)
         if (index !== -1) {
             this.insertChild(child, index)
+            this.checkConsistency()
         }
     }
     removeChild(child: Box) {
@@ -215,6 +231,8 @@ export class Box {
         if (index !== -1) {
             this.nativeBox.removeChild(child.nativeBox)
             this.children.splice(index, 1)
+            child.parent = null
+            this.checkConsistency()
         }
     }
 
@@ -228,6 +246,10 @@ export class Box {
 
     hit(x: number, y: number) {
         return this.nativeBox.hit(x, y)
+    }
+
+    search(x: number, y: number) {
+        return this.nativeBox.search(x, y)
     }
 
     getNativeObject() {

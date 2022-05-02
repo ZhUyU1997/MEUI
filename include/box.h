@@ -54,6 +54,7 @@ class(Box)
     box_image_cache_t bg_image_cache;
     box_image_cache_t content_image_cache;
 
+    int out_of_screen;
     struct
     {
         plutovg_matrix_t to_screen_matrix; // box to screen
@@ -81,6 +82,7 @@ int box_get_scroll_top(box_t node);
 void box_set_scroll_top(box_t node, int scroll_top);
 int box_get_scroll_left(box_t node);
 void box_set_scroll_left(box_t node, int scroll_left);
+int box_hit(box_t node, int x, int y);
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
 FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);

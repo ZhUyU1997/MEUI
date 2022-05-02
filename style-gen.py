@@ -125,6 +125,7 @@ void box_style_{item[1]}Percent(box_style_t *style, float {item[1]});''', file=f
 void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
 int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop);
+void box_style_unset(box_style_t *dst, enum BOX_STYLE prop);
 void box_style_merge(box_style_t *dst, const box_style_t *src);
 void box_style_to_flex(box_style_t *style, box_t box);''', file=f)
 
@@ -261,6 +262,14 @@ void box_style_free(box_style_t *style)
 int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop)
 {{
     return !(style->flags & prop);
+}}
+''', file=f)
+
+    print(f'''
+void box_style_unset(box_style_t *dst, enum BOX_STYLE prop)
+{{
+    assert(dst);
+    dst->flags &= ~prop;
 }}
 ''', file=f)
 

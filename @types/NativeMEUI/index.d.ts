@@ -1,23 +1,11 @@
 declare module "NativeMEUI" {
-    export interface MeuiMouseDownRawEvent {
-        type: "mousedown"
+    export interface MeuiMouseRawEvent {
+        type: "mousedown" | "mouseup" | "mousemove"
         x: number
         y: number
         button: number
     }
-    export interface MeuiMouseUpRawEvent {
-        type: "mouseup"
-        x: number
-        y: number
-        button: number
-    }
-    export interface MeuiMouseMoveRawEvent {
-        type: "mousemove"
-        x: number
-        y: number
-        button: number
-    }
-    export interface MeuiMouseWheelRawEvent {
+    export interface MeuiWheelRawEvent {
         type: "mousewheel"
         deltaX: number
         deltaY: number
@@ -25,11 +13,14 @@ declare module "NativeMEUI" {
         button: number
     }
 
+    export interface MeuiUnloadRawEvent {
+        type: "unload"
+    }
+
     export type MeuiRawEvent =
-        | MeuiMouseDownRawEvent
-        | MeuiMouseUpRawEvent
-        | MeuiMouseMoveRawEvent
-        | MeuiMouseWheelRawEvent
+        | MeuiMouseRawEvent
+        | MeuiWheelRawEvent
+        | MeuiUnloadRawEvent
 
     export class NativeMEUI {
         constructor(width: number, height: number)
@@ -46,12 +37,14 @@ declare module "NativeMEUI" {
         constructor(type: string)
         getStyle(state: UI_STATE): Record<string, any>
         setStyle(style: Record<string, any>, state: UI_STATE): void
+        getChildCount(): number
         addChild(child: Box): void
         insertChild(child: Box, index: number): void
         removeChild(child: Box): void
         setState(state: UI_STATE): void
         getState(): UI_STATE
         hit(x: number, y: number): boolean
+        search(x: number, y: number): number[]
         get scrollLeft(): number
         set scrollLeft(value: number)
         get scrollTop(): number

@@ -103,7 +103,6 @@ destructor(Box)
 
         box_style_clear(&this->style);
     }
-
     box_image_cache_free(&this->bg_image_cache);
     box_image_cache_free(&this->content_image_cache);
 
@@ -231,6 +230,55 @@ void box_set_scroll_left(box_t node, int scroll_left)
         scroll_left = box->scroll_width - box->client_width;
 
     box->scroll_left = scroll_left;
+}
+
+int box_hit(box_t node, int x, int y)
+{
+    Box *box = Flex_getContext(node);
+
+    if (box->out_of_screen)
+        return 0;
+
+    float left = Flex_getResultLeft(node);
+    float top = Flex_getResultTop(node);
+    float width = Flex_getResultWidth(node);
+    float height = Flex_getResultHeight(node);
+
+    box_t target = node;
+
+    plutovg_matrix_t to_local = box->result.to_screen_matrix;
+    plutovg_matrix_invert(&to_local);
+
+    plutovg_point_t dst;
+    plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
+
+    if (dst.x >= 0 && dst.x < width && dst.y >= 0 && dst.y < height)
+    {
+        for (box_t node = Flex_getParent(target); node != NULL; node = Flex_getParent(node))
+        {
+            Box *box = Flex_getContext(node);
+            if (box->style.overflow != CSS_OVERFLOW_VISIBLE)
+            {
+                plutovg_matrix_t to_local = box->result.to_screen_matrix;
+                plutovg_matrix_invert(&to_local);
+                plutovg_point_t dst;
+                plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
+                float width = Flex_getResultWidth(node);
+                float height = Flex_getResultHeight(node);
+
+                int x = dst.x - Flex_getResultBorderLeft(node);
+                int y = dst.y - Flex_getResultBorderTop(node);
+
+                if (x >= 0 && x < box->client_width && y >= 0 && y < box->client_height)
+                    continue;
+                else
+                    return 0;
+            }
+        }
+        return 1;
+    }
+
+    return 0;
 }
 
 static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
@@ -731,17 +779,27 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 
     box_transform_by_origin(box, pluto, &(plutovg_rect_t){left, top, width, height});
 
-    if (box->draw)
-        box->draw(box, pluto);
-
     box->client_width = width - Flex_getResultBorderLeft(node) - Flex_getResultBorderRight(node);
     box->client_height = height - Flex_getResultBorderTop(node) - Flex_getResultBorderBottom(node);
     box->offset_width = width;
     box->offset_height = height;
-    box->scroll_width = Flex_getResultScrollWidth(node);
-    box->scroll_height = Flex_getResultScrollHeight(node);
+    box->scroll_width = fmax(Flex_getResultScrollWidth(node), box->client_width);
+    box->scroll_height = fmax(Flex_getResultScrollHeight(node), box->client_height);
 
-    if (box->style.overflow == CSS_OVERFLOW_VISIBLE || (box->client_width >= box->scroll_width && box->client_height >= box->scroll_height))
+    struct meui_t *meui = meui_get_instance();
+    plutovg_matrix_t *m = &box->result.to_screen_matrix;
+    plutovg_rect_t rect = {0, 0, width, height};
+    plutovg_matrix_map_rect(m, &rect, &rect);
+    plutovg_rect_intersect(&rect, &(plutovg_rect_t){0, 0, meui->width, meui->height});
+
+    box->out_of_screen = plutovg_rect_invalid(&rect);
+    if (!box->out_of_screen)
+    {
+        if (box->draw)
+            box->draw(box, pluto);
+    }
+
+    if (box->style.overflow == CSS_OVERFLOW_VISIBLE)
     {
         box_draw_child(node, pluto, pq);
     }
@@ -749,25 +807,15 @@ void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
     {
         plutovg_save(pluto);
         // printf("%f %f\n", box->client_width, box->client_height);
-        plutovg_surface_t *surface = plutovg_surface_create(box->client_width, box->client_height);
-
         {
-            plutovg_t *pluto = plutovg_create(surface);
             plutovg_translate(pluto, -box->scroll_left, -box->scroll_top);
 
             // Fix scroll offset
             plutovg_matrix_translate(&box->result.to_screen_matrix, -box->scroll_left, -box->scroll_top);
             box_draw_child(node, pluto, pq);
             plutovg_matrix_translate(&box->result.to_screen_matrix, box->scroll_left, box->scroll_top);
-
-            plutovg_destroy(pluto);
         }
-
-        plutovg_rect(pluto, Flex_getResultBorderLeft(node), Flex_getResultBorderLeft(node), box->client_width, box->client_height);
-        plutovg_set_source_surface(pluto, surface, 0, 0);
         plutovg_fill(pluto);
-
-        plutovg_surface_destroy(surface);
 
         plutovg_restore(pluto);
     }

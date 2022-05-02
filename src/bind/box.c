@@ -64,6 +64,17 @@ static JSValue js_set_style(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_get_child_count(JSContext *ctx, JSValueConst this_val,
+                                  int argc, JSValueConst *argv)
+{
+    box_t box = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!box)
+        return JS_EXCEPTION;
+
+    return JS_NewInt32(ctx, Flex_getChildrenCount(box));
+}
+
 static JSValue js_add_child(JSContext *ctx, JSValueConst this_val,
                             int argc, JSValueConst *argv)
 {
@@ -110,7 +121,6 @@ static JSValue js_remove_child(JSContext *ctx, JSValueConst this_val,
     box_t child = JS_GetOpaque2(ctx, argv[0], js_box_class_id);
     if (!child)
         return JS_EXCEPTION;
-    // TODO: call box_free
     Flex_removeChild(box, child);
     return JS_UNDEFINED;
 }
@@ -157,48 +167,46 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     if (JS_ToInt32(ctx, &y, argv[1]))
         return JS_EXCEPTION;
 
-    float left = Flex_getResultLeft(node);
-    float top = Flex_getResultTop(node);
-    float width = Flex_getResultWidth(node);
-    float height = Flex_getResultHeight(node);
+    return JS_NewBool(ctx, box_hit(node, x, y));
+}
 
-    Box *box = Flex_getContext(node);
+static int _js_search(JSContext *ctx, box_t node, int x, int y, JSValue path, int level)
+{
+    int len = Flex_getChildrenCount(node);
 
-    box_t target = node;
+    JS_SetPropertyUint32(ctx, path, level, JS_NewInt32(ctx, -1));
 
-    plutovg_matrix_t to_local = box->result.to_screen_matrix;
-    plutovg_matrix_invert(&to_local);
-
-    plutovg_point_t dst;
-    plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
-
-    if (dst.x >= 0 && dst.x < width && dst.y >= 0 && dst.y < height)
+    for (int i = len - 1; i >= 0; i--)
     {
-        for (box_t node = Flex_getParent(target); node != NULL; node = Flex_getParent(node))
+        int ret = _js_search(ctx, Flex_getChild(node, i), x, y, path, level + 1);
+
+        if (ret)
         {
-            Box *box = Flex_getContext(node);
-            if (box->style.overflow != CSS_OVERFLOW_VISIBLE)
-            {
-                plutovg_matrix_t to_local = box->result.to_screen_matrix;
-                plutovg_matrix_invert(&to_local);
-                plutovg_point_t dst;
-                plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
-                float width = Flex_getResultWidth(node);
-                float height = Flex_getResultHeight(node);
-
-                int x = dst.x - Flex_getResultBorderLeft(node);
-                int y = dst.y - Flex_getResultBorderTop(node);
-
-                if (x >= 0 && x < box->client_width && y >= 0 && y < box->client_height)
-                    continue;
-                else
-                    return JS_NewBool(ctx, 0);
-            }
+            JS_SetPropertyUint32(ctx, path, level, JS_NewInt32(ctx, i));
+            return 1;
         }
-        return JS_NewBool(ctx, 1);
     }
 
-    return JS_NewBool(ctx, 0);
+    return box_hit(node, x, y);
+}
+
+static JSValue js_search(JSContext *ctx, JSValueConst this_val,
+                         int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+
+    JSValue path = JS_NewArray(ctx);
+    _js_search(ctx, node, x, y, path, 0);
+    return path;
 }
 
 static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
@@ -286,12 +294,15 @@ static JSValue js_get_scroll_height(JSContext *ctx, JSValueConst this_val)
 static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getStyle", 1, js_get_style),
     JS_CFUNC_DEF("setStyle", 2, js_set_style),
+    JS_CFUNC_DEF("getChildCount", 0, js_get_child_count),
+
     JS_CFUNC_DEF("addChild", 1, js_add_child),
     JS_CFUNC_DEF("insertChild", 2, js_insert_child),
     JS_CFUNC_DEF("removeChild", 1, js_remove_child),
     JS_CFUNC_DEF("setState", 1, js_set_state),
     JS_CFUNC_DEF("getState", 0, js_get_state),
     JS_CFUNC_DEF("hit", 2, js_hit),
+    JS_CFUNC_DEF("search", 2, js_search),
 
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
