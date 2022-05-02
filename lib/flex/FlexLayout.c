@@ -1229,31 +1229,20 @@ FlexNodeRef Flex_newNode() {
 }
 
 void Flex_freeNode(FlexNodeRef node) {
-    if(--node->ref != 0)
+    if(--node->ref > 0)
         return;
+
+    assert(node->parent == NULL);
 
     if (node->measuredSizeCache) {
         FlexVector_free(FlexMeasureCache, node->measuredSizeCache);
     }
-    if(node->parent) {
-        Flex_removeChild(node->parent, node);
-        node->parent = NULL;
-    }
     if (node->children) {
-        for (size_t i = 0; i < Flex_getChildrenCount(node); i++) {
-            FlexNodeRef child = Flex_getChild(node, i);
-            child->parent = NULL;
+        for (;Flex_getChildrenCount(node) > 0;) {
+            Flex_removeChild(node, Flex_getChild(node, Flex_getChildrenCount(node) - 1));
         }
-        FlexVector_free(FlexNodeRef, node->children);
     }
     free(node);
-}
-
-void Flex_freeNodeRecursive(FlexNodeRef node) {
-    for (size_t i = 0; i < Flex_getChildrenCount(node); i++) {
-        Flex_freeNodeRecursive(Flex_getChild(node, i));
-    }
-    Flex_freeNode(node);
 }
 
 void Flex_insertChild(FlexNodeRef node, FlexNodeRef child, size_t index) {
@@ -1261,6 +1250,8 @@ void Flex_insertChild(FlexNodeRef node, FlexNodeRef child, size_t index) {
         node->children = FlexVector_new(FlexNodeRef, 4);
     }
     flex_markDirty(node);
+
+    assert(child->parent == NULL);
     FlexVector_insert(FlexNodeRef, node->children, Flex_reference(child), index);
     child->parent = node;
 }
@@ -1275,6 +1266,7 @@ void Flex_addChild(FlexNodeRef node, FlexNodeRef child) {
 }
 
 void Flex_removeChild(FlexNodeRef node, FlexNodeRef child) {
+    child->parent = NULL;
     FlexVector_remove(FlexNodeRef, node->children, child);
     flex_markDirty(node);
     Flex_freeNode(child);

@@ -204,7 +204,6 @@ FLEX_RESULT_PROPERTYES()
 
 FlexNodeRef Flex_newNode();
 void        Flex_freeNode          (FlexNodeRef node);
-void        Flex_freeNodeRecursive (FlexNodeRef node);
 void        Flex_insertChild       (FlexNodeRef node, FlexNodeRef child, size_t index);
 void        Flex_addChild          (FlexNodeRef node, FlexNodeRef child);
 void        Flex_removeChild       (FlexNodeRef node, FlexNodeRef child);
