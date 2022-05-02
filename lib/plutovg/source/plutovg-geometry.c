@@ -51,7 +51,7 @@ void plutovg_rect_unite(plutovg_rect_t* rect, const plutovg_rect_t* source)
 
 void plutovg_rect_intersect(plutovg_rect_t* rect, const plutovg_rect_t* source)
 {
-   if(plutovg_rect_invalid(source))
+    if(plutovg_rect_invalid(source))
         return;
 
     if(plutovg_rect_invalid(rect))
