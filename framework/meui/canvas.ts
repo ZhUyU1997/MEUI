@@ -1147,7 +1147,7 @@ export class CanvasElement extends Box {
     private setWidth: (width: number) => void
     private setHeight: (height: number) => void
     private getHeight: () => number
-    constructor(style: MeuiStyle) {
+    constructor(style?: MeuiStyle) {
         super("canvas", style)
         this.getWidth = NativeCanvas.getWidth.bind(this.nativeBox)
         this.setWidth = NativeCanvas.setWidth.bind(this.nativeBox)

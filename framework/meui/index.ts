@@ -9,13 +9,12 @@ import type { MeuiStyle } from "./style"
 
 const FPS = 60
 
-export function createBox(type = "Div", style: MeuiStyle) {
+export function createBox(type = "Div", style: MeuiStyle = {}) {
     if (type === "Div") return new DivElement(style)
     else if (type === "Stack") return new StackElement(style)
     else if (type === "Canvas") return new CanvasElement(style)
     return new DivElement(style)
 }
-
 export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
