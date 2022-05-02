@@ -261,6 +261,11 @@ void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
     {
         *meui_event = (struct meui_event_t){.type = MEUI_EVENT_MOUSE_MOVE, .MOUSE_MOVE = {event.xbutton.x, event.xbutton.y}};
     }
+    else if (event.type == ClientMessage &&
+             event.xclient.data.l[0] == window->wmDeleteMessage)
+    {
+        *meui_event = (struct meui_event_t){.type = MEUI_EVENT_UNLOAD};
+    }
     else
     {
         printf("Unhandled event -> type:%d\n", event.type);

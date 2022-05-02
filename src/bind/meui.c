@@ -150,6 +150,10 @@ static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
             JS_SetPropertyStr(ctx, obj, "deltaY", JS_NewInt32(ctx, event.MOUSE_WHEEL.deltaY));
             JS_SetPropertyStr(ctx, obj, "deltaZ", JS_NewInt32(ctx, event.MOUSE_WHEEL.deltaZ));
         }
+        else if (event.type == MEUI_EVENT_UNLOAD)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "unload"));
+        }
         return obj;
     }
 
