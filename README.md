@@ -195,6 +195,9 @@ export interface MeuiStyle {
 
 `arc` `arcTo` `beiginPath` `bezierCurveTo` `createRadialGradient` `createLinearGradient` `clearRect` `clip` `closePath` `ellipse` `fill` `fillRect` `fillText` `font` `getImageData` `getTransform` `lineCap` `lineDashOffset` `lineJoin` `lineWidth` `measureText` `Path2D` `putImageData` `quadraticCurveTo` `resetTransform` `rotate` `save` `scale` `setLineDash` `setTransform` `strokeRect` `strokeText` `textAlign` `textBaseline` `transform` `translate`
 
+## Discussion Group
+Tencent QQ Group: [765228998](https://jq.qq.com/?_wv=1027&k=LjX7RmEe)
+
 ## References
 
 - QuickJS Javascript Engine. Available at:
