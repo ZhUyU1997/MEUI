@@ -18,7 +18,7 @@ declare module 'std' {
         getByte(): number;
         putByte(): number;
     }
-    export function exit(): void;
+    export function exit(status:number): void;
     export function gc(): void;
     export function evalScript(str: string, option: {
         backtrace_barrier: boolean;
