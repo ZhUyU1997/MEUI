@@ -38,9 +38,10 @@ SRC			+= lib/pqueue/*.c
 
 X_CFLAGS	+=
 X_LDFLAGS	+= -lm -ldl -lpthread -lX11
-# X_LDFLAGS	+= -ltcmalloc -lprofiler -ltcmalloc
+# X_LDFLAGS	+= -ltcmalloc
+# X_CFLAGS	+= -march=native
 # X_DEFINES	+= PROFILE
-
+# X_LDFLAGS	+= -lprofiler
 NAME		:= meui
 
 define CUSTOM_TARGET_CMD
