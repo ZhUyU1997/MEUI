@@ -42,8 +42,8 @@ export function setInterval(callback, time) {
     function run() {
         if (timer) clearTimeout(timer)
         timer = setTimeout(() => {
-            run()
             callback()
+            run() // Timer priority is lower than callback
         }, time)
     }
     run()
