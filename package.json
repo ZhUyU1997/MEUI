@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "dev": "rm -f dist/* && make -j16 && rollup -c --input examples/hello/index.jsx && ./meui dist/index.js",
+    "dev": "rm -f dist/* && make -j16 && rollup -c --input examples/file-explorer/index.jsx && ./meui dist/index.js",
     "build": "rm -f dist/* && make -j16 && rollup -c",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
+    "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "./style-gen.py",
     "format": "prettier --write framework test examples"
   },
@@ -24,6 +25,7 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@types/color-string": "^1.5.2",
     "@types/react": "^17.0.43",
+    "@types/react-reconciler": "^0.26.6",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "eslint": "^8.10.0",
