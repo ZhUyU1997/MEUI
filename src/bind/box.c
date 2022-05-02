@@ -32,8 +32,10 @@ static void setBoxStyleFromJSValue(JSContext *ctx, box_style_t *style, JSValueCo
         JSValue value = JS_GetPropertyStr(ctx, obj, jsStyleGetSet[i].name);
         if (JS_IsUndefined(value))
             continue;
-
-        jsStyleGetSet[i].set(ctx, style, value);
+        if (JS_IsNull(value))
+            box_style_unset(style, jsStyleGetSet[i].enumValue);
+        else
+            jsStyleGetSet[i].set(ctx, style, value);
         JS_FreeValue(ctx, value);
     }
 }

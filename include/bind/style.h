@@ -8,6 +8,7 @@ typedef struct
     const char *name;
     JSValue (*get)(JSContext *ctx, box_style_t *style);
     JSValue (*set)(JSContext *ctx, box_style_t *style, JSValue val);
+    enum BOX_STYLE enumValue;
 } JSStyleGetSet;
 
 extern const JSStyleGetSet jsStyleGetSet[];

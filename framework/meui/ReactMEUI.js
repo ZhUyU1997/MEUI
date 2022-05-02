@@ -1,11 +1,21 @@
 import ReactReconciler from "react-reconciler"
 import { createBox } from "."
 
+function shallowDiff(oldObj, newObj) {
+    // Return a diff between the new and the old object
+    const uniqueProps = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+    const changedProps = Array.from(uniqueProps).filter(
+        propName => oldObj[propName] !== newObj[propName]
+    );
+
+    return changedProps;
+}
+
 const rootHostContext = {}
 const childHostContext = {}
 
 // const log = console.log
-const log = () => {}
+const log = (...args) => { }
 const hostConfig = {
     now: Date.now,
     supportsMutation: true,
@@ -101,9 +111,9 @@ const hostConfig = {
         parent.addChild(child)
     },
     prepareUpdate(domElement, oldProps, newProps, rootContainer, hostContext) {
+        // Return a diff between the new and the old props
         log("prepareUpdate")
-
-        return true
+        return shallowDiff(oldProps, newProps)
     },
     commitUpdate(
         domElement,
@@ -113,8 +123,17 @@ const hostConfig = {
         { style, ...newProps }
     ) {
         log("commitUpdate")
+
         if (style) {
-            domElement.setStyle(style)
+            const styleDiffs = shallowDiff(oldProps.style, style);
+            const finalStyles = styleDiffs.reduce((acc, styleName) => {
+                // Style marked to be unset
+                if (!style[styleName]) acc[styleName] = null;
+                else acc[styleName] = style[styleName];
+
+                return acc;
+            }, {});
+            domElement.setStyle(finalStyles)
         }
 
         Object.keys(newProps).forEach((propName) => {

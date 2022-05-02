@@ -1,4 +1,3 @@
-
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
@@ -785,35 +784,36 @@ static JSValue js_set_style_transform_origin(JSContext *ctx, box_style_t *style,
 #undef JS_FLEX_LENGTH_PROPERTY
 #undef JS_FLEX_LENGTH_PROPERTY_AUTO
 
-#define JS_INT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},
-#define JS_FLOAT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},
-#define JS_FLOAT_PROPERTY_RW(Name) {#Name, NULL, js_box_style_##Name},
-#define JS_FLEX_LENGTH_PROPERTY(Name) {#Name, NULL, js_box_style_##Name},
-#define JS_FLEX_LENGTH_PROPERTY_AUTO(Name) {#Name, NULL, js_box_style_##Name},
+#define JS_INT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name, BOX_STYLE_##Name},
+#define JS_FLOAT_PROPERTY(Name) {#Name, NULL, js_box_style_##Name, BOX_STYLE_##Name},
+#define JS_FLOAT_PROPERTY_RW(Name) {#Name, NULL, js_box_style_##Name, BOX_STYLE_##Name},
+#define JS_FLEX_LENGTH_PROPERTY(Name) {#Name, NULL, js_box_style_##Name, BOX_STYLE_##Name},
+#define JS_FLEX_LENGTH_PROPERTY_AUTO(Name) {#Name, NULL, js_box_style_##Name, BOX_STYLE_##Name},
 
 const JSStyleGetSet jsStyleGetSet[] = {
-    {"borderRadius", NULL, js_set_style_border_radius},
-    {"borderColor", NULL, js_set_style_border_color},
-    {"backgroundColor", NULL, js_set_style_fill_color},
-    {"fontColor", NULL, js_set_style_font_color},
-    {"text", js_get_style_text, js_set_style_text},
-    {"fontSize", NULL, js_set_style_font_size},
-    {"fontFamily", NULL, js_set_style_font_family},
-    {"textAlign", NULL, js_set_style_text_align},
-    {"backgroundImage", NULL, js_set_style_background_image},
-    {"contentImage", NULL, js_set_style_content_image},
-    {"transform", NULL, js_set_style_transform_matrix},
-    {"transformOrigin", NULL, js_set_style_transform_origin},
-    {"flexWrap", NULL, js_box_style_wrap},
-    {"flexDirection", NULL, js_box_style_direction},
-    {"alignItems", NULL, js_box_style_alignItems},
-    {"alignSelf", NULL, js_box_style_alignSelf},
-    {"alignContent", NULL, js_box_style_alignContent},
-    {"justifyContent", NULL, js_box_style_justifyContent},
-    {"margin", NULL, js_box_style_margin},
-    {"border", NULL, js_box_style_border},
-    {"padding", NULL, js_box_style_padding},
-    {"overflow", NULL, js_box_style_overflow},
+    {"borderRadius", NULL, js_set_style_border_radius, BOX_STYLE_borderTopLeftRadius | BOX_STYLE_borderTopRightRadius | BOX_STYLE_borderBottomRightRadius | BOX_STYLE_borderBottomLeftRadius},
+    {"borderColor", NULL, js_set_style_border_color, BOX_STYLE_borderColor},
+    {"backgroundColor", NULL, js_set_style_fill_color, BOX_STYLE_backgroundColor},
+    {"fontColor", NULL, js_set_style_font_color, BOX_STYLE_fontColor},
+    {"text", js_get_style_text, js_set_style_text, BOX_STYLE_text},
+    {"fontSize", NULL, js_set_style_font_size, BOX_STYLE_fontSize},
+    {"fontFamily", NULL, js_set_style_font_family, BOX_STYLE_fontFamily},
+    {"textAlign", NULL, js_set_style_text_align, BOX_STYLE_textAlign},
+    {"backgroundImage", NULL, js_set_style_background_image, BOX_STYLE_backgroundImage},
+    {"contentImage", NULL, js_set_style_content_image, BOX_STYLE_contentImage},
+    {"transform", NULL, js_set_style_transform_matrix, BOX_STYLE_transform},
+    {"transformOrigin", NULL, js_set_style_transform_origin, BOX_STYLE_transformOrigin},
+    {"flexWrap", NULL, js_box_style_wrap, BOX_STYLE_wrap},
+    {"flexDirection", NULL, js_box_style_direction, BOX_STYLE_direction},
+    {"alignItems", NULL, js_box_style_alignItems, BOX_STYLE_alignItems},
+    {"alignSelf", NULL, js_box_style_alignSelf, BOX_STYLE_alignSelf},
+    {"alignContent", NULL, js_box_style_alignContent, BOX_STYLE_alignContent},
+    {"justifyContent", NULL, js_box_style_justifyContent, BOX_STYLE_justifyContent},
+
+    {"margin", NULL, js_box_style_margin, BOX_STYLE_marginLeft | BOX_STYLE_marginTop | BOX_STYLE_marginBottom | BOX_STYLE_marginRight | BOX_STYLE_marginStart | BOX_STYLE_marginEnd},
+    {"border", NULL, js_box_style_border, BOX_STYLE_borderLeft | BOX_STYLE_borderTop | BOX_STYLE_borderBottom | BOX_STYLE_borderRight | BOX_STYLE_borderStart | BOX_STYLE_borderEnd},
+    {"padding", NULL, js_box_style_padding, BOX_STYLE_paddingLeft | BOX_STYLE_paddingTop | BOX_STYLE_paddingBottom | BOX_STYLE_paddingRight | BOX_STYLE_paddingStart | BOX_STYLE_paddingEnd},
+    {"overflow", NULL, js_box_style_overflow, BOX_STYLE_overflow},
     JS_FLEX_PROPERTYES()};
 
 const int jsStyleGetSetLength = sizeof(jsStyleGetSet) / sizeof(JSStyleGetSet);
