@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
+import * as std from "std"
+
 import { Div, MEUI, ReactMEUI } from "@/meui"
 import path from "@/path"
 
@@ -15,68 +17,129 @@ import {
 
 import { Center, Row, Column, Root, MaterialDesignIcon } from "@/components"
 
-function PathBar({ fullPath, onChange }) {
-    const pathArray = fullPath.split(path.sep)
-    const { root } = path.parse(fullPath)
-    pathArray[0] = root
+function Icon({ icon, backgroundColor, style }) {
+    return (
+        <MaterialDesignIcon
+            icon={icon}
+            color="rgba(0,0,0, 0.50)"
+            style={{
+                padding: [10, 10, 10, 10],
+                marginRight: 5,
+                marginLeft: 5,
+                borderRadius: 10,
+                fontSize: 18,
+                height: "100%",
+                width: 50,
+                backgroundColor,
+                fontColor: "black",
+                HOVER: {
+                    backgroundColor: "rgba(0,0,0, 0.05)",
+                },
+                ...style,
+            }}
+        ></MaterialDesignIcon>
+    )
+}
 
+function TopBar({ fullPath, onChange }) {
+    const pathArray = fullPath.split(path.sep).filter((item) => {
+        return typeof item === "string" && item !== ""
+    })
+
+    console.log(fullPath, pathArray, pathArray.length)
     return (
         <Row
             style={{
                 flexDirection: "row",
                 width: "100%",
-                height: 50,
-                minHeight: 50,
+                height: 60,
+                minHeight: 60,
                 padding: [5, 5, 5, 5],
             }}
         >
+            <Icon
+                icon={"\u{F004D}"}
+                backgroundColor="rgba(0,0,0, 0.04)"
+                style={{
+                    marginLeft: 5,
+                    marginRight: undefined,
+
+                    borderRadius: [10, 0, 0, 10],
+                    HOVER: {
+                        backgroundColor: "rgba(0,0,0, 0.09)",
+                    },
+                }}
+            ></Icon>
+            <Icon
+                icon={"\u{F0054}"}
+                backgroundColor="rgba(0,0,0, 0.04)"
+                style={{
+                    marginRight: 5,
+                    marginLeft: undefined,
+                    borderRadius: [0, 10, 10, 0],
+                    HOVER: {
+                        backgroundColor: "rgba(0,0,0, 0.09)",
+                    },
+                }}
+            ></Icon>
+
+            <Icon icon={"\u{F02DC}"} backgroundColor="rgba(0,0,0, 0.03)"></Icon>
             <Row
                 style={{
-                    padding: [0, 10, 0, 10],
+                    padding: [0, 5, 0, 5],
                     borderRadius: [20, 20, 20, 20],
-                    backgroundColor: "rgba(0, 0, 0, 0.04)",
                     width: "100%",
-                    height: 40,
+                    height: 45,
                     flexGrow: 1,
                     justifyContent: "flex-start",
-                    HOVER: {
-                        backgroundColor: "rgba(0, 0, 20, 0.1)",
-                    },
                 }}
             >
                 {pathArray.map((name, index) => {
                     return (
-                        <>
-                            {index === 0 ? null : (
-                                <MaterialDesignIcon
-                                    width={20}
-                                    height={40}
-                                    icon={"\u{F035F}"}
-                                ></MaterialDesignIcon>
-                            )}
-                            <Column
-                                style={{
-                                    padding: [0, 10, 0, 10],
-                                    fontSize: 18,
-                                    height: "100%",
-                                    HOVER: {
-                                        backgroundColor: "white",
-                                    },
-                                }}
-                                onClick={() => {
-                                    onChange?.(
-                                        path.join(
-                                            ...pathArray.slice(0, index + 1)
-                                        )
+                        <Column
+                            key={index}
+                            style={{
+                                padding: [10, 10, 10, 10],
+                                margin: [0, 5, 0, 5],
+                                fontSize: 18,
+                                height: "100%",
+                                borderRadius: 10,
+                                backgroundColor:
+                                    index === pathArray.length - 1
+                                        ? "rgba(0,129,255,1)"
+                                        : "rgba(0,0,0, 0.03)",
+                                fontColor:
+                                    index === pathArray.length - 1
+                                        ? "white"
+                                        : "black",
+                                HOVER: {
+                                    backgroundColor:
+                                        index === pathArray.length - 1
+                                            ? "rgba(0,129,255,0.8)"
+                                            : "rgba(0,0,0, 0.05)",
+                                },
+                            }}
+                            onClick={() => {
+                                onChange?.(
+                                    path.join(
+                                        "/",
+                                        ...pathArray.slice(0, index + 1)
                                     )
-                                }}
-                            >
-                                {name}
-                            </Column>
-                        </>
+                                )
+                            }}
+                        >
+                            {name}
+                        </Column>
                     )
                 })}
             </Row>
+            <Icon icon={"\u{F021E}"}></Icon>
+            <Icon icon={"\u{F0570}"}></Icon>
+            <Icon icon={"\u{F0572}"}></Icon>
+            <Icon icon={"\u{F0BAB}"}></Icon>
+            <Icon icon={"\u{F05B0}"}></Icon>
+            <Icon icon={"\u{F05AF}"}></Icon>
+            <Icon icon={"\u{F05AD}"}></Icon>
         </Row>
     )
 }
@@ -84,15 +147,10 @@ function PathBar({ fullPath, onChange }) {
 function FileExplorer() {
     const [curPath, setCurPath] = useState(() => process.cwd())
     const [dirent, setDirent] = useState([])
-
-    const transition = useTransition(dirent, {
-        trail: 18,
-        from: { opacity: 0, scale: 0 },
-        enter: { opacity: 1, scale: 1 },
-    })
-
+    // console.log(JSON.stringify(dirent))
     useLayoutEffect(() => {
         const [d, err] = readdir(curPath)
+        console.log(curPath)
         setDirent(
             d
                 .sort()
@@ -117,29 +175,35 @@ function FileExplorer() {
         <Root
             style={{
                 flexDirection: "column",
+                borderRadius: 20,
             }}
         >
-            <PathBar
+            <TopBar
                 fullPath={curPath}
                 onChange={(newPath) => {
                     setCurPath(newPath)
                 }}
             />
             <Div
+                key={curPath}
                 style={{
                     alignItems: "flex-start",
                     alignContent: "flex-start",
                     flexDirection: "row",
                     flexWrap: "wrap",
                     width: "100%",
+                    // TODO clip scroll area
+                    borderRadius: 20,
+
                     flexGrow: 1,
                     overflow: "scroll",
+                    backgroundColor: "#F8F8F8",
                 }}
             >
-                {transition((style, { name, attribute, isDir }) => {
+                {dirent.map(({ name, attribute, isDir }) => {
                     return (
-                        <animated.Div
-                            key={name}
+                        <Div
+                            key={path.join(curPath, name)}
                             style={{
                                 justifyContent: "center",
                                 alignItems: "center",
@@ -147,12 +211,14 @@ function FileExplorer() {
                                 flexDirection: "column",
                                 textAlign: "center",
                                 fontSize: 20,
-                                width: 100,
-                                height: 120,
+                                width: 120,
+                                height: 150,
+                                borderRadius: 20,
+                                margin: [15, 15, 15, 15],
+                                backgroundColor: "white",
                                 HOVER: {
                                     backgroundColor: "rgba(0, 177, 255, 0.1)",
                                 },
-                                ...style,
                             }}
                             onClick={() => {
                                 let nextPath = path.join(curPath, name)
@@ -163,23 +229,29 @@ function FileExplorer() {
                                 }
                             }}
                         >
-                            <MaterialDesignIcon
-                                width={100}
-                                height={70}
-                                color={isDir ? "#ffbf00" : "black"}
-                                icon={isDir ? "\u{F024B}" : "\u{F0214}"}
+                            <Div
+                                style={{
+                                    width: 70,
+                                    height: 70,
+                                    contentImage: isDir
+                                        ? "res/icon/folder.svg"
+                                        : undefined,
+                                    backgroundColor: isDir
+                                        ? undefined
+                                        : "green",
+                                }}
                             />
                             <Center
                                 style={{
                                     textAlign: "center",
-                                    fontSize: 20,
+                                    fontSize: 15,
                                     width: 90,
                                     height: 30,
                                 }}
                             >
                                 {name}
                             </Center>
-                        </animated.Div>
+                        </Div>
                     )
                 })}
             </Div>
