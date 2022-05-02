@@ -19,8 +19,9 @@
 
 #include <meui.h>
 
-#define WINDOW_W 1920
-#define WINDOW_H 1080
+#ifdef PROFILE
+#include <gperftools/profiler.h>
+#endif
 
 JSModuleDef *js_init_module_meui(JSContext *ctx, const char *module_name);
 
@@ -95,6 +96,11 @@ static int eval_file(JSContext *ctx, const char *filename)
 
 int main(int argc, char **argv)
 {
+#ifdef PROFILE
+    ProfilerStart("test.prof");
+    atexit(ProfilerStop);
+#endif
+
     do_class_init();
 
     JSRuntime *rt;

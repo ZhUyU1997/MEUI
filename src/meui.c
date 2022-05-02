@@ -12,11 +12,6 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef PROFILE
-#include <gperftools/profiler.h>
-#endif
-
 #include <stdbool.h>
 
 struct meui_platform_t
@@ -30,11 +25,6 @@ static struct meui_t *meui_instance = NULL;
 
 struct meui_t *meui_start(int width, int height)
 {
-#ifdef PROFILE
-    ProfilerStart("test.prof");
-    atexit(ProfilerStop);
-#endif
-
     struct meui_platform_t *platform = calloc(1, sizeof(struct meui_platform_t));
 
     if (!platform)
@@ -106,7 +96,7 @@ void meui_platform_fps(struct meui_t *meui)
         if (ticks >= CLOCKS_PER_SEC)
         {
             char buf[128] = {0};
-            snprintf(buf, 128, "FPS: %f", (double)platform->frame * 1000000 / ticks);
+            snprintf(buf, 128, "FPS: %f", (double)platform->frame * CLOCKS_PER_SEC / ticks);
             window_set_name(platform->window, buf);
             platform->frame = 0;
             platform->start_ticks = time;
