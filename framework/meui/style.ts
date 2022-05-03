@@ -9,7 +9,7 @@ import cssfontparser from "cssfontparser"
 type Length<T = (string & {}) | 0> = number | "auto" | T
 
 export interface MeuiStyle {
-    borderRadius?: [number, number, number, number]
+    borderRadius?: [number, number, number, number] | number
     borderColor?: string
     backgroundColor?: Property.BackgroundColor
     fontColor?: Property.Color
