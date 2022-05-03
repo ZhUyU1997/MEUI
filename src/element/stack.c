@@ -8,8 +8,12 @@ static FlexSize stack_layout(FlexNodeRef node, float constrainedWidth, float con
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
         FlexNodeRef item = Flex_getChild(node, i);
-        Flex_layout(item, FlexUndefined, FlexUndefined, scale);
         Box *childBox = Flex_getContext(item);
+
+        Flex_layout(item,
+                    flex_resolve(childBox->style.width, NULL, constrainedWidth),
+                    flex_resolve(childBox->style.height, NULL, constrainedHeight),
+                    scale);
         float left = flex_resolve(childBox->style.left, NULL, constrainedWidth);
         float right = flex_resolve(childBox->style.right, NULL, constrainedWidth);
         float top = flex_resolve(childBox->style.top, NULL, constrainedHeight);
