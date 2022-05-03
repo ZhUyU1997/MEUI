@@ -55,6 +55,7 @@ class(Box)
     box_image_cache_t content_image_cache;
 
     int out_of_screen;
+    int index_in_parent; // for search hitbox
     struct
     {
         plutovg_matrix_t to_screen_matrix; // box to screen
@@ -90,3 +91,4 @@ FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constr
 void box_updateStyleRecursive(box_t node);
 void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
 void box_draw(box_t root);
+box_t box_search_queue(box_t node, int x, int y);

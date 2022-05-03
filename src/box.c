@@ -886,3 +886,76 @@ void box_draw(box_t root)
     box_drawRecursiveQueue(pluto, root);
     plutovg_destroy(pluto);
 }
+
+static void box_get_zindex_queue(box_t node, pqueue_t *pq)
+{
+    int len = Flex_getChildrenCount(node);
+
+    for (int i = 0; i < len; i++)
+    {
+        box_t child = Flex_getChild(node, i);
+        Box *box = Flex_getContext(child);
+        box->index_in_parent = i;
+
+        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
+        {
+            pqueue_insert(pq, child);
+            continue;
+        }
+
+        box_get_zindex_queue(child, pq);
+    }
+}
+
+static box_t box_search(box_t node, int x, int y)
+{
+    int len = Flex_getChildrenCount(node);
+
+    for (int i = len - 1; i >= 0; i--)
+    {
+        box_t child = Flex_getChild(node, i);
+        Box *box = Flex_getContext(child);
+        box->index_in_parent = i;
+
+        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
+            continue;
+
+        box_t ret = box_search(child, x, y);
+
+        if (ret)
+            return ret;
+    }
+
+    int hit = box_hit(node, x, y);
+
+    if (hit)
+        return node;
+    else
+        return NULL;
+}
+
+box_t box_search_queue(box_t node, int x, int y)
+{
+    pqueue_t *pq = pqueue_init(10, cmp_pri, get_pri, set_pri, get_pos, set_pos);
+    box_get_zindex_queue(node, pq);
+
+    if (pqueue_peek(pq) != NULL)
+    {
+        box_t box = NULL;
+        while ((box = pqueue_pop(pq)))
+        {
+            Box *pBox = Flex_getContext(box);
+            box_t ret = box_search_queue(box, x, y);
+
+            if (ret)
+            {
+                pqueue_free(pq);
+                return ret;
+            }
+        }
+    }
+
+    pqueue_free(pq);
+
+    return box_search(node, x, y);
+}

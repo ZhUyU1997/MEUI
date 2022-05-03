@@ -2,6 +2,7 @@
 #include "quickjs.h"
 #include "quickjs-libc.h"
 #include <box.h>
+#include <pqueue.h>
 #include <element.h>
 #include <string.h>
 #include <bind/style.h>
@@ -170,24 +171,15 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, box_hit(node, x, y));
 }
 
-static int _js_search(JSContext *ctx, box_t node, int x, int y, JSValue path, int level)
+static int js_set_path(JSContext *ctx, box_t node, JSValue path)
 {
-    int len = Flex_getChildrenCount(node);
+    Box *box = Flex_getContext(node);
 
-    JS_SetPropertyUint32(ctx, path, level, JS_NewInt32(ctx, -1));
-
-    for (int i = len - 1; i >= 0; i--)
-    {
-        int ret = _js_search(ctx, Flex_getChild(node, i), x, y, path, level + 1);
-
-        if (ret)
-        {
-            JS_SetPropertyUint32(ctx, path, level, JS_NewInt32(ctx, i));
-            return 1;
-        }
-    }
-
-    return box_hit(node, x, y);
+    if (box->index_in_parent == -1)
+        return 0;
+    int index = js_set_path(ctx, Flex_getParent(node), path);
+    JS_SetPropertyInt64(ctx, path, index, JS_NewInt32(ctx, box->index_in_parent));
+    return index + 1;
 }
 
 static JSValue js_search(JSContext *ctx, JSValueConst this_val,
@@ -204,8 +196,16 @@ static JSValue js_search(JSContext *ctx, JSValueConst this_val,
     if (JS_ToInt32(ctx, &y, argv[1]))
         return JS_EXCEPTION;
 
+    Box *box = Flex_getContext(node);
+    box->index_in_parent = -1;
+
     JSValue path = JS_NewArray(ctx);
-    _js_search(ctx, node, x, y, path, 0);
+    box_t hitbox = box_search_queue(node, x, y);
+
+    if (hitbox)
+    {
+        js_set_path(ctx, hitbox, path);
+    }
     return path;
 }
 
