@@ -1,7 +1,8 @@
 import React from "react"
-import { Div } from "@/meui"
+import { Div, MeuiElementAttribule } from "@/meui"
 import { DivElement } from "@/meui/div"
 import { MeuiStyle } from "@/meui/style"
+import { getIconHex, IconsKey } from "./icons"
 
 type RootProps = {
     children?: React.ReactNode
@@ -49,12 +50,12 @@ export const Center = React.forwardRef<DivElement, CenterProps>(
 
 Center.displayName = "Center"
 
-type RowProps = {
+interface RowProps extends MeuiElementAttribule {
     children?: React.ReactNode
     style?: MeuiStyle
 }
 
-export const Row: React.FC<RootProps> = ({ children, style, ...props }) => {
+export const Row: React.FC<RowProps> = ({ children, style, ...props }) => {
     return (
         <Div
             style={{
@@ -71,9 +72,8 @@ export const Row: React.FC<RootProps> = ({ children, style, ...props }) => {
     )
 }
 
-type ColumnProps = {
+interface ColumnProps extends MeuiElementAttribule {
     children?: React.ReactNode
-    style?: MeuiStyle
 }
 
 export const Column: React.FC<ColumnProps> = ({
@@ -97,20 +97,20 @@ export const Column: React.FC<ColumnProps> = ({
     )
 }
 
-type IconProps = {
-    width: number
-    height: number
-    icon: string
-    color: MeuiStyle["fontColor"]
-    style: MeuiStyle
+interface IconProps extends MeuiElementAttribule {
+    width?: number
+    height?: number
+    icon: IconsKey | (string & {})
+    color?: MeuiStyle["fontColor"]
 }
 
 export const MaterialDesignIcon: React.FC<IconProps> = ({
     width = 50,
     height = 50,
-    icon,
+    icon = "\u{F0027}",
     color = "black",
     style,
+    ...props
 }) => {
     return (
         <Center
@@ -124,8 +124,9 @@ export const MaterialDesignIcon: React.FC<IconProps> = ({
                 fontColor: color,
                 ...style,
             }}
+            {...props}
         >
-            {icon}
+            {getIconHex(icon)}
         </Center>
     )
 }

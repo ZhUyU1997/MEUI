@@ -32,6 +32,8 @@ type ComponentProps = {
     onScroll?: (ev: CustomEvent) => any
 }
 
+export type MeuiElementAttribule = PropsWithChildren<ComponentProps>
+
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {

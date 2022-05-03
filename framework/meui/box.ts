@@ -261,6 +261,8 @@ export class Box {
         listener: EventListener<K>,
         useCapture = false
     ) {
+        if (!listener) return
+
         const listenerArray =
             this.eventListeners[type] ?? (this.eventListeners[type] = [])
         listenerArray.push({ listener, useCapture })

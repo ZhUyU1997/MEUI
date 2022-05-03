@@ -3,19 +3,22 @@ import { createBox } from "."
 
 function shallowDiff(oldObj, newObj) {
     // Return a diff between the new and the old object
-    const uniqueProps = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+    const uniqueProps = new Set([
+        ...Object.keys(oldObj),
+        ...Object.keys(newObj),
+    ])
     const changedProps = Array.from(uniqueProps).filter(
-        propName => oldObj[propName] !== newObj[propName]
-    );
+        (propName) => oldObj[propName] !== newObj[propName]
+    )
 
-    return changedProps;
+    return changedProps
 }
 
 const rootHostContext = {}
 const childHostContext = {}
 
 // const log = console.log
-const log = (...args) => { }
+const log = (...args) => {}
 const hostConfig = {
     now: Date.now,
     supportsMutation: true,
@@ -125,14 +128,14 @@ const hostConfig = {
         log("commitUpdate")
 
         if (style) {
-            const styleDiffs = shallowDiff(oldProps.style, style);
+            const styleDiffs = shallowDiff(oldProps.style, style)
             const finalStyles = styleDiffs.reduce((acc, styleName) => {
                 // Style marked to be unset
-                if (!style[styleName]) acc[styleName] = null;
-                else acc[styleName] = style[styleName];
+                if (!style[styleName]) acc[styleName] = null
+                else acc[styleName] = style[styleName]
 
-                return acc;
-            }, {});
+                return acc
+            }, {})
             domElement.setStyle(finalStyles)
         }
 
