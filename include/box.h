@@ -86,7 +86,6 @@ void box_set_scroll_left(box_t node, int scroll_left);
 int box_hit(box_t node, int x, int y);
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
-FlexSize box_stack_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 
 void box_updateStyleRecursive(box_t node);
 void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
