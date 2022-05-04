@@ -7,6 +7,8 @@ interface MeuiEventMap {
     mouseup: MeuiMouseEvent
     mousemove: MeuiMouseEvent
     mousewheel: MeuiWheelEvent
+    keydown: MeuiKeyboardEvent
+    keyup: MeuiKeyboardEvent
 }
 
 interface EventInit {
@@ -88,6 +90,56 @@ export class MeuiWheelEvent extends MeuiMouseEvent {
     }
 }
 
+interface EventModifierInit extends UIEventInit {
+    altKey?: boolean
+    ctrlKey?: boolean
+    metaKey?: boolean
+    modifierAltGraph?: boolean
+    modifierCapsLock?: boolean
+    modifierFn?: boolean
+    modifierFnLock?: boolean
+    modifierHyper?: boolean
+    modifierNumLock?: boolean
+    modifierScrollLock?: boolean
+    modifierSuper?: boolean
+    modifierSymbol?: boolean
+    modifierSymbolLock?: boolean
+    shiftKey?: boolean
+}
+
+interface KeyboardEventInit extends EventModifierInit {
+    /** @deprecated */
+    charCode?: number
+    code?: string
+    isComposing?: boolean
+    key?: string
+    /** @deprecated */
+    keyCode?: number
+    location?: number
+    repeat?: boolean
+}
+/** KeyboardEvent objects describe a user interaction with the keyboard; each event describes a single interaction between the user and a key (or combination of a key with modifier keys) on the keyboard. */
+export class MeuiKeyboardEvent extends MeuiEvent {
+    readonly altKey: boolean
+    readonly ctrlKey: boolean
+    readonly key: string
+    /** @deprecated */
+    readonly keyCode: number
+    readonly shiftKey: boolean
+    readonly DOM_KEY_LOCATION_LEFT: number = 0x00
+    readonly DOM_KEY_LOCATION_NUMPAD: number = 0x01
+    readonly DOM_KEY_LOCATION_RIGHT: number = 0x02
+    readonly DOM_KEY_LOCATION_STANDARD: number = 0x03
+    constructor(type: string, eventInitDict: KeyboardEventInit = {}) {
+        super(type)
+        this.altKey = eventInitDict.altKey ?? false
+        this.ctrlKey = eventInitDict.ctrlKey ?? false
+        this.shiftKey = eventInitDict.shiftKey ?? false
+        this.key = eventInitDict.key ?? ""
+        this.keyCode = eventInitDict.keyCode ?? 0
+    }
+}
+
 export class CustomEvent extends MeuiEvent {
     constructor(type: string) {
         super(type)
@@ -95,8 +147,8 @@ export class CustomEvent extends MeuiEvent {
 }
 
 type EventListener<K extends string> = K extends keyof MeuiEventMap
-    ? (ev: MeuiEventMap[K]) => any
-    : (ev: MeuiEvent) => any
+    ? (ev: MeuiEventMap[K]) => void
+    : (ev: MeuiEvent) => void
 
 type EventRecord<K extends string> = Array<{
     useCapture: boolean

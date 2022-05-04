@@ -4,8 +4,7 @@ import { DivElement } from "@/meui/div"
 import { MeuiStyle } from "@/meui/style"
 import { getIconHex, IconsKey } from "./icons"
 
-type RootProps = {
-    children?: React.ReactNode
+interface RootProps extends MeuiElementAttribule {
     style?: MeuiStyle
 }
 
@@ -18,13 +17,14 @@ export const Root: React.FC<RootProps> = ({ children, style, ...props }) => {
                 height: "100%",
                 ...style,
             }}
+            {...props}
         >
             {children}
         </Div>
     )
 }
 
-type CenterProps = {
+interface CenterProps extends MeuiElementAttribule {
     children?: React.ReactNode
     style?: MeuiStyle
 }

@@ -3,11 +3,18 @@ import * as os from "os"
 import * as std from "std"
 
 import React, { PropsWithChildren, RefAttributes } from "react"
-import { Box, CustomEvent, MeuiMouseEvent, MeuiWheelEvent } from "./box"
+import {
+    Box,
+    CustomEvent,
+    MeuiKeyboardEvent,
+    MeuiMouseEvent,
+    MeuiWheelEvent,
+} from "./box"
 import { CanvasElement } from "./canvas"
 import { DivElement } from "./div"
 import { StackElement } from "./stack"
 import type { MeuiStyle } from "./style"
+import { KeyMap } from "./keymap"
 
 const FPS = 60
 
@@ -25,10 +32,12 @@ export const Canvas = "Canvas"
 type ComponentProps = {
     style?: MeuiStyle
     onClick?: (ev: CustomEvent) => any
-    onMouseUp?: (ev: CustomEvent) => any
-    onMouseDown?: (ev: CustomEvent) => any
-    onMouseMove?: (ev: CustomEvent) => any
-    onMouseWheel?: (ev: CustomEvent) => any
+    onMouseUp?: (ev: MeuiMouseEvent) => any
+    onMouseDown?: (ev: MeuiMouseEvent) => any
+    onKeyDown?: (ev: MeuiKeyboardEvent) => any
+    onKeyUp?: (ev: MeuiKeyboardEvent) => any
+    onMouseMove?: (ev: MeuiMouseEvent) => any
+    onMouseWheel?: (ev: MeuiWheelEvent) => any
     onScroll?: (ev: CustomEvent) => any
 }
 
@@ -135,7 +144,6 @@ export class MEUI {
             } else if (event.type === "unload") {
                 this.onExit()
             }
-
             if (box) {
                 if (event.type === "mousedown") {
                     box.setState(BOX_STATE.ACTIVE)
@@ -159,6 +167,19 @@ export class MEUI {
                             deltaX: event.deltaX,
                             deltaY: event.deltaY,
                             deltaZ: event.deltaZ,
+                        })
+                    )
+                } else if (event.type === "keyup" || event.type === "keydown") {
+                    box.dispatchEvent(
+                        new MeuiKeyboardEvent(event.type, {
+                            altKey: event.altKey,
+                            ctrlKey: event.ctrlKey,
+                            shiftKey: event.shiftKey,
+                            key:
+                                event.key in KeyMap
+                                    ? (KeyMap as any)[event.key]
+                                    : event.key,
+                            keyCode: event.keyCode,
                         })
                     )
                 }

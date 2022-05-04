@@ -1,6 +1,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+#include <X11/XKBlib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -151,13 +152,50 @@ int window_pending(struct window_t *window)
     return XPending(window->dis);
 }
 
+const char Unidentified[] = "Unidentified";
+
 void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
 {
     XEvent event;
     XNextEvent(window->dis, &event);
     meui_event->type = MEUI_EVENT_NULL;
 
-    if (event.type == ButtonPress)
+    if (event.type == KeyPress)
+    {
+        KeySym ks = NoSymbol;
+        const char *s = NULL;
+        if (XkbLookupKeySym(window->dis, event.xkey.keycode, event.xkey.state, NULL, &ks))
+            s = XKeysymToString(ks);
+
+        *meui_event = (struct meui_event_t){
+            .type = MEUI_EVENT_KEY_DOWN,
+            .KEY_DOWN = {
+                .keyCode = event.xkey.keycode,
+                .key = s ? s : "Unidentified",
+                .shiftKey = event.xkey.state & ShiftMask,
+                .ctrlKey = event.xkey.state & ControlMask,
+                .altKey = event.xkey.state & Mod1Mask,
+            },
+        };
+    }
+    else if (event.type == KeyRelease)
+    {
+        KeySym ks = NoSymbol;
+        const char *s = NULL;
+        if (XkbLookupKeySym(window->dis, event.xkey.keycode, event.xkey.state, NULL, &ks))
+            s = XKeysymToString(ks);
+        *meui_event = (struct meui_event_t){
+            .type = MEUI_EVENT_KEY_UP,
+            .KEY_UP = {
+                .keyCode = event.xkey.keycode,
+                .key = s ? s : "Unidentified",
+                .shiftKey = event.xkey.state & ShiftMask,
+                .ctrlKey = event.xkey.state & ControlMask,
+                .altKey = event.xkey.state & Mod1Mask,
+            },
+        };
+    }
+    else if (event.type == ButtonPress)
     {
         switch (event.xbutton.button)
         {

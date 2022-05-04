@@ -1,4 +1,13 @@
 declare module "NativeMEUI" {
+    export interface MeuiKeyboardRawEvent {
+        type: "keydown" | "keyup"
+        keyCode: number
+        key: string
+        altKey: boolean
+        ctrlKey: boolean
+        shiftKey: boolean
+    }
+
     export interface MeuiMouseRawEvent {
         type: "mousedown" | "mouseup" | "mousemove"
         x: number
@@ -18,6 +27,7 @@ declare module "NativeMEUI" {
     }
 
     export type MeuiRawEvent =
+        | MeuiKeyboardRawEvent
         | MeuiMouseRawEvent
         | MeuiWheelRawEvent
         | MeuiUnloadRawEvent
@@ -145,7 +155,7 @@ declare module "NativeMEUI" {
     }
 
     /** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
-    interface TextMetrics {
+    export interface TextMetrics {
         /** Returns the measurement described below. */
         readonly actualBoundingBoxAscent: number
         /** Returns the measurement described below. */

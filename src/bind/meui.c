@@ -123,7 +123,25 @@ static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
     {
         JSValue obj = JS_NewObject(ctx);
 
-        if (event.type == MEUI_EVENT_MOUSE_DOWN)
+        if (event.type == MEUI_EVENT_KEY_DOWN)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "keydown"));
+            JS_SetPropertyStr(ctx, obj, "keyCode", JS_NewInt32(ctx, event.KEY_DOWN.keyCode));
+            JS_SetPropertyStr(ctx, obj, "key", JS_NewString(ctx, event.KEY_DOWN.key));
+            JS_SetPropertyStr(ctx, obj, "altKey", JS_NewBool(ctx, event.KEY_DOWN.altKey));
+            JS_SetPropertyStr(ctx, obj, "ctrlKey", JS_NewBool(ctx, event.KEY_DOWN.ctrlKey));
+            JS_SetPropertyStr(ctx, obj, "shiftKey", JS_NewBool(ctx, event.KEY_DOWN.shiftKey));
+        }
+        else if (event.type == MEUI_EVENT_KEY_UP)
+        {
+            JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "keyup"));
+            JS_SetPropertyStr(ctx, obj, "keyCode", JS_NewInt32(ctx, event.KEY_UP.keyCode));
+            JS_SetPropertyStr(ctx, obj, "key", JS_NewString(ctx, event.KEY_UP.key));
+            JS_SetPropertyStr(ctx, obj, "altKey", JS_NewBool(ctx, event.KEY_UP.altKey));
+            JS_SetPropertyStr(ctx, obj, "ctrlKey", JS_NewBool(ctx, event.KEY_UP.ctrlKey));
+            JS_SetPropertyStr(ctx, obj, "shiftKey", JS_NewBool(ctx, event.KEY_UP.shiftKey));
+        }
+        else if (event.type == MEUI_EVENT_MOUSE_DOWN)
         {
             JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "mousedown"));
             JS_SetPropertyStr(ctx, obj, "x", JS_NewInt32(ctx, event.MOUSE_DOWN.x));

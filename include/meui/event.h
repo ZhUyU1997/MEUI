@@ -42,12 +42,22 @@ typedef struct meui_event_t
         } UNLOAD;
         struct
         {
+            unsigned int keyCode;
+            const char *key;
+            int shiftKey;
+            int ctrlKey;
+            int altKey;
         } KEY_DOWN;
         struct
         {
         } KEY_PRESS;
         struct
         {
+            unsigned int keyCode;
+            const char *key;
+            int shiftKey;
+            int ctrlKey;
+            int altKey;
         } KEY_UP;
         struct
         {

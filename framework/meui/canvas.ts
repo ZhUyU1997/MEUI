@@ -15,6 +15,8 @@ export enum COLOR_FORMAT {
     COLOR_BGR = 3,
 }
 
+export type { TextMetrics } from "NativeMEUI"
+
 /** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
 interface TextMetrics {
     /** Returns the measurement described below. */
