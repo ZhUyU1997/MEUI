@@ -408,10 +408,13 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
     plutovg_save(pluto);
 
     plutovg_path_t *outer_path = round4_rect(r, 0, 0, w, h);
-    plutovg_add_path(pluto, outer_path);
-    plutovg_set_source_color(pluto, &fill_color);
 
-    plutovg_fill_preserve(pluto);
+    if (fill_color.a != 0)
+    {
+        plutovg_add_path(pluto, outer_path);
+        plutovg_set_source_color(pluto, &fill_color);
+        plutovg_fill_preserve(pluto);
+    }
 
     if (box->style.backgroundImage && box->style.backgroundImage[0] != '\0')
     {
@@ -460,12 +463,18 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
             draw_image(&box->content_image_cache, pluto, box->style.contentImage, content_rect);
         }
 
-        plutovg_add_path(pluto, outer_path);
-        plutovg_set_fill_rule(pluto, plutovg_fill_rule_even_odd);
+        if (border_color.a != 0)
+        {
+            plutovg_add_path(pluto, outer_path);
+            plutovg_set_fill_rule(pluto, plutovg_fill_rule_even_odd);
 
-        plutovg_set_source_color(pluto, &border_color);
-
-        plutovg_fill(pluto);
+            plutovg_set_source_color(pluto, &border_color);
+            plutovg_fill(pluto);
+        }
+        else
+        {
+            plutovg_new_path(pluto);
+        }
 
         if (box->style.overflow != CSS_OVERFLOW_VISIBLE)
         {
