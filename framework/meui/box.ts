@@ -6,9 +6,12 @@ interface MeuiEventMap {
     mousedown: MeuiMouseEvent
     mouseup: MeuiMouseEvent
     mousemove: MeuiMouseEvent
+    mouseout: MeuiMouseEvent
+    mouseover: MeuiMouseEvent
     mousewheel: MeuiWheelEvent
     keydown: MeuiKeyboardEvent
     keyup: MeuiKeyboardEvent
+    click: MeuiMouseEvent
 }
 
 interface EventInit {
@@ -61,6 +64,8 @@ export class MeuiMouseEvent extends MeuiEvent {
     readonly clientY: number
     readonly offsetX: number
     readonly offsetY: number
+    readonly screenX: number
+    readonly screenY: number
     readonly x: number
     readonly y: number
     constructor(type: string, eventInitDict: MouseEventInit = {}) {
@@ -69,6 +74,8 @@ export class MeuiMouseEvent extends MeuiEvent {
         this.buttons = eventInitDict.buttons ?? 0
         this.clientX = eventInitDict.clientX ?? 0
         this.clientY = eventInitDict.clientY ?? 0
+        this.screenX = eventInitDict.screenX ?? 0
+        this.screenY = eventInitDict.screenY ?? 0
         this.x = eventInitDict.clientX ?? 0
         this.y = eventInitDict.clientY ?? 0
         // TODO:
@@ -342,11 +349,47 @@ export class Box {
         }
     }
 
+    toClient(x: number, y: number) {
+        return this.nativeBox.toClient(x, y)
+    }
+
+    toOffset(x: number, y: number) {
+        return this.nativeBox.toOffset(x, y)
+    }
+
     tryHandleEvent(event: MeuiEvent, capture: boolean) {
         const listenerArray = this.eventListeners[event.type]
         if (!listenerArray) return
 
         for (const { listener, useCapture } of listenerArray) {
+            if (["mouseup", "mousedown", "mousemove"].includes(event.type)) {
+                const mouseEvent = event as MeuiMouseEvent
+                const [clientX, clientY] = this.toClient(
+                    mouseEvent.screenX,
+                    mouseEvent.screenY
+                )
+                Object.defineProperty(mouseEvent, "clientX", {
+                    ...Object.getOwnPropertyDescriptor(mouseEvent, "clientX"),
+                    value: clientX,
+                })
+                Object.defineProperty(mouseEvent, "clientY", {
+                    ...Object.getOwnPropertyDescriptor(mouseEvent, "clientY"),
+                    value: clientY,
+                })
+
+                const [offsetX, offsetY] = this.toOffset(
+                    mouseEvent.screenX,
+                    mouseEvent.screenY
+                )
+                Object.defineProperty(mouseEvent, "offsetX", {
+                    ...Object.getOwnPropertyDescriptor(mouseEvent, "offsetX"),
+                    value: offsetX,
+                })
+                Object.defineProperty(mouseEvent, "offsetY", {
+                    ...Object.getOwnPropertyDescriptor(mouseEvent, "offsetY"),
+                    value: offsetY,
+                })
+            }
             if (capture == useCapture) listener(event)
         }
     }

@@ -55,6 +55,8 @@ declare module "NativeMEUI" {
         getState(): UI_STATE
         hit(x: number, y: number): boolean
         search(x: number, y: number): number[]
+        toClient(x: number, y: number): [number, number]
+        toOffset(x: number, y: number): [number, number]
         get scrollLeft(): number
         set scrollLeft(value: number)
         get scrollTop(): number

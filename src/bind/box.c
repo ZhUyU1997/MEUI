@@ -171,6 +171,62 @@ static JSValue js_hit(JSContext *ctx, JSValueConst this_val,
     return JS_NewBool(ctx, box_hit(node, x, y));
 }
 
+static JSValue js_toClient(JSContext *ctx, JSValueConst this_val,
+                           int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+
+    Box *box = Flex_getContext(node);
+
+    plutovg_matrix_t to_local = box->result.to_screen_matrix;
+    plutovg_matrix_invert(&to_local);
+
+    plutovg_point_t dst = {x, y};
+    plutovg_matrix_map_point(&to_local, &dst, &dst);
+
+    JSValue pos = JS_NewArray(ctx);
+    JS_SetPropertyInt64(ctx, pos, 0, JS_NewFloat64(ctx, dst.x + Flex_getResultPaddingLeft(node)));
+    JS_SetPropertyInt64(ctx, pos, 1, JS_NewFloat64(ctx, dst.y + Flex_getResultPaddingTop(node)));
+    return pos;
+}
+
+static JSValue js_toOffset(JSContext *ctx, JSValueConst this_val,
+                           int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+    if (JS_ToInt32(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+
+    Box *box = Flex_getContext(node);
+
+    plutovg_matrix_t to_local = box->result.to_screen_matrix;
+    plutovg_matrix_invert(&to_local);
+
+    plutovg_point_t dst = {x, y};
+    plutovg_matrix_map_point(&to_local, &dst, &dst);
+
+    JSValue pos = JS_NewArray(ctx);
+    JS_SetPropertyInt64(ctx, pos, 0, JS_NewFloat64(ctx, dst.x));
+    JS_SetPropertyInt64(ctx, pos, 1, JS_NewFloat64(ctx, dst.y));
+    return pos;
+}
+
 static int js_set_path(JSContext *ctx, box_t node, JSValue path)
 {
     Box *box = Flex_getContext(node);
@@ -303,6 +359,8 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("getState", 0, js_get_state),
     JS_CFUNC_DEF("hit", 2, js_hit),
     JS_CFUNC_DEF("search", 2, js_search),
+    JS_CFUNC_DEF("toClient", 2, js_toClient),
+    JS_CFUNC_DEF("toOffset", 2, js_toOffset),
 
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),

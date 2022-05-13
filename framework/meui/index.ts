@@ -127,23 +127,24 @@ export class MEUI {
                 this.mouseHit?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.DEFAULT)
                 })
-                this.mouseHit = box = this.searchNode(this.mouseX, this.mouseY)
+                box = this.searchNode(this.mouseX, this.mouseY)
 
-                this.mouseHit?.getPath().forEach((item) => {
+                box?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.HOVER)
                 })
             } else if (event.type === "mousewheel") {
                 this.mouseHit?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.DEFAULT)
                 })
-                this.mouseHit = box = this.searchNode(this.mouseX, this.mouseY)
+                box = this.searchNode(this.mouseX, this.mouseY)
 
-                this.mouseHit?.getPath().forEach((item) => {
+                box?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.HOVER)
                 })
             } else if (event.type === "unload") {
                 this.onExit()
             }
+
             if (box) {
                 if (event.type === "mousedown") {
                     box.setState(BOX_STATE.ACTIVE)
@@ -156,8 +157,8 @@ export class MEUI {
 
                     box.dispatchEvent(
                         new MeuiMouseEvent(event.type, {
-                            clientX: mouseEvent.x,
-                            clientY: mouseEvent.y,
+                            screenX: mouseEvent.x,
+                            screenY: mouseEvent.y,
                             button: mouseEvent.button,
                         })
                     )
@@ -191,6 +192,35 @@ export class MEUI {
                 ) {
                     box.dispatchEvent(new CustomEvent("click"))
                 }
+            }
+
+            if (box !== this.mouseHit) {
+                if ("mousemove" === event.type) {
+                    const mouseEvent = event as MeuiMouseRawEvent
+                    this.mouseX = mouseEvent.x
+                    this.mouseY = mouseEvent.y
+
+                    if (this.mouseHit) {
+                        this.mouseHit.dispatchEvent(
+                            new MeuiMouseEvent("mouseout", {
+                                screenX: mouseEvent.x,
+                                screenY: mouseEvent.y,
+                                button: mouseEvent.button,
+                            })
+                        )
+                    }
+
+                    if (box) {
+                        box.dispatchEvent(
+                            new MeuiMouseEvent("mouseover", {
+                                screenX: mouseEvent.x,
+                                screenY: mouseEvent.y,
+                                button: mouseEvent.button,
+                            })
+                        )
+                    }
+                }
+                this.mouseHit = box
             }
         }
     }
