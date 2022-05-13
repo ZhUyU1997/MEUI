@@ -7,6 +7,7 @@
 class_impl(CanvasEle, Box){
     .width = 300,
     .height = 150,
+    .fit = 0,
     .surface = false,
     .direction = CANVAS_TEXT_DIRECTION_INHERIT,
     .text_align = CANVAS_TEXT_ALIGN_START,
@@ -38,10 +39,20 @@ int canvas_get_height(CanvasEle *e)
     return e->height;
 }
 
-void canvas_set_width(CanvasEle *e, int width)
+int canvas_get_fit(CanvasEle *e)
+{
+    return e->fit;
+}
+
+void canvas_set_fit(CanvasEle *e, int fit)
+{
+    e->fit = fit;
+}
+
+static void canvas_set_size(CanvasEle *e, int width, int height)
 {
     plutovg_surface_t *old_surface = e->surface;
-    plutovg_surface_t *new_surface = plutovg_surface_create(width, e->height);
+    plutovg_surface_t *new_surface = plutovg_surface_create(width, height);
 
     plutovg_t *pluto = plutovg_create(new_surface);
     plutovg_rect(pluto, 0, 0, e->width, e->height);
@@ -54,24 +65,21 @@ void canvas_set_width(CanvasEle *e, int width)
 
     e->surface = new_surface;
     e->width = width;
+    e->height = height;
+}
+
+void canvas_set_width(CanvasEle *e, int width)
+{
+    if (e->fit)
+        return;
+    canvas_set_size(e, width, e->height);
 }
 
 void canvas_set_height(CanvasEle *e, int height)
 {
-    plutovg_surface_t *old_surface = e->surface;
-    plutovg_surface_t *new_surface = plutovg_surface_create(e->width, height);
-
-    plutovg_t *pluto = plutovg_create(new_surface);
-    plutovg_rect(pluto, 0, 0, e->width, e->height);
-    plutovg_set_source_surface(pluto, e->surface, 0, 0);
-    plutovg_fill(pluto);
-    plutovg_surface_destroy(old_surface);
-
-    plutovg_destroy(e->pluto);
-    e->pluto = pluto;
-
-    e->surface = new_surface;
-    e->height = height;
+    if (e->fit)
+        return;
+    canvas_set_size(e, e->width, height);
 }
 
 void canvas_set_fill_color(CanvasEle *e, double r, double g, double b, double a)
@@ -116,10 +124,26 @@ void canvas_stroke(CanvasEle *e)
     plutovg_stroke(e->pluto);
 }
 
+static FlexSize canvas_measure(void *context, FlexSize constrainedSize)
+{
+    CanvasEle *e = dynamic_cast(CanvasEle)(context);
+    printf("canvas_measure %d\n", e->fit);
+
+    if (e->fit)
+    {
+        if (((int)constrainedSize.width) != e->width || ((int)constrainedSize.height) != e->height)
+        {
+            printf("change size %f %f\n", constrainedSize.width, constrainedSize.height);
+            canvas_set_size(e, constrainedSize.width, constrainedSize.height);
+        }
+    }
+    return (FlexSize){.width = constrainedSize.width, .height = constrainedSize.height};
+}
+
 constructor(CanvasEle)
 {
     Box *box = dynamic_cast(Box)(this);
-    Flex_setMeasureFunc(box->node, box_measure_text);
+    Flex_setMeasureFunc(box->node, canvas_measure);
 
     this->fillPaint = plutovg_paint_create_rgba(0, 0, 0, 1);
     this->strokePaint = plutovg_paint_create_rgba(0, 0, 0, 1);

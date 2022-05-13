@@ -207,6 +207,33 @@ static JSValue js_canvas_setHeight(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_canvas_getFit(JSContext *ctx, JSValueConst this_val,
+                                int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+    return JS_NewBool(ctx, canvas_get_fit(e));
+}
+
+static JSValue js_canvas_setFit(JSContext *ctx, JSValueConst this_val,
+                                int argc, JSValueConst *argv)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, get_js_box_class_id());
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    CanvasEle *e = dynamic_cast(CanvasEle)(Flex_getContext(node));
+
+    int fit = JS_ToBool(ctx, argv[0]);
+    canvas_set_fit(e, fit);
+    return JS_UNDEFINED;
+}
+
 static JSValue js_canvas_beignPath(JSContext *ctx, JSValueConst this_val,
                                    int argc, JSValueConst *argv)
 {
@@ -1407,6 +1434,8 @@ static const JSCFunctionListEntry js_canvas_funcs[] = {
     JS_CFUNC_DEF("getHeight", 0, js_canvas_getHeight),
     JS_CFUNC_DEF("setWidth", 1, js_canvas_setWidth),
     JS_CFUNC_DEF("setHeight", 1, js_canvas_setHeight),
+    JS_CFUNC_DEF("getFit", 0, js_canvas_getFit),
+    JS_CFUNC_DEF("setFit", 1, js_canvas_setFit),
     JS_CFUNC_DEF("beginPath", 0, js_canvas_beignPath),
     JS_CFUNC_DEF("closePath", 0, js_canvas_closePath),
 

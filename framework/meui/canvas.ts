@@ -1149,12 +1149,16 @@ export class CanvasElement extends Box {
     private setWidth: (width: number) => void
     private setHeight: (height: number) => void
     private getHeight: () => number
+    private getFit: () => boolean
+    private setFit: (fit: boolean) => void
     constructor(style?: MeuiStyle) {
         super("canvas", style)
         this.getWidth = NativeCanvas.getWidth.bind(this.nativeBox)
         this.setWidth = NativeCanvas.setWidth.bind(this.nativeBox)
         this.getHeight = NativeCanvas.getHeight.bind(this.nativeBox)
         this.setHeight = NativeCanvas.setHeight.bind(this.nativeBox)
+        this.getFit = NativeCanvas.getFit.bind(this.nativeBox)
+        this.setFit = NativeCanvas.setFit.bind(this.nativeBox)
     }
 
     get width() {
@@ -1171,6 +1175,14 @@ export class CanvasElement extends Box {
 
     set height(val) {
         this.setHeight(val)
+    }
+
+    get fit() {
+        return this.getFit()
+    }
+
+    set fit(val) {
+        this.setFit(val)
     }
 
     getContext(

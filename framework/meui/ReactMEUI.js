@@ -1,5 +1,6 @@
 import ReactReconciler from "react-reconciler"
 import { createBox } from "."
+import { CanvasElement } from "./canvas"
 
 function shallowDiff(oldObj, newObj) {
     // Return a diff between the new and the old object
@@ -92,6 +93,19 @@ const hostConfig = {
                 domElement.addEventListener(type, propValue, useCapture)
             }
         })
+
+        if (domElement instanceof CanvasElement) {
+            if ("width" in newProps) {
+                domElement.width = newProps.width
+            }
+            if ("height" in newProps) {
+                domElement.height = newProps.height
+            }
+
+            if ("fit" in newProps) {
+                domElement.fit = newProps.fit
+            }
+        }
         return domElement
     },
     createTextInstance: (text) => {
@@ -122,13 +136,15 @@ const hostConfig = {
         domElement,
         updatePayload,
         type,
-        oldProps,
+        _oldProps,
         { style, ...newProps }
     ) {
         log("commitUpdate")
 
+        const { style: oldStyle, oldProps } = _oldProps
+
         if (style) {
-            const styleDiffs = shallowDiff(oldProps.style, style)
+            const styleDiffs = shallowDiff(oldStyle, style)
             const finalStyles = styleDiffs.reduce((acc, styleName) => {
                 // Style marked to be unset
                 if (!style[styleName]) acc[styleName] = null
@@ -139,8 +155,17 @@ const hostConfig = {
             domElement.setStyle(finalStyles)
         }
 
-        Object.keys(newProps).forEach((propName) => {
-            const propValue = newProps[propName]
+        const propsDiffs = shallowDiff(oldProps, newProps)
+        const finalProps = propsDiffs.reduce((acc, name) => {
+            // Style marked to be unset
+            if (!newProps[name]) acc[name] = null
+            else acc[name] = newProps[name]
+
+            return acc
+        }, {})
+
+        Object.keys(finalProps).forEach((propName) => {
+            const propValue = finalProps[propName]
             if (propName === "children") {
                 if (
                     typeof propValue === "string" ||
@@ -166,6 +191,18 @@ const hostConfig = {
                 domElement.addEventListener(type, propValue, useCapture)
             }
         })
+
+        if (domElement instanceof CanvasElement) {
+            if ("width" in finalProps) {
+                domElement.width = finalProps.width
+            }
+            if ("height" in finalProps) {
+                domElement.height = finalProps.height
+            }
+            if ("fit" in finalProps) {
+                domElement.fit = finalProps.fit
+            }
+        }
     },
     commitTextUpdate(textInstance, oldText, newText) {
         log("commitTextUpdate")

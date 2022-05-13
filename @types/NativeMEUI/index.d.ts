@@ -201,6 +201,8 @@ declare module "NativeMEUI" {
         setWidth(width: number): void
         getHeight(): number
         setHeight(height: number): void
+        getFit(): boolean
+        setFit(fit: boolean): void
 
         beginPath(): void
         closePath(): void

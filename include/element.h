@@ -37,6 +37,7 @@ class(CanvasEle, Box)
 {
     int width;
     int height;
+    int fit;
     plutovg_surface_t *surface;
     plutovg_t *pluto;
     plutovg_path_t *path;
@@ -56,6 +57,8 @@ int canvas_get_width(CanvasEle *e);
 int canvas_get_height(CanvasEle *e);
 void canvas_set_width(CanvasEle *e, int width);
 void canvas_set_height(CanvasEle *e, int height);
+int canvas_get_fit(CanvasEle *e);
+void canvas_set_fit(CanvasEle *e, int fit);
 
 void canvas_set_fill_color(CanvasEle *e, double r, double g, double b, double a);
 void canvas_set_fill_gradient(CanvasEle *e, plutovg_gradient_t *gradient);

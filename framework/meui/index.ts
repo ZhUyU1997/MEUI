@@ -29,7 +29,7 @@ export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
 
-type ComponentProps = {
+interface MeuiElementProps {
     style?: MeuiStyle
     onClick?: (ev: CustomEvent) => any
     onMouseUp?: (ev: MeuiMouseEvent) => any
@@ -41,19 +41,23 @@ type ComponentProps = {
     onScroll?: (ev: CustomEvent) => any
 }
 
-export type MeuiElementAttribule = PropsWithChildren<ComponentProps>
+interface MeuiCanvasElementProps extends MeuiElementProps {
+    width?: number
+    height?: number
+    fit?: boolean
+}
+
+export type MeuiElementAttribule = PropsWithChildren<MeuiElementProps>
+export type MeuiCanvasElementAttribule =
+    PropsWithChildren<MeuiCanvasElementProps>
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
         interface IntrinsicElements {
-            Div: PropsWithChildren<ComponentProps & RefAttributes<DivElement>>
-            Canvas: PropsWithChildren<
-                ComponentProps & RefAttributes<CanvasElement>
-            >
-            Stack: PropsWithChildren<
-                ComponentProps & RefAttributes<StackElement>
-            >
+            Div: MeuiElementAttribule & RefAttributes<DivElement>
+            Canvas: MeuiCanvasElementAttribule & RefAttributes<CanvasElement>
+            Stack: MeuiElementAttribule & RefAttributes<StackElement>
         }
     }
 }
