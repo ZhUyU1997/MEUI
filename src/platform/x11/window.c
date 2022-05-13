@@ -1,7 +1,11 @@
+#include "xshm.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <X11/extensions/XShm.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -17,7 +21,8 @@ struct window_t
     GC gc;
     XImage *ximage;
     XVisualInfo vinfo;
-
+    XShmSegmentInfo shminfo;
+    int shared_image;
     int x11_fd;
     Atom wmDeleteMessage;
 };
@@ -94,10 +99,19 @@ struct window_t *window_create(const char *title, int width, int height)
     XClearWindow(dis, win);
     XMapRaised(dis, win);
 
-    char *image32 = (char *)malloc(width * height * 4);
-    window->ximage = XCreateImage(dis, window->vinfo.visual, window->vinfo.depth,
-                                  ZPixmap, 0, image32,
-                                  width, height, 32, 0);
+    // https://www.ssec.wisc.edu/~billh/bp/xshm.c
+    Status XShm = XShmQueryExtension(dis);
+
+    XShmSegmentInfo *shminfo = &window->shminfo;
+    window->ximage = alloc_xshm_image(dis, &window->vinfo, shminfo, width, height);
+    window->shared_image = !!window->ximage;
+    if (!window->shared_image)
+    {
+        char *image32 = (char *)malloc(width * height * 4);
+        window->ximage = XCreateImage(dis, window->vinfo.visual, window->vinfo.depth,
+                                      ZPixmap, 0, image32,
+                                      width, height, 32, 0);
+    }
 
     window->wmDeleteMessage = XInternAtom(dis, "WM_DELETE_WINDOW", False);
     XSetWMProtocols(dis, win, &window->wmDeleteMessage, 1);
@@ -109,6 +123,11 @@ struct window_t *window_create(const char *title, int width, int height)
 
 void window_destory(struct window_t *window)
 {
+    if (window->shared_image)
+        destroy_xshm_image(window->dis, window->ximage, &window->shminfo);
+    else
+        XDestroyImage(window->ximage);
+
     XFreeGC(window->dis, window->gc);
     XDestroyWindow(window->dis, window->win);
     XCloseDisplay(window->dis);
@@ -127,9 +146,21 @@ int window_connect_number(struct window_t *window)
 
 int window_update_image(struct window_t *window)
 {
-    return XPutImage(window->dis, window->win,
+    Status XShm = XShmQueryExtension(window->dis);
+    if (XShm)
+    {
+        XShmPutImage(window->dis, window->win,
                      window->gc, window->ximage, 0, 0, 0, 0,
-                     window->width, window->height);
+                     window->width, window->height, 0);
+    }
+    else
+    {
+        XPutImage(window->dis, window->win,
+                  window->gc, window->ximage, 0, 0, 0, 0,
+                  window->width, window->height);
+    }
+
+    return XFlush(window->dis);
 }
 
 void window_set_name(struct window_t *window, const char *name)
@@ -156,7 +187,7 @@ const char Unidentified[] = "Unidentified";
 
 void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
 {
-    XEvent event;
+    XEvent event = {};
     XNextEvent(window->dis, &event);
     meui_event->type = MEUI_EVENT_NULL;
 
