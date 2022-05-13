@@ -331,7 +331,7 @@ plutovg_font_t *meui_get_font(struct meui_t *meui, const char *font_family, doub
 
     font_map_t *map = &meui->render_context.font_map;
     plutovg_font_face_t *font_face = hashmap_get(map, font_family == NULL ? meui->render_context.default_font_family : font_family);
-    
+
     if (font_face == NULL)
     {
         // fallback
