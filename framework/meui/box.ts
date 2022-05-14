@@ -12,6 +12,8 @@ interface MeuiEventMap {
     keydown: MeuiKeyboardEvent
     keyup: MeuiKeyboardEvent
     click: MeuiMouseEvent
+    focusin: MeuiFocusEvent
+    focusout: MeuiFocusEvent
 }
 
 interface EventInit {
@@ -147,6 +149,18 @@ export class MeuiKeyboardEvent extends MeuiEvent {
     }
 }
 
+interface FocusEventInit {
+    relatedTarget?: Box | null
+}
+
+export class MeuiFocusEvent extends MeuiEvent {
+    readonly relatedTarget: Box | null
+    constructor(type: string, eventInitDict: FocusEventInit = {}) {
+        super(type)
+        this.relatedTarget = eventInitDict.relatedTarget ?? null
+    }
+}
+
 export class CustomEvent extends MeuiEvent {
     constructor(type: string) {
         super(type)
@@ -172,6 +186,7 @@ export class Box {
     parent: Box | null
     eventListeners: EventCollection
     text: string
+    focusable = false
     constructor(type = "Div", style?: MeuiStyle) {
         this.nativeBox = new NativeBox(type)
         this.children = []
@@ -220,6 +235,26 @@ export class Box {
             const v = style.borderRadius
             if (typeof style.borderRadius === "number") {
                 nativeStyle.borderRadius = [v, v, v, v]
+            }
+        }
+        if (style.margin) {
+            const v = style.margin
+            if (typeof style.margin === "number") {
+                nativeStyle.margin = [v, v, v, v]
+            }
+        }
+
+        if (style.border) {
+            const v = style.border
+            if (typeof style.border === "number") {
+                nativeStyle.border = [v, v, v, v]
+            }
+        }
+
+        if (style.padding) {
+            const v = style.padding
+            if (typeof style.padding === "number") {
+                nativeStyle.padding = [v, v, v, v]
             }
         }
 

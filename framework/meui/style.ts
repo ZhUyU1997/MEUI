@@ -55,9 +55,9 @@ export interface MeuiStyle {
         | "flex-end"
         | "space-between"
         | "space-around"
-    margin?: [number, number, number, number]
-    border?: [number, number, number, number]
-    padding?: [number, number, number, number]
+    margin?: [number, number, number, number] | number
+    border?: [number, number, number, number] | number
+    padding?: [number, number, number, number] | number
     overflow?: "visible" | "hidden" | "scroll" | "auto"
 
     flexBasis?: number

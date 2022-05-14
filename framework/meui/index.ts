@@ -6,6 +6,7 @@ import React, { PropsWithChildren, RefAttributes } from "react"
 import {
     Box,
     CustomEvent,
+    MeuiFocusEvent,
     MeuiKeyboardEvent,
     MeuiMouseEvent,
     MeuiWheelEvent,
@@ -29,7 +30,8 @@ export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
 
-interface MeuiElementProps {
+export interface MeuiElementProps {
+    focusable?: boolean
     style?: MeuiStyle
     onClick?: (ev: CustomEvent) => any
     onMouseUp?: (ev: MeuiMouseEvent) => any
@@ -38,6 +40,8 @@ interface MeuiElementProps {
     onKeyUp?: (ev: MeuiKeyboardEvent) => any
     onMouseMove?: (ev: MeuiMouseEvent) => any
     onMouseWheel?: (ev: MeuiWheelEvent) => any
+    onFocusIn?: (ev: MeuiFocusEvent) => any
+    onFocusOut?: (ev: MeuiFocusEvent) => any
     onScroll?: (ev: CustomEvent) => any
 }
 
@@ -74,6 +78,7 @@ export class MEUI {
     private mouseX: number
     private mouseY: number
     private mouseHit: Box | null
+    private focusElement: Box | null
     onunload: () => void
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
@@ -98,7 +103,9 @@ export class MEUI {
         this.mouseX = -1
         this.mouseY = -1
         this.mouseHit = null
+        this.focusElement = null
         this.onunload = () => {}
+
         os.setReadHandler(this.getConnectNumber(), this.onEvent.bind(this))
         setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
@@ -119,7 +126,7 @@ export class MEUI {
 
         for (const event of eventList) {
             let box = this.mouseHit
-
+            let focusElement = this.focusElement
             if (
                 event.type &&
                 ["mousedown", "mouseup", "mousemove"].includes(event.type)
@@ -136,6 +143,17 @@ export class MEUI {
                 box?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.HOVER)
                 })
+
+                if (event.type === "mousedown") {
+                    box?.getPath()
+                        .reverse()
+                        .forEach((item) => {
+                            if (item.focusable) {
+                                focusElement = item
+                                item.setState(BOX_STATE.FOCUS)
+                            }
+                        })
+                }
             } else if (event.type === "mousewheel") {
                 this.mouseHit?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.DEFAULT)
@@ -175,7 +193,7 @@ export class MEUI {
                         })
                     )
                 } else if (event.type === "keyup" || event.type === "keydown") {
-                    box.dispatchEvent(
+                    focusElement?.dispatchEvent(
                         new MeuiKeyboardEvent(event.type, {
                             altKey: event.altKey,
                             ctrlKey: event.ctrlKey,
@@ -225,6 +243,23 @@ export class MEUI {
                     }
                 }
                 this.mouseHit = box
+            }
+
+            if (focusElement !== this.focusElement) {
+                if ("mousedown" === event.type) {
+                    if (this.focusElement) {
+                        this.focusElement.dispatchEvent(
+                            new MeuiFocusEvent("focusout")
+                        )
+                    }
+
+                    if (focusElement) {
+                        focusElement.dispatchEvent(
+                            new MeuiFocusEvent("focusin")
+                        )
+                    }
+                }
+                this.focusElement = focusElement
             }
         }
     }

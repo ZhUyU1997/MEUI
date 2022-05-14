@@ -106,6 +106,10 @@ const hostConfig = {
                 domElement.fit = newProps.fit
             }
         }
+
+        if ("focusable" in newProps) {
+            domElement.focusable = newProps.focusable
+        }
         return domElement
     },
     createTextInstance: (text) => {
@@ -137,11 +141,15 @@ const hostConfig = {
         updatePayload,
         type,
         _oldProps,
-        { style, ...newProps }
+        { style, children, ...newProps }
     ) {
         log("commitUpdate")
 
-        const { style: oldStyle, oldProps } = _oldProps
+        const { style: oldStyle, ...oldProps } = _oldProps
+
+        if (typeof children === "string" || typeof children === "number") {
+            domElement.setStyle({ text: children })
+        }
 
         if (style) {
             const styleDiffs = shallowDiff(oldStyle, style)
@@ -183,6 +191,7 @@ const hostConfig = {
                     type = propName.toLowerCase().substring(2)
                     useCapture = false
                 }
+
                 domElement.removeEventListener(
                     type,
                     oldProps[propName],
@@ -202,6 +211,10 @@ const hostConfig = {
             if ("fit" in finalProps) {
                 domElement.fit = finalProps.fit
             }
+        }
+
+        if ("focusable" in finalProps) {
+            domElement.focusable = finalProps.focusable
         }
     },
     commitTextUpdate(textInstance, oldText, newText) {
