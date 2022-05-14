@@ -124,26 +124,25 @@ void canvas_stroke(CanvasEle *e)
     plutovg_stroke(e->pluto);
 }
 
-static FlexSize canvas_measure(void *context, FlexSize constrainedSize)
+static FlexSize canvas_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale)
 {
-    CanvasEle *e = dynamic_cast(CanvasEle)(context);
-    printf("canvas_measure %d\n", e->fit);
+    Box *box = Flex_getContext(node);
+    CanvasEle *e = dynamic_cast(CanvasEle)(box);
 
     if (e->fit)
     {
-        if (((int)constrainedSize.width) != e->width || ((int)constrainedSize.height) != e->height)
+        if (((int)constrainedWidth) != e->width || ((int)constrainedHeight) != e->height)
         {
-            printf("change size %f %f\n", constrainedSize.width, constrainedSize.height);
-            canvas_set_size(e, constrainedSize.width, constrainedSize.height);
+            canvas_set_size(e, constrainedWidth, constrainedHeight);
         }
     }
-    return (FlexSize){.width = constrainedSize.width, .height = constrainedSize.height};
+    return (FlexSize){.width = constrainedWidth, .height = constrainedHeight};
 }
 
 constructor(CanvasEle)
 {
     Box *box = dynamic_cast(Box)(this);
-    Flex_setMeasureFunc(box->node, canvas_measure);
+    Flex_setCustomLayout(box->node, canvas_layout);
 
     this->fillPaint = plutovg_paint_create_rgba(0, 0, 0, 1);
     this->strokePaint = plutovg_paint_create_rgba(0, 0, 0, 1);

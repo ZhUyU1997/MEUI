@@ -416,6 +416,21 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
     node->lastSize[FLEX_WIDTH] = node->size[FLEX_WIDTH];
     node->lastSize[FLEX_HEIGHT] = node->size[FLEX_HEIGHT];
 
+
+    if (node->customLayout)
+    {
+        FlexSize customLayoutSize = node->customLayout(node, availableSize.width, availableSize.height, context->scale);
+        if (!FlexIsResolved(resolvedWidth))
+        {
+            node->result.size[FLEX_WIDTH] = flex_clamp(customLayoutSize.width + flex_inset(node->result.padding, FLEX_WIDTH), flex_resolve(node->minSize[FLEX_WIDTH], context, constrainedWidth), flex_resolve(node->maxSize[FLEX_WIDTH], context, constrainedWidth));
+        }
+        if (!FlexIsResolved(resolvedHeight))
+        {
+            node->result.size[FLEX_HEIGHT] = flex_clamp(customLayoutSize.height + flex_inset(node->result.padding, FLEX_HEIGHT), flex_resolve(node->minSize[FLEX_HEIGHT], context, constrainedHeight), flex_resolve(node->maxSize[FLEX_HEIGHT], context, constrainedHeight));
+        }
+        return;
+    }
+
     // measure non-container element
     if (Flex_getChildrenCount(node) == 0) {
         if (!FlexIsResolved(resolvedWidth) || !FlexIsResolved(resolvedHeight)) {
@@ -427,19 +442,6 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             if (!FlexIsResolved(resolvedHeight)) {
                 node->result.size[FLEX_HEIGHT] = flex_clamp(measuredSize.height + flex_inset(node->result.padding, FLEX_HEIGHT), flex_resolve(node->minSize[FLEX_HEIGHT], context, constrainedHeight), flex_resolve(node->maxSize[FLEX_HEIGHT], context, constrainedHeight));
             }
-        }
-        return;
-    }
-    else if (node->customLayout)
-    {
-        FlexSize customLayoutSize = node->customLayout(node, availableSize.width, availableSize.height, context->scale);
-        if (!FlexIsResolved(resolvedWidth))
-        {
-            node->result.size[FLEX_WIDTH] = flex_clamp(customLayoutSize.width + flex_inset(node->result.padding, FLEX_WIDTH), flex_resolve(node->minSize[FLEX_WIDTH], context, constrainedWidth), flex_resolve(node->maxSize[FLEX_WIDTH], context, constrainedWidth));
-        }
-        if (!FlexIsResolved(resolvedHeight))
-        {
-            node->result.size[FLEX_HEIGHT] = flex_clamp(customLayoutSize.height + flex_inset(node->result.padding, FLEX_HEIGHT), flex_resolve(node->minSize[FLEX_HEIGHT], context, constrainedHeight), flex_resolve(node->maxSize[FLEX_HEIGHT], context, constrainedHeight));
         }
         return;
     }
