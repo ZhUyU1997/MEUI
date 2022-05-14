@@ -599,5 +599,5 @@ function FileExplorer() {
     )
 }
 
-const meui = new MEUI(1200, 800)
+const meui = new MEUI(1920, 1080)
 ReactMEUI.render(<FileExplorer />, meui)

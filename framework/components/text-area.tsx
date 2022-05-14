@@ -1,5 +1,10 @@
-import React, { useLayoutEffect, useRef } from "react"
-import { Div, Canvas, MeuiElementAttribule } from "@/meui"
+import React, {
+    useImperativeHandle,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from "react"
+import { Div, Stack, Canvas, MeuiElementAttribule } from "@/meui"
 import {
     CanvasElement,
     CanvasRenderingContext2D,
@@ -30,6 +35,15 @@ interface Paragraph {
 
 type Cursor = [number, number]
 const duration = 1000
+
+interface CanvasTextEditorOption {
+    type: "text" | "password"
+    defaultValue: string
+    multiline: boolean
+    fontSize: number
+    fontFamily: string
+    fontColor: string
+}
 class CanvasTextEditor {
     ctx: CanvasRenderingContext2D
     cursor: Cursor = [Infinity, 0]
@@ -42,10 +56,15 @@ class CanvasTextEditor {
     clipboard = ""
     updated = false
     updateSelected = false
-    constructor(private canvas: CanvasElement) {
+    focused = false
+
+    constructor(
+        private canvas: CanvasElement,
+        private option: CanvasTextEditorOption
+    ) {
         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D
         this.startBlinkinTimestamp = Date.now()
-        this.initData(`Hello MEUI`)
+        this.initData(option.defaultValue)
 
         requestAnimationFrame(this.render.bind(this))
 
@@ -55,11 +74,19 @@ class CanvasTextEditor {
         this.onMouseMove = this.onMouseMove.bind(this)
         this.onMouseOut = this.onMouseOut.bind(this)
 
-        this.canvas.addEventListener("keydown", this.onKeyDown)
         this.canvas.addEventListener("mousedown", this.onMouseDown)
         this.canvas.addEventListener("mouseup", this.onMouseUp)
         this.canvas.addEventListener("mousemove", this.onMouseMove)
         this.canvas.addEventListener("mouseout", this.onMouseOut)
+    }
+
+    updateOption(option: CanvasTextEditorOption) {
+        this.option = option
+        this.updated = false
+    }
+
+    setFocused(focused: boolean) {
+        this.focused = focused
     }
 
     destory() {
@@ -68,6 +95,15 @@ class CanvasTextEditor {
         this.canvas.removeEventListener("mouseup", this.onMouseUp)
         this.canvas.removeEventListener("mousemove", this.onMouseMove)
         this.canvas.removeEventListener("mouseout", this.onMouseOut)
+    }
+
+    get value() {
+        return this.paragraphs
+            .map((paragraph) =>
+                paragraph.children.map((char) => char.content).join("")
+            )
+            .join("")
+            .slice(0, -1)
     }
 
     adjustCursor() {
@@ -117,7 +153,12 @@ class CanvasTextEditor {
                 },
             },
         ]
-        this.insetText(0, 0, content)
+
+        this.insetText(
+            0,
+            0,
+            this.option.multiline ? content : content.split("\n").join("")
+        )
         this.calcLineInfo()
     }
 
@@ -205,6 +246,7 @@ class CanvasTextEditor {
     }
 
     getTextInfo(c: string) {
+        this.ctx.font = `${this.option.fontSize}px ${this.option.fontFamily}`
         if (c === "\n") {
             return {
                 content: c,
@@ -219,7 +261,7 @@ class CanvasTextEditor {
 
         return {
             content: c,
-            m: this.ctx.measureText(c),
+            m: this.ctx.measureText(this.option.type === "password" ? "*" : c),
         }
     }
 
@@ -278,9 +320,12 @@ class CanvasTextEditor {
     }
 
     insertNewLine(x: number, y: number): [number, number] {
-        this.insertChar(x, y, "\n")
-        this.splitParagraph(x + 1, y)
-        return [0, y + 1]
+        if (this.option.multiline) {
+            this.insertChar(x, y, "\n")
+            this.splitParagraph(x + 1, y)
+            return [0, y + 1]
+        }
+        return [x, y]
     }
 
     insertChars(x: number, y: number, s: string): [number, number] {
@@ -343,6 +388,16 @@ class CanvasTextEditor {
                         .join("")
                 })
                 this.clipboard = text
+            } else if (e.key.toUpperCase() === "X") {
+                let text = ""
+                this.handleSelectedChar((p, start, end) => {
+                    text += p.children
+                        .slice(start, end)
+                        .map((item) => item.content)
+                        .join("")
+                })
+                this.clipboard = text
+                this.removeSelected()
             } else if (e.key.toUpperCase() === "V") {
                 this.removeSelected()
                 const cursor = this.insetText(
@@ -362,9 +417,7 @@ class CanvasTextEditor {
             this.insertChar(this.cursor[0], this.cursor[1], e.key)
             this.cursor[0]++
         } else if (e.key == "\n") {
-            this.insertNewLine(this.cursor[0], this.cursor[1])
-            this.cursor[0] = 0
-            this.cursor[1]++
+            this.cursor = this.insertNewLine(this.cursor[0], this.cursor[1])
         } else if (e.key === "BackSpace") {
             if (this.hasSelected()) {
                 this.removeSelected()
@@ -521,8 +574,8 @@ class CanvasTextEditor {
         }, [])
     }
     renderChar(paragraph: Paragraph, char: TextRenderInfo, selected = false) {
-        let fillRectStyle = "white"
-        let fillTextStyle = "black"
+        let fillRectStyle = "#00000000"
+        let fillTextStyle = this.option.fontColor
 
         if (selected) {
             fillRectStyle = "#3390ff"
@@ -530,18 +583,18 @@ class CanvasTextEditor {
         }
 
         this.ctx.fillStyle = fillRectStyle
-
+        this.ctx.font = `${this.option.fontSize}px ${this.option.fontFamily}`
         this.ctx.fillRect(
             char.result.x,
             paragraph.result.y,
-            char.result.width,
+            char.result.width + 0.5,
             paragraph.result.lineHeight
         )
 
-        if (char.content !== "\t") {
+        if (char.content !== "\t" && char.content !== "\n") {
             this.ctx.fillStyle = fillTextStyle
             this.ctx.fillText(
-                char.content,
+                this.option.type === "password" ? "*" : char.content,
                 char.result.x,
                 paragraph.result.y + paragraph.result.ascent
             )
@@ -559,14 +612,14 @@ class CanvasTextEditor {
                 const y = paragraph.result.y
                 if (x > this.canvas.width || y > this.canvas.height) return
 
-                this.ctx.strokeRect(
-                    char.result.x,
-                    paragraph.result.y +
-                        paragraph.result.ascent -
-                        char.result.y,
-                    char.result.width,
-                    char.result.height
-                )
+                // this.ctx.strokeRect(
+                //     char.result.x,
+                //     paragraph.result.y +
+                //         paragraph.result.ascent -
+                //         char.result.y,
+                //     char.result.width,
+                //     char.result.height
+                // )
                 this.renderChar(paragraph, char)
             })
         }, 0)
@@ -575,10 +628,22 @@ class CanvasTextEditor {
 
     renderCursor() {
         this.ctx.save()
-        const phase = (Date.now() - this.startBlinkinTimestamp) % duration
 
         const paragraph = this.paragraphs[this.cursor[1]]
         const char = paragraph.children[this.cursor[0]]
+
+        this.ctx.clearRect(
+            char.result.x,
+            paragraph.result.y,
+            2,
+            paragraph.result.lineHeight
+        )
+
+        if (this.focused === false) return
+
+        const phase = (Date.now() - this.startBlinkinTimestamp) % duration
+        const showCursor = phase / duration < 0.5
+
         this.renderChar(
             paragraph,
             char,
@@ -586,8 +651,9 @@ class CanvasTextEditor {
                 this.cursorStart[1] > this.cursor[1]
         )
 
-        if (phase / duration < 0.5) {
+        if (showCursor) {
             this.ctx.fillStyle = "black"
+
             this.ctx.fillRect(
                 char.result.x,
                 paragraph.result.y,
@@ -595,6 +661,8 @@ class CanvasTextEditor {
                 paragraph.result.lineHeight
             )
         }
+
+        this.ctx.restore()
     }
 
     renderSelected() {
@@ -615,6 +683,9 @@ class CanvasTextEditor {
         this.adjustCursor()
 
         if (this.updated === false) {
+            // this.ctx.fillStyle = "red"
+            // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
             this.renderParagraphs()
             this.renderSelected()
@@ -626,27 +697,109 @@ class CanvasTextEditor {
         this.ctx.restore()
     }
 }
+export interface TextAreaHandle {
+    value: string
+}
 
-export default function TextArea(props: MeuiElementAttribule) {
-    const ref = useRef<CanvasElement>(null)
+export interface Props extends Omit<MeuiElementAttribule, "children"> {
+    type?: "text" | "password"
+    multiline?: boolean
+    placeholder?: string
+    children?: string
+}
+
+export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
+    {
+        style,
+        children = "",
+        placeholder = "",
+        multiline = true,
+        type = "text",
+        ...props
+    }: Props,
+    ref
+) {
+    const canvasRef = useRef<CanvasElement>(null)
+    const editorRef = useRef<CanvasTextEditor>()
+    const fontSize = style?.fontSize ?? 16
+    const fontFamily = style?.fontFamily ?? "sans-serif"
+    const fontColor = style?.fontColor ?? "black"
+    const [placeholderText, setPlaceholderText] = useState(
+        children === "" ? placeholder : ""
+    )
     useLayoutEffect(() => {
-        const canvas = ref.current
+        const canvas = canvasRef.current
         if (!canvas) return
 
-        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-
-        ctx.fillStyle = "black"
-        ctx.font = "30px sans-serif"
-        const editor = new CanvasTextEditor(canvas)
-
+        const editor = new CanvasTextEditor(canvas, {
+            defaultValue: children,
+            type,
+            multiline,
+            fontSize,
+            fontFamily,
+            fontColor,
+        })
+        editorRef.current = editor
         return () => {
             editor.destory()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useLayoutEffect(() => {
+        editorRef.current?.updateOption({
+            defaultValue: children,
+            type,
+            multiline,
+            fontSize,
+            fontFamily,
+            fontColor,
+        })
+    }, [children, fontColor, fontFamily, fontSize, multiline, type])
+
+    useImperativeHandle(ref, () => ({
+        get value() {
+            return editorRef.current?.value ?? ""
+        },
+    }))
     return (
-        <Div {...props}>
-            <Canvas fit={true} ref={ref}></Canvas>
-        </Div>
+        <Stack
+            focusable={true}
+            style={{
+                width: 100,
+                height: 100,
+                ...style,
+            }}
+            {...props}
+            onKeyDown={(e) => {
+                editorRef.current?.onKeyDown(e)
+                const isEmpty = (editorRef.current?.value ?? "") === ""
+                setPlaceholderText(isEmpty ? placeholder : "")
+            }}
+            onFocusIn={() => {
+                editorRef.current?.setFocused(true)
+            }}
+            onFocusOut={() => {
+                editorRef.current?.setFocused(false)
+            }}
+        >
+            <Div
+                style={{
+                    fontColor: "grey",
+                    fontFamily,
+                    fontSize,
+                }}
+            >
+                {placeholderText}
+            </Div>
+            <Canvas
+                fit={true}
+                ref={canvasRef}
+                style={{
+                    width: "auto",
+                    height: "auto",
+                }}
+            ></Canvas>
+        </Stack>
     )
-}
+})
