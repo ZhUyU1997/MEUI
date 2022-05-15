@@ -5,12 +5,16 @@ import { babel } from '@rollup/plugin-babel'
 import typescript from 'rollup-plugin-typescript2'
 import alias from '@rollup/plugin-alias'
 import inject from '@rollup/plugin-inject'
+import { terser } from "rollup-plugin-terser"
+import command from 'rollup-plugin-command'
+import replace from '@rollup/plugin-replace'
 import path from 'path'
 
+const NODE_ENV = process.env.NODE_ENV ?? "development"
+const IS_DEV = NODE_ENV === "development"
+
 export default commandLineArgs => {
-	const inputBase = commandLineArgs.input || 'examples/hello/index.jsx'
 	return {
-		input: [inputBase],
 		output: {
 			format: 'esm',
 			dir: "dist",
@@ -32,6 +36,10 @@ export default commandLineArgs => {
 				babelHelpers: 'bundled', exclude: ['node_modules/**']
 			}),
 			typescript(),
+			replace({
+				'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+			}),
+
 			inject({
 				setTimeout: [path.resolve('framework/polyfill.js'), "setTimeout"],
 				clearTimeout: [path.resolve('framework/polyfill.js'), "clearTimeout"],
@@ -43,6 +51,8 @@ export default commandLineArgs => {
 				window: [path.resolve('framework/polyfill.js'), "window"],
 				process: [path.resolve('framework/polyfill.js'), "process"],
 			}),
+			IS_DEV ? command("./meui dist/index.js") : undefined,
+			IS_DEV ? undefined : terser(),
 		]
 	}
 }

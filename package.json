@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "rm -f dist/* && make -j16 && rollup -c --input examples/file-explorer/index.tsx && ./meui dist/index.js",
-    "build": "rm -f dist/* && make -j16 && rollup -c",
+    "dev": "rm -f dist/* && make -j16 && cross-env NODE_ENV=development rollup -c --input examples/file-explorer/index.tsx",
+    "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/file-explorer/index.tsx",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "./style-gen.py",
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-spring/core": "^9.4.4",
+    "@rollup/plugin-replace": "^4.0.0",
     "color-string": "^1.9.0",
     "cssfontparser": "^1.2.1",
     "jsnes": "git+https://gitee.com/891085309/jsnes.git#master",
@@ -28,6 +29,7 @@
     "@types/react-reconciler": "^0.26.6",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",
@@ -36,6 +38,8 @@
     "prettier": "^2.6.2",
     "prettier-check": "^2.0.0",
     "rollup": "^2.70.2",
+    "rollup-plugin-command": "^1.1.3",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "tslib": "^2.3.1",
     "typescript": "^4.6.3"
