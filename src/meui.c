@@ -247,7 +247,7 @@ void meui_end(struct meui_t *meui)
         meui->render_context.default_font_family = NULL;
     }
 
-    box_free_recursive(meui->render_context.root);
+    box_free(meui->render_context.root);
     plutovg_surface_destroy(meui->render_context.surface);
     plutovg_surface_destroy(meui->win_surface);
 
