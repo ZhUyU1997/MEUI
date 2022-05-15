@@ -1,3 +1,4 @@
+<p align="center"><img src="docs/MEUI_logo.svg"></p>
 <h1 align="center">MEUI</h1> 
 <h3 align="center">A modern embedded UI library giving your extraordinary development experience<h3>
 <h3 align="center">现代嵌入式用户界面库，非凡的开发体验<h3>
@@ -208,15 +209,15 @@ Tencent QQ Group: [765228998](https://jq.qq.com/?_wv=1027&k=LjX7RmEe)
 
    https://github.com/sammycage/plutovg
 
-- React: A JavaScript library for building user interfaces.  Available at:
+- React: A JavaScript library for building user interfaces. Available at:
 
   https://reactjs.org/
 
-- react-spring: A spring-physics first animation library.   Available at:
+- react-spring: A spring-physics first animation library. Available at:
 
   https://react-spring.io/
 
-- `FlexLayout` is an `C` implementation of `Flexible Box` layout.Available at:
+- `FlexLayout` is an `C` implementation of `Flexible Box` layout. Available at:
 
    https://github.com/Sleen/FlexLayout
 
@@ -226,7 +227,7 @@ Tencent QQ Group: [765228998](https://jq.qq.com/?_wv=1027&k=LjX7RmEe)
 
 - Templated type-safe hashmap implementation in C. Available at:
 
-  Available at: https://github.com/DavidLeeds/hashmap
+   https://github.com/DavidLeeds/hashmap
 
 - `libpqueue` is a generic priority queue (heap) implementation. Available at:
 
