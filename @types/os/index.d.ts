@@ -22,8 +22,8 @@ declare module "os" {
     export function ttySetRaw(fd: number): void
     export function remove(fd: number): number
     export function rename(oldpath: string, newpath: string): number
-    export function setReadHandler(fd: number, func: Function): void
-    export function setWriteHandler(fd: number, func: Function): void
+    export function setReadHandler(fd: number, func: Function | null): void
+    export function setWriteHandler(fd: number, func: Function | null): void
     export function signal(sig_num: number, func: Function | null): void
     export const SIGINT: number
     export const SIGABRT: number

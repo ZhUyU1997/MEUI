@@ -242,6 +242,7 @@ const hostConfig = {
 }
 
 const ReactReconcilerInst = ReactReconciler(hostConfig)
+const roots = new Map()
 
 export default {
     render: (reactElement, meui, callback) => {
@@ -249,6 +250,12 @@ export default {
             meui.getRoot(),
             false
         )
+
+        roots.set(meui.getRoot(), container)
+
+        meui.onunload = () => {
+            unmountComponentAtNode(meui.getRoot())
+        }
         // update the root Container
         return ReactReconcilerInst.updateContainer(
             reactElement,
@@ -257,6 +264,15 @@ export default {
             callback
         )
     },
+}
+
+export function unmountComponentAtNode(node) {
+    const container = roots.get(node)
+    if (container) {
+        ReactReconcilerInst.updateContainer(null, container, null, () => {
+            roots.delete(node)
+        })
+    }
 }
 
 export { batchedUpdates } from "react-reconciler"

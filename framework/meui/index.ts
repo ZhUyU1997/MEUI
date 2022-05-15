@@ -79,6 +79,7 @@ export class MEUI {
     private mouseY: number
     private mouseHit: Box | null
     private focusElement: Box | null
+    private intervalId: any
     onunload: () => void
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
@@ -107,11 +108,13 @@ export class MEUI {
         this.onunload = () => {}
 
         os.setReadHandler(this.getConnectNumber(), this.onEvent.bind(this))
-        setInterval(() => this.onFrameTick(), 1000.0 / FPS)
+        this.intervalId = setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
 
     onExit() {
         this.onunload?.()
+        os.setReadHandler(this.getConnectNumber(), null)
+        clearInterval(this.intervalId)
         std.gc()
         std.exit(0)
     }
