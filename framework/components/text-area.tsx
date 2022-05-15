@@ -796,8 +796,8 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
                 fit={true}
                 ref={canvasRef}
                 style={{
-                    width: "auto",
-                    height: "auto",
+                    width: "100%",
+                    height: "100%",
                 }}
             ></Canvas>
         </Stack>

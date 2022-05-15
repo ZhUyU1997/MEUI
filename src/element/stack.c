@@ -13,8 +13,8 @@ static FlexSize stack_layout(FlexNodeRef node, float constrainedWidth, float con
         float constrainedChildWidth = flex_resolve(childBox->style.width, NULL, constrainedWidth);
         float constrainedChildHeight = flex_resolve(childBox->style.height, NULL, constrainedHeight);
 
-        constrainedChildWidth = FlexIsResolved(constrainedChildWidth) ? constrainedChildWidth : constrainedWidth;
-        constrainedChildHeight = FlexIsResolved(constrainedChildHeight) ? constrainedChildHeight : constrainedHeight;
+        // constrainedChildWidth = FlexIsResolved(constrainedChildWidth) ? constrainedChildWidth : constrainedWidth;
+        // constrainedChildHeight = FlexIsResolved(constrainedChildHeight) ? constrainedChildHeight : constrainedHeight;
 
         Flex_layout(item, constrainedChildWidth, constrainedChildHeight, scale);
 
