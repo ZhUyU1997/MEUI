@@ -7,5 +7,4 @@ fixdep*
 /meui*
 /.vscode
 /node_modules
-/include/gen
 /dist
