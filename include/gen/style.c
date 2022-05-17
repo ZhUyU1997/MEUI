@@ -858,9 +858,14 @@ void box_style_merge(box_style_t *dst, const box_style_t *src)
 {
     assert(dst && src);
 
-    for(int i = 0; i < 64; i++)
+    unsigned long flags = src->flags;
+
+    if(!flags)
+        return;
+
+    for(int i = 0; i < 54; i++)
     {
-        if(!(src->flags & (1UL << i)))
+        if(!(flags & (1UL << i)))
             continue;
         switch(i)
         {
@@ -1239,4 +1244,3 @@ void box_style_to_flex(box_style_t *style, box_t box)
         }
     }
 }
-

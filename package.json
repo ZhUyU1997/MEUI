@@ -4,7 +4,7 @@
     "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/file-explorer/index.tsx",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
-    "gen": "./style-gen.py",
+    "gen": "node ./style-gen.mjs",
     "format": "prettier --write framework test examples"
   },
   "dependencies": {

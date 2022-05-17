@@ -57,13 +57,10 @@ typedef struct box_style_t
 	FlexLength top;
 	FlexLength bottom;
 	int zIndex;
-
 } box_style_t;
-
 
 enum BOX_STYLE
 {
-
 	BOX_STYLE_wrap = 1UL << 0,
 	BOX_STYLE_direction = 1UL << 1,
 	BOX_STYLE_alignItems = 1UL << 2,
@@ -118,9 +115,7 @@ enum BOX_STYLE
 	BOX_STYLE_top = 1UL << 51,
 	BOX_STYLE_bottom = 1UL << 52,
 	BOX_STYLE_zIndex = 1UL << 53,
-
 };
-
 void box_style_wrap(box_style_t *style, FlexWrapMode wrap);
 void box_style_direction(box_style_t *style, FlexDirection direction);
 void box_style_alignItems(box_style_t *style, FlexAlign alignItems);
