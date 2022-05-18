@@ -528,7 +528,22 @@ function FileExplorer() {
                 .sort()
                 .filter((name) => name !== ".")
                 .map((name) => {
-                    const attr = stat(path.join(curPath, name))[0]
+                    // Provide the default value because stat fails on 32bit mode. 
+                    // Reference to: http://www.mjr19.org.uk/sw/inodes64.html
+                    const attr = stat(path.join(curPath, name))[0] ?? {
+                        dev: 0,
+                        ino: 0,
+                        mode: 0,
+                        nlink: 0,
+                        uid: 0,
+                        gid: 0,
+                        rdev: 0,
+                        size: 0,
+                        block: 0,
+                        atime: 0,
+                        mtime: 0,
+                        ctime: 0,
+                    }
                     return {
                         name,
                         attribute: attr,
