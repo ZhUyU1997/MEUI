@@ -134,9 +134,9 @@ void window_destory(struct window_t *window)
     free(window);
 }
 
-char *window_get_image_data(struct window_t *window)
+unsigned char *window_get_image_data(struct window_t *window)
 {
-    return window->ximage->data;
+    return (unsigned char *)window->ximage->data;
 }
 
 int window_connect_number(struct window_t *window)
@@ -166,9 +166,7 @@ int window_update_image(struct window_t *window)
 void window_set_name(struct window_t *window, const char *name)
 {
     XTextProperty tp;
-    char *props[1] = {name};
-
-    if (!XStringListToTextProperty(props, 1, &tp))
+    if (!XStringListToTextProperty((char **)&name, 1, &tp))
     {
         printf("Failed to set WMName");
         return;

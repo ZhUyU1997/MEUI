@@ -160,7 +160,7 @@ destructor(CanvasEle)
     plutovg_paint_destroy(this->strokePaint);
 
     if (this->font_family)
-        free(this->font_family);
+        free((void *)this->font_family);
     plutovg_path_destroy(this->path);
     plutovg_destroy(this->pluto);
     plutovg_surface_destroy(this->surface);

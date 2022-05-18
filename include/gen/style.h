@@ -1,7 +1,9 @@
 #pragma once
+#include <stdint.h>
 typedef struct box_style_t
 {
-    unsigned long flags; // 0: null, 1: assigned
+    uint64_t flags; // 0: null, 1: assigned
+    uint64_t dirty;
 
 	FlexWrapMode wrap;
 	FlexDirection direction;
@@ -61,60 +63,60 @@ typedef struct box_style_t
 
 enum BOX_STYLE
 {
-	BOX_STYLE_wrap = 1UL << 0,
-	BOX_STYLE_direction = 1UL << 1,
-	BOX_STYLE_alignItems = 1UL << 2,
-	BOX_STYLE_alignSelf = 1UL << 3,
-	BOX_STYLE_alignContent = 1UL << 4,
-	BOX_STYLE_justifyContent = 1UL << 5,
-	BOX_STYLE_flexBasis = 1UL << 6,
-	BOX_STYLE_flexGrow = 1UL << 7,
-	BOX_STYLE_flexShrink = 1UL << 8,
-	BOX_STYLE_width = 1UL << 9,
-	BOX_STYLE_height = 1UL << 10,
-	BOX_STYLE_minWidth = 1UL << 11,
-	BOX_STYLE_minHeight = 1UL << 12,
-	BOX_STYLE_maxWidth = 1UL << 13,
-	BOX_STYLE_maxHeight = 1UL << 14,
-	BOX_STYLE_marginLeft = 1UL << 15,
-	BOX_STYLE_marginTop = 1UL << 16,
-	BOX_STYLE_marginBottom = 1UL << 17,
-	BOX_STYLE_marginRight = 1UL << 18,
-	BOX_STYLE_marginStart = 1UL << 19,
-	BOX_STYLE_marginEnd = 1UL << 20,
-	BOX_STYLE_paddingLeft = 1UL << 21,
-	BOX_STYLE_paddingTop = 1UL << 22,
-	BOX_STYLE_paddingBottom = 1UL << 23,
-	BOX_STYLE_paddingRight = 1UL << 24,
-	BOX_STYLE_paddingStart = 1UL << 25,
-	BOX_STYLE_paddingEnd = 1UL << 26,
-	BOX_STYLE_borderLeft = 1UL << 27,
-	BOX_STYLE_borderTop = 1UL << 28,
-	BOX_STYLE_borderBottom = 1UL << 29,
-	BOX_STYLE_borderRight = 1UL << 30,
-	BOX_STYLE_borderStart = 1UL << 31,
-	BOX_STYLE_borderEnd = 1UL << 32,
-	BOX_STYLE_borderTopLeftRadius = 1UL << 33,
-	BOX_STYLE_borderTopRightRadius = 1UL << 34,
-	BOX_STYLE_borderBottomRightRadius = 1UL << 35,
-	BOX_STYLE_borderBottomLeftRadius = 1UL << 36,
-	BOX_STYLE_borderColor = 1UL << 37,
-	BOX_STYLE_backgroundColor = 1UL << 38,
-	BOX_STYLE_fontColor = 1UL << 39,
-	BOX_STYLE_textAlign = 1UL << 40,
-	BOX_STYLE_fontSize = 1UL << 41,
-	BOX_STYLE_backgroundImage = 1UL << 42,
-	BOX_STYLE_contentImage = 1UL << 43,
-	BOX_STYLE_transform = 1UL << 44,
-	BOX_STYLE_transformOrigin = 1UL << 45,
-	BOX_STYLE_text = 1UL << 46,
-	BOX_STYLE_fontFamily = 1UL << 47,
-	BOX_STYLE_overflow = 1UL << 48,
-	BOX_STYLE_left = 1UL << 49,
-	BOX_STYLE_right = 1UL << 50,
-	BOX_STYLE_top = 1UL << 51,
-	BOX_STYLE_bottom = 1UL << 52,
-	BOX_STYLE_zIndex = 1UL << 53,
+	BOX_STYLE_wrap = UINT64_C(1) << 0,
+	BOX_STYLE_direction = UINT64_C(1) << 1,
+	BOX_STYLE_alignItems = UINT64_C(1) << 2,
+	BOX_STYLE_alignSelf = UINT64_C(1) << 3,
+	BOX_STYLE_alignContent = UINT64_C(1) << 4,
+	BOX_STYLE_justifyContent = UINT64_C(1) << 5,
+	BOX_STYLE_flexBasis = UINT64_C(1) << 6,
+	BOX_STYLE_flexGrow = UINT64_C(1) << 7,
+	BOX_STYLE_flexShrink = UINT64_C(1) << 8,
+	BOX_STYLE_width = UINT64_C(1) << 9,
+	BOX_STYLE_height = UINT64_C(1) << 10,
+	BOX_STYLE_minWidth = UINT64_C(1) << 11,
+	BOX_STYLE_minHeight = UINT64_C(1) << 12,
+	BOX_STYLE_maxWidth = UINT64_C(1) << 13,
+	BOX_STYLE_maxHeight = UINT64_C(1) << 14,
+	BOX_STYLE_marginLeft = UINT64_C(1) << 15,
+	BOX_STYLE_marginTop = UINT64_C(1) << 16,
+	BOX_STYLE_marginBottom = UINT64_C(1) << 17,
+	BOX_STYLE_marginRight = UINT64_C(1) << 18,
+	BOX_STYLE_marginStart = UINT64_C(1) << 19,
+	BOX_STYLE_marginEnd = UINT64_C(1) << 20,
+	BOX_STYLE_paddingLeft = UINT64_C(1) << 21,
+	BOX_STYLE_paddingTop = UINT64_C(1) << 22,
+	BOX_STYLE_paddingBottom = UINT64_C(1) << 23,
+	BOX_STYLE_paddingRight = UINT64_C(1) << 24,
+	BOX_STYLE_paddingStart = UINT64_C(1) << 25,
+	BOX_STYLE_paddingEnd = UINT64_C(1) << 26,
+	BOX_STYLE_borderLeft = UINT64_C(1) << 27,
+	BOX_STYLE_borderTop = UINT64_C(1) << 28,
+	BOX_STYLE_borderBottom = UINT64_C(1) << 29,
+	BOX_STYLE_borderRight = UINT64_C(1) << 30,
+	BOX_STYLE_borderStart = UINT64_C(1) << 31,
+	BOX_STYLE_borderEnd = UINT64_C(1) << 32,
+	BOX_STYLE_borderTopLeftRadius = UINT64_C(1) << 33,
+	BOX_STYLE_borderTopRightRadius = UINT64_C(1) << 34,
+	BOX_STYLE_borderBottomRightRadius = UINT64_C(1) << 35,
+	BOX_STYLE_borderBottomLeftRadius = UINT64_C(1) << 36,
+	BOX_STYLE_borderColor = UINT64_C(1) << 37,
+	BOX_STYLE_backgroundColor = UINT64_C(1) << 38,
+	BOX_STYLE_fontColor = UINT64_C(1) << 39,
+	BOX_STYLE_textAlign = UINT64_C(1) << 40,
+	BOX_STYLE_fontSize = UINT64_C(1) << 41,
+	BOX_STYLE_backgroundImage = UINT64_C(1) << 42,
+	BOX_STYLE_contentImage = UINT64_C(1) << 43,
+	BOX_STYLE_transform = UINT64_C(1) << 44,
+	BOX_STYLE_transformOrigin = UINT64_C(1) << 45,
+	BOX_STYLE_text = UINT64_C(1) << 46,
+	BOX_STYLE_fontFamily = UINT64_C(1) << 47,
+	BOX_STYLE_overflow = UINT64_C(1) << 48,
+	BOX_STYLE_left = UINT64_C(1) << 49,
+	BOX_STYLE_right = UINT64_C(1) << 50,
+	BOX_STYLE_top = UINT64_C(1) << 51,
+	BOX_STYLE_bottom = UINT64_C(1) << 52,
+	BOX_STYLE_zIndex = UINT64_C(1) << 53,
 };
 void box_style_wrap(box_style_t *style, FlexWrapMode wrap);
 void box_style_direction(box_style_t *style, FlexDirection direction);
@@ -216,6 +218,8 @@ void box_style_zIndex(box_style_t *style, int zIndex);
 box_style_t *box_style_new();
 void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
+uint64_t box_style_is_dirty(box_style_t *style);
+void box_style_clear_dirty(box_style_t *style);
 int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop);
 void box_style_unset(box_style_t *dst, enum BOX_STYLE prop);
 void box_style_merge(box_style_t *dst, const box_style_t *src);

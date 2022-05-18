@@ -23,7 +23,7 @@ enum COLOR_FORMAT
     COLOR_BGR,
 };
 
-static const plutovg_surface_t *plutovg_surface_format_convert(const plutovg_surface_t *surface, enum COLOR_FORMAT format)
+static plutovg_surface_t *plutovg_surface_format_convert(const plutovg_surface_t *surface, enum COLOR_FORMAT format)
 {
     unsigned char *data = plutovg_surface_get_data(surface);
     int width = plutovg_surface_get_width(surface);
@@ -1385,7 +1385,7 @@ static JSValue js_canvas_setFontFamily(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
 
     if (e->font_family)
-        free(e->font_family);
+        free((void *)e->font_family);
     e->font_family = strdup(s);
 
     JS_FreeCString(ctx, s);

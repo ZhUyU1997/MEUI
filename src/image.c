@@ -5,7 +5,7 @@
 plutovg_surface_t *pluto_load_image_from_file(const char *filename, int width, int height)
 {
     int iw, ih, channels_in_file;
-    char *image = stbi_load(filename, &iw, &ih, &channels_in_file, STBI_rgb_alpha);
+    stbi_uc *image = stbi_load(filename, &iw, &ih, &channels_in_file, STBI_rgb_alpha);
 
     if (!image)
         return NULL;

@@ -27,7 +27,7 @@ void plutovg_surface_fill(const plutovg_surface_t *s, const plutovg_color_t colo
     uint32_t ucolor = combine_opacity(&color, 1);
     for (int y = 0; y < height; y++)
     {
-        const uint32_t *dest = (uint32_t *)(data + stride * y);
+        uint32_t *dest = (uint32_t *)(data + stride * y);
         for (int x = 0; x < width; x++)
         {
             memfill32(dest, ucolor, width);

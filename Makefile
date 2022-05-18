@@ -1,5 +1,10 @@
 sinclude scripts/env.mk
 
+# i386 platform
+# CC			:= gcc -m32
+# LD			:= ld -m elf_i386
+# export CC LD
+
 W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function \
 				-Werror=return-type -Wno-unused-but-set-variable -Wno-unused-variable \
 				-Werror=incompatible-pointer-types
