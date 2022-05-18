@@ -528,7 +528,7 @@ function FileExplorer() {
                 .sort()
                 .filter((name) => name !== ".")
                 .map((name) => {
-                    // Provide the default value because stat fails on 32bit mode. 
+                    // Provide the default value because stat fails on 32bit mode.
                     // Reference to: http://www.mjr19.org.uk/sw/inodes64.html
                     const attr = stat(path.join(curPath, name))[0] ?? {
                         dev: 0,

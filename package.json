@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "rm -f dist/* && make -j16 && cross-env NODE_ENV=development rollup -c -w --input examples/file-explorer/index.tsx",
-    "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/file-explorer/index.tsx",
+    "dev": "rm -f dist/* && make -j16 && cross-env NODE_ENV=development node ./esbuild.mjs",
+    "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/hello/index.jsx",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "node ./style-gen.mjs",
@@ -30,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.14.39",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",

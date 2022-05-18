@@ -84,8 +84,9 @@ sudo apt install gcc make
 
 ```sh
 npm install
-npm run gen   # generate necessary c header files
 npm run dev
+# specified entry
+npm run dev examples/signin/index.tsx
 ```
 
 ## API References
@@ -94,7 +95,7 @@ npm run dev
 
 ```typescript
 export interface MeuiStyle {
-    borderRadius?: [number, number, number, number]
+    borderRadius?: [number, number, number, number] | number
     borderColor?: string
     backgroundColor?: Property.BackgroundColor
     fontColor?: Property.Color
@@ -140,9 +141,9 @@ export interface MeuiStyle {
         | "flex-end"
         | "space-between"
         | "space-around"
-    margin?: [number, number, number, number]
-    border?: [number, number, number, number]
-    padding?: [number, number, number, number]
+    margin?: [number, number, number, number] | number
+    border?: [number, number, number, number] | number
+    padding?: [number, number, number, number] | number
     overflow?: "visible" | "hidden" | "scroll" | "auto"
 
     flexBasis?: number
