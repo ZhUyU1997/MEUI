@@ -43,6 +43,7 @@ class(Box)
 {
     box_t node;
     enum BOX_STATE state;
+    int state_changed;
     box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
 

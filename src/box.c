@@ -51,7 +51,7 @@ static void box_image_cache_free(box_image_cache_t *cache)
 
     if (cache->path)
     {
-        free(cache->path);
+        free((void *)cache->path);
     }
 }
 
@@ -88,6 +88,7 @@ constructor(Box)
 {
     this->node = Flex_newNode();
     this->style_array[BOX_STATE_DEFAULT] = box_style_new();
+    this->state_changed = 1;
     Flex_setContext(this->node, this);
 }
 
@@ -170,6 +171,7 @@ void box_set_state(box_t node, enum BOX_STATE state)
 {
     Box *box = Flex_getContext(node);
     box->state = state;
+    box->state_changed = 1;
 }
 
 int box_get_client_width(box_t node)
@@ -656,6 +658,12 @@ static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *
 
 static void merge_styles(Box *box)
 {
+    if (!box->state_changed && box->state == BOX_STATE_DEFAULT && box_style_is_dirty(box->style_array[BOX_STATE_DEFAULT]) == 0)
+    {
+        return;
+    }
+
+    // TODO: Optimze, get previous state, then decide if merge by dirty flags
     box_style_clear(&box->style);
     box_style_merge(&box->style, box_default_style());
     box_style_merge(&box->style, box->style_array[BOX_STATE_DEFAULT]);
@@ -666,6 +674,9 @@ static void merge_styles(Box *box)
         if (src)
             box_style_merge(&box->style, src);
     }
+
+    box_style_clear_dirty(box->style_array[BOX_STATE_DEFAULT]);
+    box->state_changed = 0;
 }
 
 void box_updateStyleRecursive(box_t node)
