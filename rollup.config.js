@@ -19,7 +19,7 @@ export default commandLineArgs => {
 			format: 'esm',
 			dir: "dist",
 		},
-		external: ['NativeMEUI', 'os'],
+		external: ['NativeMEUI', 'os', 'std'],
 		plugins: [
 			alias({
 				entries: {
