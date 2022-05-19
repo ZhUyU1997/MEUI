@@ -61,63 +61,62 @@ typedef struct box_style_t
 	int zIndex;
 } box_style_t;
 
-enum BOX_STYLE
-{
-	BOX_STYLE_wrap = UINT64_C(1) << 0,
-	BOX_STYLE_direction = UINT64_C(1) << 1,
-	BOX_STYLE_alignItems = UINT64_C(1) << 2,
-	BOX_STYLE_alignSelf = UINT64_C(1) << 3,
-	BOX_STYLE_alignContent = UINT64_C(1) << 4,
-	BOX_STYLE_justifyContent = UINT64_C(1) << 5,
-	BOX_STYLE_flexBasis = UINT64_C(1) << 6,
-	BOX_STYLE_flexGrow = UINT64_C(1) << 7,
-	BOX_STYLE_flexShrink = UINT64_C(1) << 8,
-	BOX_STYLE_width = UINT64_C(1) << 9,
-	BOX_STYLE_height = UINT64_C(1) << 10,
-	BOX_STYLE_minWidth = UINT64_C(1) << 11,
-	BOX_STYLE_minHeight = UINT64_C(1) << 12,
-	BOX_STYLE_maxWidth = UINT64_C(1) << 13,
-	BOX_STYLE_maxHeight = UINT64_C(1) << 14,
-	BOX_STYLE_marginLeft = UINT64_C(1) << 15,
-	BOX_STYLE_marginTop = UINT64_C(1) << 16,
-	BOX_STYLE_marginBottom = UINT64_C(1) << 17,
-	BOX_STYLE_marginRight = UINT64_C(1) << 18,
-	BOX_STYLE_marginStart = UINT64_C(1) << 19,
-	BOX_STYLE_marginEnd = UINT64_C(1) << 20,
-	BOX_STYLE_paddingLeft = UINT64_C(1) << 21,
-	BOX_STYLE_paddingTop = UINT64_C(1) << 22,
-	BOX_STYLE_paddingBottom = UINT64_C(1) << 23,
-	BOX_STYLE_paddingRight = UINT64_C(1) << 24,
-	BOX_STYLE_paddingStart = UINT64_C(1) << 25,
-	BOX_STYLE_paddingEnd = UINT64_C(1) << 26,
-	BOX_STYLE_borderLeft = UINT64_C(1) << 27,
-	BOX_STYLE_borderTop = UINT64_C(1) << 28,
-	BOX_STYLE_borderBottom = UINT64_C(1) << 29,
-	BOX_STYLE_borderRight = UINT64_C(1) << 30,
-	BOX_STYLE_borderStart = UINT64_C(1) << 31,
-	BOX_STYLE_borderEnd = UINT64_C(1) << 32,
-	BOX_STYLE_borderTopLeftRadius = UINT64_C(1) << 33,
-	BOX_STYLE_borderTopRightRadius = UINT64_C(1) << 34,
-	BOX_STYLE_borderBottomRightRadius = UINT64_C(1) << 35,
-	BOX_STYLE_borderBottomLeftRadius = UINT64_C(1) << 36,
-	BOX_STYLE_borderColor = UINT64_C(1) << 37,
-	BOX_STYLE_backgroundColor = UINT64_C(1) << 38,
-	BOX_STYLE_fontColor = UINT64_C(1) << 39,
-	BOX_STYLE_textAlign = UINT64_C(1) << 40,
-	BOX_STYLE_fontSize = UINT64_C(1) << 41,
-	BOX_STYLE_backgroundImage = UINT64_C(1) << 42,
-	BOX_STYLE_contentImage = UINT64_C(1) << 43,
-	BOX_STYLE_transform = UINT64_C(1) << 44,
-	BOX_STYLE_transformOrigin = UINT64_C(1) << 45,
-	BOX_STYLE_text = UINT64_C(1) << 46,
-	BOX_STYLE_fontFamily = UINT64_C(1) << 47,
-	BOX_STYLE_overflow = UINT64_C(1) << 48,
-	BOX_STYLE_left = UINT64_C(1) << 49,
-	BOX_STYLE_right = UINT64_C(1) << 50,
-	BOX_STYLE_top = UINT64_C(1) << 51,
-	BOX_STYLE_bottom = UINT64_C(1) << 52,
-	BOX_STYLE_zIndex = UINT64_C(1) << 53,
-};
+typedef uint64_t box_style_flag_t;
+#define BOX_STYLE_wrap (UINT64_C(1) << 0)
+#define BOX_STYLE_direction (UINT64_C(1) << 1)
+#define BOX_STYLE_alignItems (UINT64_C(1) << 2)
+#define BOX_STYLE_alignSelf (UINT64_C(1) << 3)
+#define BOX_STYLE_alignContent (UINT64_C(1) << 4)
+#define BOX_STYLE_justifyContent (UINT64_C(1) << 5)
+#define BOX_STYLE_flexBasis (UINT64_C(1) << 6)
+#define BOX_STYLE_flexGrow (UINT64_C(1) << 7)
+#define BOX_STYLE_flexShrink (UINT64_C(1) << 8)
+#define BOX_STYLE_width (UINT64_C(1) << 9)
+#define BOX_STYLE_height (UINT64_C(1) << 10)
+#define BOX_STYLE_minWidth (UINT64_C(1) << 11)
+#define BOX_STYLE_minHeight (UINT64_C(1) << 12)
+#define BOX_STYLE_maxWidth (UINT64_C(1) << 13)
+#define BOX_STYLE_maxHeight (UINT64_C(1) << 14)
+#define BOX_STYLE_marginLeft (UINT64_C(1) << 15)
+#define BOX_STYLE_marginTop (UINT64_C(1) << 16)
+#define BOX_STYLE_marginBottom (UINT64_C(1) << 17)
+#define BOX_STYLE_marginRight (UINT64_C(1) << 18)
+#define BOX_STYLE_marginStart (UINT64_C(1) << 19)
+#define BOX_STYLE_marginEnd (UINT64_C(1) << 20)
+#define BOX_STYLE_paddingLeft (UINT64_C(1) << 21)
+#define BOX_STYLE_paddingTop (UINT64_C(1) << 22)
+#define BOX_STYLE_paddingBottom (UINT64_C(1) << 23)
+#define BOX_STYLE_paddingRight (UINT64_C(1) << 24)
+#define BOX_STYLE_paddingStart (UINT64_C(1) << 25)
+#define BOX_STYLE_paddingEnd (UINT64_C(1) << 26)
+#define BOX_STYLE_borderLeft (UINT64_C(1) << 27)
+#define BOX_STYLE_borderTop (UINT64_C(1) << 28)
+#define BOX_STYLE_borderBottom (UINT64_C(1) << 29)
+#define BOX_STYLE_borderRight (UINT64_C(1) << 30)
+#define BOX_STYLE_borderStart (UINT64_C(1) << 31)
+#define BOX_STYLE_borderEnd (UINT64_C(1) << 32)
+#define BOX_STYLE_borderTopLeftRadius (UINT64_C(1) << 33)
+#define BOX_STYLE_borderTopRightRadius (UINT64_C(1) << 34)
+#define BOX_STYLE_borderBottomRightRadius (UINT64_C(1) << 35)
+#define BOX_STYLE_borderBottomLeftRadius (UINT64_C(1) << 36)
+#define BOX_STYLE_borderColor (UINT64_C(1) << 37)
+#define BOX_STYLE_backgroundColor (UINT64_C(1) << 38)
+#define BOX_STYLE_fontColor (UINT64_C(1) << 39)
+#define BOX_STYLE_textAlign (UINT64_C(1) << 40)
+#define BOX_STYLE_fontSize (UINT64_C(1) << 41)
+#define BOX_STYLE_backgroundImage (UINT64_C(1) << 42)
+#define BOX_STYLE_contentImage (UINT64_C(1) << 43)
+#define BOX_STYLE_transform (UINT64_C(1) << 44)
+#define BOX_STYLE_transformOrigin (UINT64_C(1) << 45)
+#define BOX_STYLE_text (UINT64_C(1) << 46)
+#define BOX_STYLE_fontFamily (UINT64_C(1) << 47)
+#define BOX_STYLE_overflow (UINT64_C(1) << 48)
+#define BOX_STYLE_left (UINT64_C(1) << 49)
+#define BOX_STYLE_right (UINT64_C(1) << 50)
+#define BOX_STYLE_top (UINT64_C(1) << 51)
+#define BOX_STYLE_bottom (UINT64_C(1) << 52)
+#define BOX_STYLE_zIndex (UINT64_C(1) << 53)
+
 void box_style_wrap(box_style_t *style, FlexWrapMode wrap);
 void box_style_direction(box_style_t *style, FlexDirection direction);
 void box_style_alignItems(box_style_t *style, FlexAlign alignItems);
@@ -220,7 +219,7 @@ void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
 uint64_t box_style_is_dirty(box_style_t *style);
 void box_style_clear_dirty(box_style_t *style);
-int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop);
-void box_style_unset(box_style_t *dst, enum BOX_STYLE prop);
+int box_style_is_unset(box_style_t *style, box_style_flag_t prop);
+void box_style_unset(box_style_t *dst, box_style_flag_t prop);
 void box_style_merge(box_style_t *dst, const box_style_t *src);
 void box_style_to_flex(box_style_t *style, box_t box);

@@ -785,13 +785,13 @@ void box_style_clear_dirty(box_style_t *style)
     style->dirty = UINT64_C(0);
 }
 
-int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop)
+int box_style_is_unset(box_style_t *style, box_style_flag_t prop)
 {
     return !(style->flags & prop);
 }
 
 
-void box_style_unset(box_style_t *dst, enum BOX_STYLE prop)
+void box_style_unset(box_style_t *dst, box_style_flag_t prop)
 {
     assert(dst);
     dst->flags &= ~prop;

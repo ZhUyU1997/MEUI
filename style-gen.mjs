@@ -74,10 +74,9 @@ ${style_table.map(item => `\t${item[0]} ${item[1]};`).join("\n")}
 `
 
 style_header += `
-enum BOX_STYLE
-{
-${style_table.map((item, index) => `\tBOX_STYLE_${item[1]} = UINT64_C(1) << ${index},`).join("\n")}
-};
+typedef uint64_t box_style_flag_t;
+${style_table.map((item, index) => `#define BOX_STYLE_${item[1]} (UINT64_C(1) << ${index})`).join("\n")}
+
 `
 
 function GenCFunctionDeclaration(returnType, name, ...args) {
@@ -144,8 +143,8 @@ void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
 uint64_t box_style_is_dirty(box_style_t *style);
 void box_style_clear_dirty(box_style_t *style);
-int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop);
-void box_style_unset(box_style_t *dst, enum BOX_STYLE prop);
+int box_style_is_unset(box_style_t *style, box_style_flag_t prop);
+void box_style_unset(box_style_t *dst, box_style_flag_t prop);
 void box_style_merge(box_style_t *dst, const box_style_t *src);
 void box_style_to_flex(box_style_t *style, box_t box);\n`
 
@@ -256,13 +255,13 @@ void box_style_clear_dirty(box_style_t *style)
     style->dirty = UINT64_C(0);
 }
 
-int box_style_is_unset(box_style_t *style, enum BOX_STYLE prop)
+int box_style_is_unset(box_style_t *style, box_style_flag_t prop)
 {
     return !(style->flags & prop);
 }
 
 
-void box_style_unset(box_style_t *dst, enum BOX_STYLE prop)
+void box_style_unset(box_style_t *dst, box_style_flag_t prop)
 {
     assert(dst);
     dst->flags &= ~prop;
