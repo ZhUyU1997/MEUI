@@ -43,7 +43,6 @@ struct window_t {
         struct {
             vsf_linux_fd_t *sfd;
             vk_input_notifier_t notifier;
-            bool capslock;
         } event;
         struct {
             vsf_linux_fd_t *sfd;
@@ -282,11 +281,11 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
                                     // 44 - 56
     };
 
-    uint8_t mod = vsf_input_keyboard_get_keymod(evt);
+    uint16_t mod = vsf_input_keyboard_get_keymod(evt);
     uint16_t keycode = vsf_input_keyboard_get_keycode(evt);
     bool is_shift_down = mod & VSF_KM_SHIFT, is_upper = false;
 
-    if (    window->event.capslock
+    if (    (mod & VSF_KM_CAPSLOCK)
         &&  ((keycode >= VSF_KB_a) && (keycode <= VSF_KB_z))) {
         is_upper = !is_upper;
      }
@@ -314,7 +313,7 @@ read_next:
 
     switch (evt.type) {
     case VSF_INPUT_TYPE_KEYBOARD: {
-            uint8_t mod         = vsf_input_keyboard_get_keymod(&evt.evt);
+            uint16_t mod        = vsf_input_keyboard_get_keymod(&evt.evt);
             *meui_event         = (struct meui_event_t) {
                 .type           = vsf_input_keyboard_is_down(&evt.evt) ? MEUI_EVENT_KEY_DOWN : MEUI_EVENT_KEY_UP,
                 .KEY_DOWN       = {
@@ -325,9 +324,6 @@ read_next:
                     .altKey     = mod & VSF_KM_ALT,
                 },
             };
-            if ((MEUI_EVENT_KEY_DOWN == meui_event->type) && (VSF_KB_CAPSLOCK == meui_event->KEY_DOWN.keyCode)) {
-                window->event.capslock = !window->event.capslock;
-            }
         }
         break;
     case VSF_INPUT_TYPE_MOUSE:
