@@ -11,7 +11,9 @@ W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function \
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
-SRC			+= src/*.c src/platform/x11/*.c src/element/*.c src/bind/*.c src/bind/element/*.c
+SRC			+= src/*.c src/element/*.c src/bind/*.c src/bind/element/*.c
+SRC			+= src/platform/x11/*.c
+# SRC			+= src/platform/sdl2/*.c
 
 # stb
 X_INCDIRS	+= lib/stb/include
@@ -42,7 +44,7 @@ X_INCDIRS	+= lib/pqueue
 SRC			+= lib/pqueue/*.c
 
 X_CFLAGS	+=
-X_LDFLAGS	+= -lm -ldl -lpthread -lX11 -lXext
+X_LDFLAGS	+= -lm -ldl -lpthread -lX11 -lXext -lSDL2
 # X_LDFLAGS	+= -ltcmalloc
 # X_CFLAGS	+= -march=native
 # X_DEFINES	+= PROFILE
