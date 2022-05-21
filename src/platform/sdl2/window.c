@@ -70,9 +70,7 @@ static int EventThread(void *ptr)
             return 0;
         }
         SDL_UnlockMutex(window->sdl.lock);
-
-        SDL_PumpEvents();
-        SDL_Delay(10);
+        SDL_WaitEventTimeout(NULL, 10);
     }
     return 0;
 }
