@@ -182,15 +182,16 @@ type EventCollection = {
 
 export class Box {
     nativeBox: NativeBox
-    children: Box[]
-    parent: Box | null
+    childNodes: Box[]
+    parentNode: Box | null
     eventListeners: EventCollection
     text: string
     focusable = false
+    style: any
     constructor(type = "Div", style?: MeuiStyle) {
         this.nativeBox = new NativeBox(type)
-        this.children = []
-        this.parent = null
+        this.childNodes = []
+        this.parentNode = null
         this.eventListeners = {} as EventCollection
         this.text = ""
 
@@ -201,6 +202,24 @@ export class Box {
             this.scrollTop += e.deltaY
             this.dispatchEvent(new CustomEvent("scroll"))
         })
+
+        this.style = new Proxy(
+            {
+                setProperty: (key, value) => {
+                    this.setStyle({ [key]: value })
+                },
+            },
+            {
+                // get(obj, prop) {
+                //     console.log(obj, prop)
+                //     return ""
+                // },
+                set: (obj, prop, value) => {
+                    this.setStyle({ [prop]: value })
+                    return true
+                },
+            }
+        )
     }
 
     getStyle(state: UI_STATE) {
@@ -281,13 +300,13 @@ export class Box {
     }
 
     checkConsistency() {
-        if (this.children.length !== this.nativeBox.getChildCount()) {
+        if (this.childNodes.length !== this.nativeBox.getChildCount()) {
             throw new Error("Failed to pass consistency check")
         }
     }
 
     remove() {
-        this.parent?.removeChild(this)
+        this.parentNode?.removeChild(this)
     }
 
     addChild(child: Box) {
@@ -297,35 +316,40 @@ export class Box {
         } else {
             child.remove()
             this.nativeBox.addChild(child.nativeBox)
-            this.children.push(child)
-            child.parent = this
+            this.childNodes.push(child)
+            child.parentNode = this
             this.checkConsistency()
         }
     }
+
+    appendChild(child: Box) {
+        this.addChild(child)
+    }
+
     insertChild(child: Box, index: number) {
         child.remove()
 
         this.nativeBox.insertChild(child.nativeBox, index)
-        this.children.splice(index, 0, child)
-        child.parent = this
+        this.childNodes.splice(index, 0, child)
+        child.parentNode = this
         this.checkConsistency()
     }
 
     insertBefore(child: Box, beforeChild: Box) {
         child.remove()
-        const index = this.children.indexOf(beforeChild)
+        const index = this.childNodes.indexOf(beforeChild)
         if (index !== -1) {
             this.insertChild(child, index)
             this.checkConsistency()
         }
     }
     removeChild(child: Box) {
-        const index = this.children.indexOf(child)
+        const index = this.childNodes.indexOf(child)
 
         if (index !== -1) {
             this.nativeBox.removeChild(child.nativeBox)
-            this.children.splice(index, 1)
-            child.parent = null
+            this.childNodes.splice(index, 1)
+            child.parentNode = null
             this.checkConsistency()
         }
     }
@@ -425,12 +449,14 @@ export class Box {
                     value: offsetY,
                 })
             }
-            if (capture == useCapture) listener(event)
+            if (capture == useCapture) {
+                listener.call(this, event)
+            }
         }
     }
 
     capturingPhase(node: Box, event: MeuiEvent) {
-        if (node.parent) this.capturingPhase(node.parent, event)
+        if (node.parentNode) this.capturingPhase(node.parentNode, event)
         event.currentTarget = node
         node.tryHandleEvent(event, true)
     }
@@ -441,8 +467,8 @@ export class Box {
             event.currentTarget = node
             node.tryHandleEvent(event, false)
 
-            if (!node.parent) break
-            node = node.parent
+            if (!node.parentNode) break
+            node = node.parentNode
         }
     }
 
@@ -458,7 +484,7 @@ export class Box {
         let box: Box | null = this
         while (box) {
             path.unshift(box)
-            box = box.parent
+            box = box.parentNode
         }
         return path
     }
