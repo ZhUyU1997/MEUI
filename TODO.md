@@ -5,3 +5,4 @@ flex-direction: column;
 justify-content: flex-end;
 overflow-y: scroll;
 ```
+- JSON.stringify issue
