@@ -303,10 +303,11 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
 void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
 {
     window_evt_t evt;
+    int result;
 
     meui_event->type = MEUI_EVENT_NULL;
 read_next:
-    int result = read(window->event.sfd->fd, &evt, sizeof(evt));
+    result = read(window->event.sfd->fd, &evt, sizeof(evt));
     if (result <= 0) {
         return;
     }
