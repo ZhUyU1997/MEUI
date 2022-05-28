@@ -188,7 +188,7 @@ static const char *vsf_input_keyboard_get_key(struct window_t *window, SDL_Event
         "Escape",           // 41
         "Backspace",        // 42
         "Tab",              // 43
-        " ", "-", "=", "[", "]", "\\", "#", ";", "'", ",", ".", "/",
+        " ", "-", "=", "[", "]", "\\", "#", ";", "'", "`", ",", ".", "/",
         // 44 - 56
         "CapsLock", // 57
         "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
@@ -247,7 +247,7 @@ static const char *vsf_input_keyboard_get_key(struct window_t *window, SDL_Event
         "Attn",   // 154
         "Cancel", // 155
         "Clear",  // 156
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL,
         "CrSel", // 163
         "ExSel", // 164
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -295,7 +295,7 @@ static const char *vsf_input_keyboard_get_key(struct window_t *window, SDL_Event
         "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "^",
         "&", "*", "(", ")",     // 4 - 39
         NULL, NULL, NULL, NULL, // 40 - 43
-        " ", "_", "+", "{", "}", "|", "#", ":", "\"", "<", ">", "?",
+        " ", "_", "+", "{", "}", "|", "#", ":", "\"", "~", "<", ">", "?",
         // 44 - 56
     };
 
@@ -307,7 +307,7 @@ static const char *vsf_input_keyboard_get_key(struct window_t *window, SDL_Event
     {
         is_upper = !is_upper;
     }
-    if ((mod & KMOD_SHIFT) && (((keycode >= SDL_SCANCODE_1) && (keycode <= SDL_SCANCODE_0)) || ((keycode >= SDL_SCANCODE_MINUS) && (keycode <= SDL_SCANCODE_SLASH))))
+    if ((mod & KMOD_SHIFT) && (((keycode >= SDL_SCANCODE_1) && (keycode <= SDL_SCANCODE_0)) || ((keycode >= SDL_SCANCODE_MINUS) && (keycode <= SDL_SCANCODE_SLASH)) || ((keycode >= SDL_SCANCODE_A) && (keycode <= SDL_SCANCODE_Z))))
     {
         is_upper = !is_upper;
     }

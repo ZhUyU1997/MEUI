@@ -170,7 +170,7 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
         "Escape",                   // 41
         "Backspace",                // 42
         "Tab",                      // 43
-        " ", "-", "=", "[", "]", "\\", "#", ";", "'", ",", ".", "/",
+        " ", "-", "=", "[", "]", "\\", "#", ";", "'", "`", ",", ".", "/",
                                     // 44 - 56
         "CapsLock",                 // 57
         "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
@@ -229,7 +229,7 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
         "Attn",                     // 154
         "Cancel",                   // 155
         "Clear",                    // 156
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL,
         "CrSel",                    // 163
         "ExSel",                    // 164
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -277,12 +277,12 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
         "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "^",
         "&", "*", "(", ")",         // 4 - 39
         NULL, NULL, NULL, NULL,     // 40 - 43
-        " ", "_", "+", "{", "}", "|", "#", ":", "\"", "<", ">", "?",
+        " ", "_", "+", "{", "}", "|", "#", ":", "\"", "~", "<", ">", "?",
                                     // 44 - 56
     };
 
     uint16_t mod = vsf_input_keyboard_get_keymod(evt);
-    uint16_t keycode = vsf_input_keyboard_get_keycode(evt);
+    uint16_t keycode = vsf_input_keyboard_get_keycode(evt) & ~VSF_KB_EXT;
     bool is_shift_down = mod & VSF_KM_SHIFT, is_upper = false;
 
     if (    (mod & VSF_KM_CAPSLOCK)
@@ -292,6 +292,7 @@ static const char * vsf_input_keyboard_get_key(struct window_t *window, vk_input
     if (    is_shift_down
         &&  (   ((keycode >= VSF_KB_1) && (keycode <= VSF_KB_0))
             ||  ((keycode >= VSF_KB_MINUS) && (keycode <= VSF_KB_SLASH))
+            ||  ((keycode >= VSF_KB_a) && (keycode <= VSF_KB_z))
             )
        ) {
         is_upper = !is_upper;
@@ -318,7 +319,7 @@ read_next:
             *meui_event         = (struct meui_event_t) {
                 .type           = vsf_input_keyboard_is_down(&evt.evt) ? MEUI_EVENT_KEY_DOWN : MEUI_EVENT_KEY_UP,
                 .KEY_DOWN       = {
-                    .keyCode    = vsf_input_keyboard_get_keycode(&evt.evt),
+                    .keyCode    = vsf_input_keyboard_get_keycode(&evt.evt) & ~VSF_KB_EXT,
                     .key        = vsf_input_keyboard_get_key(window, &evt.evt),
                     .shiftKey   = mod & VSF_KM_SHIFT,
                     .ctrlKey    = mod & VSF_KM_CTRL,
