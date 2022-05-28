@@ -205,7 +205,10 @@ export class Box {
 
         this.style = new Proxy(
             {
-                setProperty: (key, value) => {
+                setProperty: (
+                    key: keyof MeuiStyle,
+                    value: MeuiStyle[keyof MeuiStyle]
+                ) => {
                     this.setStyle({ [key]: value })
                 },
             },
