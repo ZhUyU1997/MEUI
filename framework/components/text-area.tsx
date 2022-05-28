@@ -409,16 +409,17 @@ class CanvasTextEditor {
                 this.cursor[1] = cursor[1]
             }
         } else if (
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ ~`!@#$%^&*()_+{}:\"<>?[];',./\\|1234567890\t".includes(
-                e.key.toUpperCase()
+            /^[ -~]$/.test(
+                e.key
             )
         ) {
+            // https://stackoverflow.com/questions/12052825/regular-expression-for-all-printable-characters-in-javascript
             this.removeSelected()
             this.insertChar(this.cursor[0], this.cursor[1], e.key)
             this.cursor[0]++
         } else if (e.key == "\n") {
             this.cursor = this.insertNewLine(this.cursor[0], this.cursor[1])
-        } else if (e.key === "BackSpace") {
+        } else if (e.key === "Backspace") {
             if (this.hasSelected()) {
                 this.removeSelected()
             } else if (this.cursor[0] === 0) {
@@ -436,7 +437,7 @@ class CanvasTextEditor {
                 )
                 this.cursor[0]--
             }
-        } else if (e.key === "Left") {
+        } else if (e.key === "ArrowLeft") {
             if (this.cursor[0] === 0) {
                 if (this.cursor[1] > 0) {
                     this.cursor[1]--
@@ -445,7 +446,7 @@ class CanvasTextEditor {
             } else {
                 this.cursor[0]--
             }
-        } else if (e.key === "Right") {
+        } else if (e.key === "ArrowRight") {
             if (this.cursor[0] < this.getParagraphLength(this.cursor[1]) - 1) {
                 this.cursor[0]++
             } else {
@@ -454,7 +455,7 @@ class CanvasTextEditor {
                     this.cursor[1]++
                 }
             }
-        } else if (e.key === "Up") {
+        } else if (e.key === "ArrowUp") {
             if (this.cursor[1] > 0) {
                 this.cursor[0] = this.calcCursorX(
                     this.calcMouseX(this.cursor[0], this.cursor[1]),
@@ -463,7 +464,7 @@ class CanvasTextEditor {
 
                 this.cursor[1]--
             }
-        } else if (e.key === "Down") {
+        } else if (e.key === "ArrowDown") {
             if (this.cursor[1] < this.paragraphs.length - 1) {
                 this.cursor[0] = this.calcCursorX(
                     this.calcMouseX(this.cursor[0], this.cursor[1]),
