@@ -69,7 +69,7 @@ static void __windows_on_event(vk_input_notifier_t *notifier, vk_input_type_t ty
     vsf_linux_pipe_rx_priv_t *priv_rx = (vsf_linux_pipe_rx_priv_t *)window->event.sfd->priv;
     window_evt_t window_evt = {
         .type   = type,
-        .evt    = evt,
+        .evt    = *evt,
     };
 
     vsf_stream_write(priv_rx->stream_rx, (uint8_t *)&window_evt, sizeof(window_evt));
