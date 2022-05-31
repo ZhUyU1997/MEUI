@@ -628,8 +628,6 @@ class CanvasTextEditor {
     }
 
     renderCursor() {
-        this.ctx.save()
-
         const paragraph = this.paragraphs[this.cursor[1]]
         const char = paragraph.children[this.cursor[0]]
 
@@ -641,6 +639,8 @@ class CanvasTextEditor {
         )
 
         if (this.focused === false) return
+
+        this.ctx.save()
 
         const phase = (Date.now() - this.startBlinkinTimestamp) % duration
         const showCursor = phase / duration < 0.5
