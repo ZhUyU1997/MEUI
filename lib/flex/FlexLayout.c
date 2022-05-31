@@ -75,8 +75,8 @@ size_t _FlexVector_size_##type(FlexVectorRef(type) vector) {                    
 #define FLEX_VECTOR_INIT(type) FLEX_VECTOR_INIT_WITH_EQUALS(type, FLEX_VECTOR_EQUALS_FUNC)
 
 
-static const FlexDirection FLEX_WIDTH = FlexHorizontal;
-static const FlexDirection FLEX_HEIGHT = FlexVertical;
+#define FLEX_WIDTH FlexHorizontal
+#define FLEX_HEIGHT FlexVertical
 
 static FlexPositionIndex flex_start[4] = { FLEX_LEFT, FLEX_TOP, FLEX_RIGHT, FLEX_BOTTOM };
 static FlexPositionIndex flex_end[4] = { FLEX_RIGHT, FLEX_BOTTOM, FLEX_LEFT, FLEX_TOP };
