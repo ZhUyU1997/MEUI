@@ -24,6 +24,7 @@
 
 #define __VSF_DISP_CLASS_INHERIT__
 #define __VSF_LINUX_FS_CLASS_INHERIT__
+#define __VSF_LINUX_CLASS_INHERIT__
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -147,6 +148,15 @@ int window_update_image(struct window_t *window)
 
 void window_set_name(struct window_t *window, const char *name)
 {
+#if     VSF_LINUX_USE_SIMPLE_LIBC == ENABLED && VSF_LINUX_USE_SIMPLE_STDLIB == ENABLED\
+    &&  VSF_LINUX_SIMPLE_STDLIB_CFG_HEAP_MONITOR == ENABLED
+    vsf_linux_heap_info_t heapinfo;
+    vsf_linux_process_t *process = vsf_linux_get_cur_process();
+    vsf_protect_t orig = vsf_protect_sched();
+        heapinfo = process->heap_monitor.info;
+    vsf_unprotect_sched(orig);
+    vsf_trace_info("title: %s heap: %d %d\n", name, heapinfo.usage, heapinfo.balance);
+#endif
 }
 
 int window_pending(struct window_t *window)
