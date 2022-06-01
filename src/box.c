@@ -285,7 +285,7 @@ int box_hit(box_t node, int x, int y)
 
 static plutovg_path_t *round4_rect(float r[4][2], int x, int y, int w, int h)
 {
-    const char a[4][3][2] = {
+    static const float a[4][3][2] = {
         {{0, -KAPPA90}, {1 - KAPPA90, -1}, {1, -1}},
         {{KAPPA90, 0}, {1, 1 - KAPPA90}, {1, 1}},
         {{0, KAPPA90}, {-(1 - KAPPA90), 1}, {-1, 1}},
