@@ -35,6 +35,10 @@ void _FlexVector_free_##type(FlexVectorRef(type) vector) {                      
     free(vector);                                                                       \
 }                                                                                       \
                                                                                         \
+void _FlexVector_clear_##type(FlexVectorRef(type) vector) {                             \
+    vector->size = 0;                                                                   \
+}                                                                                       \
+                                                                                        \
 void _FlexVector_insert_##type(FlexVectorRef(type) vector, type value, size_t index) {  \
    if (vector->size == vector->capacity) {                                              \
        vector->capacity *= 2;                                                           \
@@ -210,11 +214,15 @@ static const FlexNode defaultFlexNode = {
 
 void flex_markDirty(FlexNodeRef node) {
     node->lastConstrainedSize = FlexCacheSizeUndefined;
+    
+    if (node->measuredSizeCache) {
+        FlexVector_clear(FlexMeasureCache, node->measuredSizeCache);
+    }
+
     if (node->parent) {
         flex_markDirty(node->parent);
     }
 }
-
 
 // implementation of getters and setters
 #define FLEX_GETTER(type, Name, field) \
