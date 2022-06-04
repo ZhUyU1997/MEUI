@@ -5,47 +5,47 @@
 #include <string.h>
 #include <bind/style.h>
 
-#define JS_INT_PROPERTY(Name)                                                           \
-    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val) \
-    {                                                                                   \
-        if (!style)                                                                     \
-            return JS_EXCEPTION;                                                        \
-        int v;                                                                          \
-        if (JS_ToInt32(ctx, &v, val))                                                   \
-            return JS_EXCEPTION;                                                        \
-        box_style_##Name(style, v);                                                     \
-        return JS_UNDEFINED;                                                            \
+#define JS_INT_PROPERTY(Name)                                                                       \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_t node, box_style_t *style, JSValue val) \
+    {                                                                                               \
+        if (!style)                                                                                 \
+            return JS_EXCEPTION;                                                                    \
+        int v;                                                                                      \
+        if (JS_ToInt32(ctx, &v, val))                                                               \
+            return JS_EXCEPTION;                                                                    \
+        box_style_##Name(style, v);                                                                 \
+        return JS_UNDEFINED;                                                                        \
     }
 
-#define JS_FLOAT_PROPERTY(Name)                                                         \
-    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val) \
-    {                                                                                   \
-        if (!style)                                                                     \
-            return JS_EXCEPTION;                                                        \
-        double v;                                                                       \
-        if (JS_ToFloat64(ctx, &v, val))                                                 \
-            return JS_EXCEPTION;                                                        \
-        box_style_##Name(style, v);                                                     \
-        return JS_UNDEFINED;                                                            \
+#define JS_FLOAT_PROPERTY(Name)                                                                     \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_t node, box_style_t *style, JSValue val) \
+    {                                                                                               \
+        if (!style)                                                                                 \
+            return JS_EXCEPTION;                                                                    \
+        double v;                                                                                   \
+        if (JS_ToFloat64(ctx, &v, val))                                                             \
+            return JS_EXCEPTION;                                                                    \
+        box_style_##Name(style, v);                                                                 \
+        return JS_UNDEFINED;                                                                        \
     }
 
-#define JS_FLOAT_PROPERTY_RW(Name)                                                                 \
-    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_style_t *style, JSValue val) \
-    {                                                                                              \
-        double v;                                                                                  \
-        if (JS_ToFloat64(ctx, &v, val))                                                            \
-            return JS_EXCEPTION;                                                                   \
-        box_style_##Name(style, v);                                                                \
-        return JS_UNDEFINED;                                                                       \
-    }                                                                                              \
-    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val)            \
-    {                                                                                              \
-        if (!style)                                                                                \
-            return JS_EXCEPTION;                                                                   \
-        return js_box_style_##Name##_Internel(ctx, style, val);                                    \
+#define JS_FLOAT_PROPERTY_RW(Name)                                                                             \
+    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_t node, box_style_t *style, JSValue val) \
+    {                                                                                                          \
+        double v;                                                                                              \
+        if (JS_ToFloat64(ctx, &v, val))                                                                        \
+            return JS_EXCEPTION;                                                                               \
+        box_style_##Name(style, v);                                                                            \
+        return JS_UNDEFINED;                                                                                   \
+    }                                                                                                          \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_t node, box_style_t *style, JSValue val)            \
+    {                                                                                                          \
+        if (!style)                                                                                            \
+            return JS_EXCEPTION;                                                                               \
+        return js_box_style_##Name##_Internel(ctx, node, style, val);                                          \
     }
 
-static JSValue js_box_style_wrap(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_wrap(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
     if (!style)
@@ -78,7 +78,7 @@ static JSValue js_box_style_wrap(JSContext *ctx, box_style_t *style, JSValue val
     return ret;
 }
 
-static JSValue js_box_style_direction(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_direction(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -113,7 +113,7 @@ static JSValue js_box_style_direction(JSContext *ctx, box_style_t *style, JSValu
     return ret;
 }
 
-static JSValue js_box_style_alignItems(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_alignItems(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -149,7 +149,7 @@ static JSValue js_box_style_alignItems(JSContext *ctx, box_style_t *style, JSVal
     return ret;
 }
 
-static JSValue js_box_style_alignSelf(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_alignSelf(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -186,7 +186,7 @@ static JSValue js_box_style_alignSelf(JSContext *ctx, box_style_t *style, JSValu
     return ret;
 }
 
-static JSValue js_box_style_alignContent(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_alignContent(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -223,7 +223,7 @@ static JSValue js_box_style_alignContent(JSContext *ctx, box_style_t *style, JSV
     return ret;
 }
 
-static JSValue js_box_style_justifyContent(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_justifyContent(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -259,78 +259,78 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_style_t *style, J
     return ret;
 }
 
-#define JS_FLEX_LENGTH_PROPERTY(Name)                                                              \
-    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_style_t *style, JSValue val) \
-    {                                                                                              \
-        if (JS_IsNumber(val))                                                                      \
-        {                                                                                          \
-            double v;                                                                              \
-            if (JS_ToFloat64(ctx, &v, val))                                                        \
-                return JS_EXCEPTION;                                                               \
-            box_style_##Name(style, v);                                                            \
-        }                                                                                          \
-        else if (JS_IsString(val))                                                                 \
-        {                                                                                          \
-            size_t len;                                                                            \
-            const char *s = JS_ToCStringLen(ctx, &len, val);                                       \
-            if (!s)                                                                                \
-                return JS_EXCEPTION;                                                               \
-            else if ((len > 0) && (s[len - 1] == '%'))                                             \
-            {                                                                                      \
-                float percent = strtof(s, NULL);                                                   \
-                box_style_##Name##Percent(style, percent);                                         \
-            }                                                                                      \
-            else                                                                                   \
-            {                                                                                      \
-                return JS_EXCEPTION;                                                               \
-            }                                                                                      \
-        }                                                                                          \
-        return JS_UNDEFINED;                                                                       \
-    }                                                                                              \
-    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val)            \
-    {                                                                                              \
-        if (!style)                                                                                \
-            return JS_EXCEPTION;                                                                   \
-        return js_box_style_##Name##_Internel(ctx, style, val);                                    \
+#define JS_FLEX_LENGTH_PROPERTY(Name)                                                                          \
+    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_t node, box_style_t *style, JSValue val) \
+    {                                                                                                          \
+        if (JS_IsNumber(val))                                                                                  \
+        {                                                                                                      \
+            double v;                                                                                          \
+            if (JS_ToFloat64(ctx, &v, val))                                                                    \
+                return JS_EXCEPTION;                                                                           \
+            box_style_##Name(style, v);                                                                        \
+        }                                                                                                      \
+        else if (JS_IsString(val))                                                                             \
+        {                                                                                                      \
+            size_t len;                                                                                        \
+            const char *s = JS_ToCStringLen(ctx, &len, val);                                                   \
+            if (!s)                                                                                            \
+                return JS_EXCEPTION;                                                                           \
+            else if ((len > 0) && (s[len - 1] == '%'))                                                         \
+            {                                                                                                  \
+                float percent = strtof(s, NULL);                                                               \
+                box_style_##Name##Percent(style, percent);                                                     \
+            }                                                                                                  \
+            else                                                                                               \
+            {                                                                                                  \
+                return JS_EXCEPTION;                                                                           \
+            }                                                                                                  \
+        }                                                                                                      \
+        return JS_UNDEFINED;                                                                                   \
+    }                                                                                                          \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_t node, box_style_t *style, JSValue val)            \
+    {                                                                                                          \
+        if (!style)                                                                                            \
+            return JS_EXCEPTION;                                                                               \
+        return js_box_style_##Name##_Internel(ctx, node, style, val);                                          \
     }
 
-#define JS_FLEX_LENGTH_PROPERTY_AUTO(Name)                                                         \
-    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_style_t *style, JSValue val) \
-    {                                                                                              \
-        if (JS_IsNumber(val))                                                                      \
-        {                                                                                          \
-            double v;                                                                              \
-            if (JS_ToFloat64(ctx, &v, val))                                                        \
-                return JS_EXCEPTION;                                                               \
-            box_style_##Name(style, v);                                                            \
-        }                                                                                          \
-        else if (JS_IsString(val))                                                                 \
-        {                                                                                          \
-            size_t len;                                                                            \
-            const char *s = JS_ToCStringLen(ctx, &len, val);                                       \
-            if (!s)                                                                                \
-                return JS_EXCEPTION;                                                               \
-            if (!strcmp(s, "auto"))                                                                \
-            {                                                                                      \
-                box_style_##Name##Auto(style);                                                     \
-            }                                                                                      \
-            else if ((len > 0) && (s[len - 1] == '%'))                                             \
-            {                                                                                      \
-                float percent = strtof(s, NULL);                                                   \
-                box_style_##Name##Percent(style, percent);                                         \
-            }                                                                                      \
-            else                                                                                   \
-            {                                                                                      \
-                return JS_EXCEPTION;                                                               \
-            }                                                                                      \
-        }                                                                                          \
-        return JS_UNDEFINED;                                                                       \
-    }                                                                                              \
-    static JSValue js_box_style_##Name(JSContext *ctx, box_style_t *style, JSValue val)            \
-    {                                                                                              \
-        if (!style)                                                                                \
-            return JS_EXCEPTION;                                                                   \
-        return js_box_style_##Name##_Internel(ctx, style, val);                                    \
+#define JS_FLEX_LENGTH_PROPERTY_AUTO(Name)                                                                     \
+    static JSValue js_box_style_##Name##_Internel(JSContext *ctx, box_t node, box_style_t *style, JSValue val) \
+    {                                                                                                          \
+        if (JS_IsNumber(val))                                                                                  \
+        {                                                                                                      \
+            double v;                                                                                          \
+            if (JS_ToFloat64(ctx, &v, val))                                                                    \
+                return JS_EXCEPTION;                                                                           \
+            box_style_##Name(style, v);                                                                        \
+        }                                                                                                      \
+        else if (JS_IsString(val))                                                                             \
+        {                                                                                                      \
+            size_t len;                                                                                        \
+            const char *s = JS_ToCStringLen(ctx, &len, val);                                                   \
+            if (!s)                                                                                            \
+                return JS_EXCEPTION;                                                                           \
+            if (!strcmp(s, "auto"))                                                                            \
+            {                                                                                                  \
+                box_style_##Name##Auto(style);                                                                 \
+            }                                                                                                  \
+            else if ((len > 0) && (s[len - 1] == '%'))                                                         \
+            {                                                                                                  \
+                float percent = strtof(s, NULL);                                                               \
+                box_style_##Name##Percent(style, percent);                                                     \
+            }                                                                                                  \
+            else                                                                                               \
+            {                                                                                                  \
+                return JS_EXCEPTION;                                                                           \
+            }                                                                                                  \
+        }                                                                                                      \
+        return JS_UNDEFINED;                                                                                   \
+    }                                                                                                          \
+    static JSValue js_box_style_##Name(JSContext *ctx, box_t node, box_style_t *style, JSValue val)            \
+    {                                                                                                          \
+        if (!style)                                                                                            \
+            return JS_EXCEPTION;                                                                               \
+        return js_box_style_##Name##_Internel(ctx, node, style, val);                                          \
     }
 
 #define JS_FLEX_PROPERTYES()                      \
@@ -373,7 +373,7 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_style_t *style, J
 
 JS_FLEX_PROPERTYES()
 
-static JSValue js_box_style_margin(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_margin(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -381,15 +381,15 @@ static JSValue js_box_style_margin(JSContext *ctx, box_style_t *style, JSValue v
     if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
-    js_box_style_marginTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
-    js_box_style_marginRight_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 1));
-    js_box_style_marginBottom_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 2));
-    js_box_style_marginLeft_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 3));
+    js_box_style_marginTop_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 0));
+    js_box_style_marginRight_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 1));
+    js_box_style_marginBottom_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 2));
+    js_box_style_marginLeft_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 3));
 
     return JS_UNDEFINED;
 }
 
-static JSValue js_box_style_border(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_border(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -397,15 +397,15 @@ static JSValue js_box_style_border(JSContext *ctx, box_style_t *style, JSValue v
     if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
-    js_box_style_borderTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
-    js_box_style_borderRight_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 1));
-    js_box_style_borderBottom_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 2));
-    js_box_style_borderLeft_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 3));
+    js_box_style_borderTop_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 0));
+    js_box_style_borderRight_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 1));
+    js_box_style_borderBottom_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 2));
+    js_box_style_borderLeft_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 3));
 
     return JS_UNDEFINED;
 }
 
-static JSValue js_box_style_padding(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_padding(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -413,15 +413,15 @@ static JSValue js_box_style_padding(JSContext *ctx, box_style_t *style, JSValue 
     if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
-    js_box_style_paddingTop_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
-    js_box_style_paddingRight_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 1));
-    js_box_style_paddingBottom_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 2));
-    js_box_style_paddingLeft_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 3));
+    js_box_style_paddingTop_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 0));
+    js_box_style_paddingRight_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 1));
+    js_box_style_paddingBottom_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 2));
+    js_box_style_paddingLeft_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 3));
 
     return JS_UNDEFINED;
 }
 
-static JSValue js_box_style_borderRadius(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_borderRadius(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -429,15 +429,15 @@ static JSValue js_box_style_borderRadius(JSContext *ctx, box_style_t *style, JSV
     if (JS_IsArray(ctx, val) <= 0)
         return JS_EXCEPTION;
 
-    js_box_style_borderTopLeftRadius_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 0));
-    js_box_style_borderTopRightRadius_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 1));
-    js_box_style_borderBottomRightRadius_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 2));
-    js_box_style_borderBottomLeftRadius_Internel(ctx, style, JS_GetPropertyUint32(ctx, val, 3));
+    js_box_style_borderTopLeftRadius_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 0));
+    js_box_style_borderTopRightRadius_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 1));
+    js_box_style_borderBottomRightRadius_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 2));
+    js_box_style_borderBottomLeftRadius_Internel(ctx, node, style, JS_GetPropertyUint32(ctx, val, 3));
 
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_border_radius(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_border_radius(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -459,7 +459,7 @@ static JSValue js_set_style_border_radius(JSContext *ctx, box_style_t *style, JS
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_border_color(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_border_color(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -479,7 +479,7 @@ static JSValue js_set_style_border_color(JSContext *ctx, box_style_t *style, JSV
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_fill_color(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_fill_color(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -499,7 +499,7 @@ static JSValue js_set_style_fill_color(JSContext *ctx, box_style_t *style, JSVal
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_font_color(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_font_color(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -519,7 +519,7 @@ static JSValue js_set_style_font_color(JSContext *ctx, box_style_t *style, JSVal
     return JS_UNDEFINED;
 }
 
-static JSValue js_get_style_text(JSContext *ctx, box_style_t *style)
+static JSValue js_get_style_text(JSContext *ctx, box_t node, box_style_t *style)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -527,7 +527,7 @@ static JSValue js_get_style_text(JSContext *ctx, box_style_t *style)
     return JS_NewString(ctx, style->text);
 }
 
-static JSValue js_set_style_text(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_text(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -536,11 +536,12 @@ static JSValue js_set_style_text(JSContext *ctx, box_style_t *style, JSValue val
         return JS_EXCEPTION;
 
     box_style_text(style, s);
+    flex_markDirty(node);
     JS_FreeCString(ctx, s);
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_font_size(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_font_size(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -554,7 +555,7 @@ static JSValue js_set_style_font_size(JSContext *ctx, box_style_t *style, JSValu
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_font_family(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_font_family(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -568,7 +569,7 @@ static JSValue js_set_style_font_family(JSContext *ctx, box_style_t *style, JSVa
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_text_align(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_text_align(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
 
@@ -610,7 +611,7 @@ static JSValue js_set_style_text_align(JSContext *ctx, box_style_t *style, JSVal
     return ret;
 }
 
-static JSValue js_box_style_overflow(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_box_style_overflow(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     JSValue ret = JS_EXCEPTION;
     if (!style)
@@ -644,7 +645,7 @@ static JSValue js_box_style_overflow(JSContext *ctx, box_style_t *style, JSValue
     return ret;
 }
 
-static JSValue js_set_style_background_image(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_background_image(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -658,7 +659,7 @@ static JSValue js_set_style_background_image(JSContext *ctx, box_style_t *style,
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_content_image(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_content_image(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -672,7 +673,7 @@ static JSValue js_set_style_content_image(JSContext *ctx, box_style_t *style, JS
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_transform_matrix(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_transform_matrix(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;
@@ -692,7 +693,7 @@ static JSValue js_set_style_transform_matrix(JSContext *ctx, box_style_t *style,
     return JS_UNDEFINED;
 }
 
-static JSValue js_set_style_transform_origin(JSContext *ctx, box_style_t *style, JSValue val)
+static JSValue js_set_style_transform_origin(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
         return JS_EXCEPTION;

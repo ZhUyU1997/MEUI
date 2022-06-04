@@ -26,7 +26,7 @@ static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
     return JS_NULL;
 }
 
-static void setBoxStyleFromJSValue(JSContext *ctx, box_style_t *style, JSValueConst obj)
+static void setBoxStyleFromJSValue(JSContext *ctx, box_t node, box_style_t *style, JSValueConst obj)
 {
     for (int i = 0; i < jsStyleGetSetLength; i++)
     {
@@ -36,7 +36,7 @@ static void setBoxStyleFromJSValue(JSContext *ctx, box_style_t *style, JSValueCo
         if (JS_IsNull(value))
             box_style_unset(style, jsStyleGetSet[i].enumValue);
         else
-            jsStyleGetSet[i].set(ctx, style, value);
+            jsStyleGetSet[i].set(ctx, node, style, value);
         JS_FreeValue(ctx, value);
     }
 }
@@ -61,7 +61,7 @@ static JSValue js_set_style(JSContext *ctx, JSValueConst this_val,
         box_set_style(box, style, v);
     }
 
-    setBoxStyleFromJSValue(ctx, style, argv[0]);
+    setBoxStyleFromJSValue(ctx, box, style, argv[0]);
     return JS_UNDEFINED;
 }
 
