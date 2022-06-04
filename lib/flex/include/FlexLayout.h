@@ -230,6 +230,7 @@ void        Flex_print             (FlexNodeRef node, FlexPrintOptions options);
 #define FlexVectorRef(type) FlexVector(type)*
 #define FlexVector_new(type, initialCapacity) _FlexVector_new_##type(initialCapacity)
 #define FlexVector_free(type, vector) _FlexVector_free_##type(vector)
+#define FlexVector_clear(type, vector) _FlexVector_clear_##type(vector)
 #define FlexVector_insert(type, vector, value, index) _FlexVector_insert_##type(vector, value, index)
 #define FlexVector_add(type, vector, value) _FlexVector_add_##type(vector, value)
 #define FlexVector_removeAt(type, vector, index) _FlexVector_removeAt_##type(vector, index)
@@ -299,6 +300,8 @@ static inline float flex_clampMin(float value, float minValue) {
         return fmaxf(value, minValue);
     }
 }
+
+void flex_markDirty(FlexNodeRef node);
 
 #ifdef __cplusplus
 }
