@@ -1,7 +1,7 @@
+/* eslint-disable no-unreachable */
 import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
 import * as colorString from "color-string"
 import { MeuiStyle, parseTransform } from "./style"
-
 interface MeuiEventMap {
     mousedown: MeuiMouseEvent
     mouseup: MeuiMouseEvent
@@ -99,7 +99,7 @@ export class MeuiWheelEvent extends MeuiMouseEvent {
     }
 }
 
-interface EventModifierInit extends UIEventInit {
+interface EventModifierInit {
     altKey?: boolean
     ctrlKey?: boolean
     metaKey?: boolean
@@ -180,18 +180,81 @@ type EventCollection = {
     [K in string]: EventRecord<K>
 }
 
-export class Box {
-    nativeBox: NativeBox
-    childNodes: Box[]
+export abstract class Node {
+    childNodes: Node[]
     parentNode: Box | null
+    text: string = ""
+    abstract nodeType: NodeType
+
+    constructor() {
+        this.childNodes = []
+        this.parentNode = null
+    }
+
+    get firstChild() {
+        return this.childNodes[0]
+    }
+
+    get nextSibling(): Node | null {
+        if (!this.parentNode) return null
+        const index = this.parentNode.childNodes.indexOf(this)
+
+        if (index === -1 || index === this.parentNode.childNodes.length - 1)
+            return null
+        return this.parentNode.childNodes[index]
+    }
+
+    remove() {
+        this.parentNode?.removeChild(this)
+    }
+
+    appendChild(child: Node) {
+        this.insertBefore(child, null)
+    }
+
+    insertBefore(child: Node, beforeChild: Node | null) {
+        child.remove()
+        let index = this.childNodes.length
+        if (beforeChild) {
+            const i = this.childNodes.indexOf(beforeChild)
+            index = i == -1 ? index : i
+        }
+
+        this.childNodes.splice(index, 0, child)
+        child.parentNode = this as unknown as Box
+        return child
+    }
+
+    removeChild(child: Node) {
+        const index = this.childNodes.indexOf(child)
+
+        if (index !== -1) {
+            this.childNodes.splice(index, 1)
+            child.parentNode = null
+        }
+    }
+}
+
+export enum NodeType {
+    ELEMENT_NODE = 1,
+    TEXT_NODE = 3,
+}
+
+export class Box extends Node {
+    nativeBox: NativeBox
+    children: Node[]
     eventListeners: EventCollection
     text: string
     focusable = false
     style: any
+    nodeType: NodeType = NodeType.ELEMENT_NODE
     constructor(type = "Div", style?: MeuiStyle) {
+        super()
+
         this.nativeBox = new NativeBox(type)
         this.childNodes = []
-        this.parentNode = null
+        this.children = []
+
         this.eventListeners = {} as EventCollection
         this.text = ""
 
@@ -205,7 +268,10 @@ export class Box {
 
         this.style = new Proxy(
             {
-                setProperty: (key, value) => {
+                setProperty: (
+                    key: keyof MeuiStyle,
+                    value: MeuiStyle[keyof MeuiStyle]
+                ) => {
                     this.setStyle({ [key]: value })
                 },
             },
@@ -300,58 +366,73 @@ export class Box {
     }
 
     checkConsistency() {
-        if (this.childNodes.length !== this.nativeBox.getChildCount()) {
+        if (this.children.length !== this.nativeBox.getChildCount()) {
             throw new Error("Failed to pass consistency check")
         }
     }
 
-    remove() {
-        this.parentNode?.removeChild(this)
-    }
-
-    addChild(child: Box) {
-        if (typeof child === "string" || typeof child === "number") {
-            this.text += child
-            this.setStyle({ text: this.text })
-        } else {
-            child.remove()
-            this.nativeBox.addChild(child.nativeBox)
-            this.childNodes.push(child)
-            child.parentNode = this
-            this.checkConsistency()
-        }
-    }
-
-    appendChild(child: Box) {
-        this.addChild(child)
-    }
-
-    insertChild(child: Box, index: number) {
-        child.remove()
-
+    insertChildElement(child: Box, index: number) {
+        this.children.splice(index, 0, child)
         this.nativeBox.insertChild(child.nativeBox, index)
-        this.childNodes.splice(index, 0, child)
-        child.parentNode = this
         this.checkConsistency()
     }
 
-    insertBefore(child: Box, beforeChild: Box) {
-        child.remove()
-        const index = this.childNodes.indexOf(beforeChild)
-        if (index !== -1) {
-            this.insertChild(child, index)
-            this.checkConsistency()
+    updateText() {
+        const text = this.childNodes
+            .filter((child) => child.nodeType === NodeType.TEXT_NODE)
+            .map((child) => child.text)
+            .join("")
+        this.setStyle({ text })
+    }
+
+    removeChild(child: Node) {
+        super.removeChild(child)
+
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
+            const index = this.children.indexOf(child)
+
+            if (index !== -1) {
+                this.children.splice(index, 1)
+                this.nativeBox.removeChild((child as Box).nativeBox)
+                this.checkConsistency()
+            }
+        } else if (child.nodeType === NodeType.TEXT_NODE) {
+            this.updateText()
         }
     }
-    removeChild(child: Box) {
-        const index = this.childNodes.indexOf(child)
 
-        if (index !== -1) {
-            this.nativeBox.removeChild(child.nativeBox)
-            this.childNodes.splice(index, 1)
-            child.parentNode = null
-            this.checkConsistency()
+    insertBefore(child: Node, beforeChild: Node | null) {
+        super.insertBefore(child, beforeChild)
+
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
+            let beforeEle: Node | null = beforeChild
+            let index = this.children.length
+
+            if (child.nodeType !== NodeType.ELEMENT_NODE) {
+                let findBefore = false
+                beforeEle =
+                    this.childNodes.find((value, i) => {
+                        if (!findBefore) {
+                            if (value === beforeChild) findBefore = true
+                            return false
+                        }
+                        return child.nodeType == NodeType.ELEMENT_NODE
+                    }) ?? null
+
+                if (beforeEle) {
+                    index = this.children.indexOf(beforeEle)
+                    if (index == -1) {
+                        throw new Error("Logic error")
+                    }
+                }
+            }
+
+            this.insertChildElement(child as Box, index)
+        } else if (child.nodeType === NodeType.TEXT_NODE) {
+            this.updateText()
         }
+
+        return child
     }
 
     getState() {
@@ -456,7 +537,7 @@ export class Box {
     }
 
     capturingPhase(node: Box, event: MeuiEvent) {
-        if (node.parentNode) this.capturingPhase(node.parentNode, event)
+        if (node.parentNode) this.capturingPhase(node.parentNode as Box, event)
         event.currentTarget = node
         node.tryHandleEvent(event, true)
     }

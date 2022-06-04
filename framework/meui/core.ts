@@ -23,7 +23,7 @@ export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
 
-export function createBox(type = "Div", style: MeuiStyle = {}) {
+export function createBox(type = "Div", style: MeuiStyle = {}): Box {
     if (type === "Div") return new DivElement(style)
     else if (type === "Stack") return new StackElement(style)
     else if (type === "Canvas") return new CanvasElement(style)
@@ -32,7 +32,7 @@ export function createBox(type = "Div", style: MeuiStyle = {}) {
 
 export class MEUI {
     private nativeMEUI: NativeMEUI
-    private root: DivElement | StackElement | CanvasElement
+    private root: Box
     private mouseX: number
     private mouseY: number
     private mouseHit: Box | null
@@ -273,7 +273,7 @@ export class MEUI {
 
         for (const i of path) {
             if (i === -1) break
-            target = target.childNodes[i]
+            target = target.childNodes[i] as Box
         }
         return target
     }

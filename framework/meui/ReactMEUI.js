@@ -118,18 +118,18 @@ const hostConfig = {
     },
     appendInitialChild: (parent, child) => {
         log("appendInitialChild", child)
-        parent.addChild(child)
+        parent.appendChild(child)
     },
     appendChild(parent, child) {
         log("appendChild", child)
-        parent.addChild(child)
+        parent.appendChild(child)
     },
     finalizeInitialChildren: (domElement, type, props) => {
         log("finalizeInitialChildren")
     },
     appendChildToContainer: (parent, child) => {
         log("appendChildToContainer", child)
-        parent.addChild(child)
+        parent.appendChild(child)
     },
     prepareUpdate(domElement, oldProps, newProps, rootContainer, hostContext) {
         // Return a diff between the new and the old props
