@@ -18,7 +18,9 @@
         "typeRoots": ["@types", "node_modules/@types"],
         "baseUrl": ".",
         "paths": {
-            "@/*": ["framework/*"]
+            "@/*": ["framework/*"],
+            "react": ["preact/compat"],
+            "react-dom": ["preact/compat"]
         }
     },
     "include": ["framework", "test", "examples"]
