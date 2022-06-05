@@ -9,7 +9,7 @@ import { Root } from "@/components"
 import jsnes from "jsnes"
 import path from "@/path"
 import * as std from "std"
-import { CanvasElement, COLOR_FORMAT, ImageData } from "@/meui/canvas"
+import { CanvasElement, COLOR_FORMAT, ImageData } from "@/meui"
 
 const SCREEN_WIDTH = 256
 const SCREEN_HEIGHT = 240

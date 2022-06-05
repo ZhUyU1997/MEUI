@@ -3,7 +3,7 @@ import { Canvas, Div, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root, Button } from "@/components"
-import { CanvasElement } from "@/meui/canvas"
+import { CanvasElement } from "@/meui"
 
 const Test: any = {
     arc: () => import("./arc"),

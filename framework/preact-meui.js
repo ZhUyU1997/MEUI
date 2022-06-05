@@ -1,16 +1,5 @@
-import { h, render } from "preact"
-
-import { createBox } from "@/meui/core"
-import { Text } from "@/meui/text"
-
-globalThis.document = {
-    createElement(nodeType, option) {
-        return createBox(nodeType)
-    },
-    createTextNode(data) {
-        return new Text(data)
-    },
-}
+import { render } from "preact"
+import "@/meui/node/dom"
 
 export default {
     render: (reactElement, meui, callback) => {

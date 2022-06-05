@@ -1,4 +1,4 @@
-import { Node, NodeType } from "./box"
+import { Node, NodeType } from "./node"
 
 export class Text extends Node {
     nodeType = NodeType.TEXT_NODE

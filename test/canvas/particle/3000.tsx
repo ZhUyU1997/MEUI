@@ -3,7 +3,7 @@ import { Canvas, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root } from "@/components"
-import { CanvasElement } from "@/meui/canvas"
+import { CanvasElement } from "@/meui"
 
 const ROWS = 100
 const COLS = 300

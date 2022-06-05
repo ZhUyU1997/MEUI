@@ -6,14 +6,13 @@ import {
     MeuiKeyboardEvent,
     MeuiMouseEvent,
     MeuiWheelEvent,
-} from "./box"
+} from "./node"
 
-import { CanvasElement } from "./canvas"
-import { DivElement } from "./div"
-import { StackElement } from "./stack"
+import { CanvasElement, DivElement, StackElement } from "./node"
 import type { MeuiStyle } from "./style"
-
 export * from "./core"
+export * from "./node"
+export type { MeuiStyle } from "./style"
 
 export interface MeuiElementProps {
     focusable?: boolean

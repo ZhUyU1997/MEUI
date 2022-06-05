@@ -1,7 +1,9 @@
 /* eslint-disable no-unreachable */
 import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
 import * as colorString from "color-string"
-import { MeuiStyle, parseTransform } from "./style"
+import { MeuiStyle, parseTransform } from "../style"
+import { Node, NodeType } from "./node"
+
 interface MeuiEventMap {
     mousedown: MeuiMouseEvent
     mouseup: MeuiMouseEvent
@@ -45,8 +47,8 @@ export class MeuiEvent implements MeuiEvent {
     readonly cancelable: boolean
 
     readonly type: string
-    target: Box | null
-    currentTarget: Box | null
+    target: Element | null
+    currentTarget: Element | null
 
     constructor(type: string, eventInitDict: EventInit = {}) {
         this.type = type
@@ -150,11 +152,11 @@ export class MeuiKeyboardEvent extends MeuiEvent {
 }
 
 interface FocusEventInit {
-    relatedTarget?: Box | null
+    relatedTarget?: Element | null
 }
 
 export class MeuiFocusEvent extends MeuiEvent {
-    readonly relatedTarget: Box | null
+    readonly relatedTarget: Element | null
     constructor(type: string, eventInitDict: FocusEventInit = {}) {
         super(type)
         this.relatedTarget = eventInitDict.relatedTarget ?? null
@@ -180,67 +182,7 @@ type EventCollection = {
     [K in string]: EventRecord<K>
 }
 
-export abstract class Node {
-    childNodes: Node[]
-    parentNode: Box | null
-    text = ""
-    abstract nodeType: NodeType
-
-    constructor() {
-        this.childNodes = []
-        this.parentNode = null
-    }
-
-    get firstChild() {
-        return this.childNodes[0]
-    }
-
-    get nextSibling(): Node | null {
-        if (!this.parentNode) return null
-        const index = this.parentNode.childNodes.indexOf(this)
-
-        if (index === -1 || index === this.parentNode.childNodes.length - 1)
-            return null
-        return this.parentNode.childNodes[index]
-    }
-
-    remove() {
-        this.parentNode?.removeChild(this)
-    }
-
-    appendChild(child: Node) {
-        this.insertBefore(child, null)
-    }
-
-    insertBefore(child: Node, beforeChild: Node | null) {
-        child.remove()
-        let index = this.childNodes.length
-        if (beforeChild) {
-            const i = this.childNodes.indexOf(beforeChild)
-            index = i == -1 ? index : i
-        }
-
-        this.childNodes.splice(index, 0, child)
-        child.parentNode = this as unknown as Box
-        return child
-    }
-
-    removeChild(child: Node) {
-        const index = this.childNodes.indexOf(child)
-
-        if (index !== -1) {
-            this.childNodes.splice(index, 1)
-            child.parentNode = null
-        }
-    }
-}
-
-export enum NodeType {
-    ELEMENT_NODE = 1,
-    TEXT_NODE = 3,
-}
-
-export class Box extends Node {
+export class Element extends Node {
     nativeBox: NativeBox
     children: Node[]
     eventListeners: EventCollection
@@ -370,7 +312,7 @@ export class Box extends Node {
         }
     }
 
-    insertChildElement(child: Box, index: number) {
+    insertChildElement(child: Element, index: number) {
         this.children.splice(index, 0, child)
         this.nativeBox.insertChild(child.nativeBox, index)
         this.checkConsistency()
@@ -392,7 +334,7 @@ export class Box extends Node {
 
             if (index !== -1) {
                 this.children.splice(index, 1)
-                this.nativeBox.removeChild((child as Box).nativeBox)
+                this.nativeBox.removeChild((child as Element).nativeBox)
                 this.checkConsistency()
             }
         } else if (child.nodeType === NodeType.TEXT_NODE) {
@@ -426,7 +368,7 @@ export class Box extends Node {
                 }
             }
 
-            this.insertChildElement(child as Box, index)
+            this.insertChildElement(child as Element, index)
         } else if (child.nodeType === NodeType.TEXT_NODE) {
             this.updateText()
         }
@@ -535,13 +477,14 @@ export class Box extends Node {
         }
     }
 
-    capturingPhase(node: Box, event: MeuiEvent) {
-        if (node.parentNode) this.capturingPhase(node.parentNode as Box, event)
+    capturingPhase(node: Element, event: MeuiEvent) {
+        if (node.parentNode)
+            this.capturingPhase(node.parentNode as Element, event)
         event.currentTarget = node
         node.tryHandleEvent(event, true)
     }
 
-    bubblingPhase(node: Box, event: MeuiEvent) {
+    bubblingPhase(node: Element, event: MeuiEvent) {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             event.currentTarget = node
@@ -558,10 +501,10 @@ export class Box extends Node {
         this.bubblingPhase(this, event)
     }
 
-    getPath(): Box[] {
-        const path: Box[] = []
+    getPath(): Element[] {
+        const path: Element[] = []
         // eslint-disable-next-line @typescript-eslint/no-this-alias
-        let box: Box | null = this
+        let box: Element | null = this
         while (box) {
             path.unshift(box)
             box = box.parentNode

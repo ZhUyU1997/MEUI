@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D } from "@/meui/canvas"
+import { CanvasRenderingContext2D } from "@/meui"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     ctx.font = "36px serif"

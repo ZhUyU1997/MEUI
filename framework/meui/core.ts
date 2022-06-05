@@ -4,17 +4,15 @@ import * as std from "std"
 import { KeyMap } from "./keymap"
 
 import {
-    Box,
+    Element,
     CustomEvent,
     MeuiFocusEvent,
     MeuiKeyboardEvent,
     MeuiMouseEvent,
     MeuiWheelEvent,
-} from "./box"
+} from "./node"
 
-import { CanvasElement } from "./canvas"
-import { DivElement } from "./div"
-import { StackElement } from "./stack"
+import { CanvasElement, DivElement, StackElement } from "./node"
 import type { MeuiStyle } from "./style"
 
 const FPS = 60
@@ -23,7 +21,7 @@ export const Div = "Div"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
 
-export function createBox(type = "Div", style: MeuiStyle = {}): Box {
+export function createElement(type = "Div", style: MeuiStyle = {}): Element {
     if (type === "Div") return new DivElement(style)
     else if (type === "Stack") return new StackElement(style)
     else if (type === "Canvas") return new CanvasElement(style)
@@ -32,16 +30,16 @@ export function createBox(type = "Div", style: MeuiStyle = {}): Box {
 
 export class MEUI {
     private nativeMEUI: NativeMEUI
-    private root: Box
+    private root: Element
     private mouseX: number
     private mouseY: number
-    private mouseHit: Box | null
-    private focusElement: Box | null
+    private mouseHit: Element | null
+    private focusElement: Element | null
     private intervalId: any
     onunload: () => void
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
-        this.root = createBox("Div", {
+        this.root = createElement("Div", {
             justifyContent: "center",
             alignItems: "center",
             alignContent: "center",
@@ -266,14 +264,14 @@ export class MEUI {
         return this.nativeMEUI.nextEvent()
     }
 
-    searchNode(x: number, y: number): Box | null {
+    searchNode(x: number, y: number): Element | null {
         const path = this.root.search(x, y)
 
         let target = this.root
 
         for (const i of path) {
             if (i === -1) break
-            target = target.childNodes[i] as Box
+            target = target.children[i] as Element
         }
         return target
     }

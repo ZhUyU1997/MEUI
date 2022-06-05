@@ -1,8 +1,8 @@
 import { Canvas as NativeCanvas, Path2D as NativePath2D } from "NativeMEUI"
-import { Box } from "./box"
-import { Matrix2D } from "./style"
+import { Element } from "../element"
+import { Matrix2D } from "../../style"
 
-import { MeuiStyle, parseFont } from "./style"
+import { MeuiStyle, parseFont } from "../../style"
 import * as colorString from "color-string"
 import { Path2D, CanvasPath } from "./path-2d"
 import { CanvasGradient } from "./canvas-gradient"
@@ -1142,7 +1142,7 @@ export class CanvasRenderingContext2D
         return new ImageData(new Uint8ClampedArray(buffer), sw, sh, settings)
     }
 }
-export class CanvasElement extends Box {
+export class CanvasElement extends Element {
     private context: CanvasRenderingContext2D | null = null
     private _context2d: CanvasRenderingContext2D | null = null
     private getWidth: () => number

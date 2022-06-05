@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D, Path2D } from "@/meui/canvas"
+import { CanvasRenderingContext2D, Path2D } from "@/meui"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     // Create a linear gradient

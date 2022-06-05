@@ -9,9 +9,9 @@ import {
     CanvasElement,
     CanvasRenderingContext2D,
     TextMetrics,
-} from "@/meui/canvas"
+} from "@/meui"
 
-import { MeuiKeyboardEvent, MeuiMouseEvent } from "@/meui/box"
+import { MeuiKeyboardEvent, MeuiMouseEvent } from "@/meui"
 
 interface TextRenderInfo {
     content: string

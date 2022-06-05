@@ -1,6 +1,6 @@
 import { Column, Root, Row } from "@/components"
 import { Stack } from "@/meui"
-import { MeuiStyle } from "@/meui/style"
+import { MeuiStyle } from "@/meui"
 import React, { useState } from "react"
 import { Icon } from "./icon"
 

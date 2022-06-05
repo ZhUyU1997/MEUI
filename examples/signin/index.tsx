@@ -4,7 +4,7 @@ import ReactMEUI from "@/react-meui"
 
 import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
 import TextArea from "@/components/text-area"
-import { MeuiStyle } from "@/meui/style"
+import { MeuiStyle } from "@/meui"
 
 function Input({
     placeholder,

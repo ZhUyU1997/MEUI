@@ -8,14 +8,14 @@ import React, { useEffect, useState } from "preact/compat"
 
 // create our tree and append it to document.body:
 
-import { Div, MEUI, createBox } from "@/meui/core"
-import { Text } from "@/meui/text"
+import { Div, MEUI, createElement } from "@/meui"
+import { Text } from "@/meui"
 
 const meui = new MEUI(300, 300)
 
 globalThis.document = {
     createElement(nodeType, option) {
-        return createBox(nodeType)
+        return createElement(nodeType)
     },
     createTextNode(data) {
         return new Text(data)

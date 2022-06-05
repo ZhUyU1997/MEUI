@@ -1,7 +1,5 @@
 import React from "react"
-import { Div, MeuiElementAttribule } from "@/meui"
-import { DivElement } from "@/meui/div"
-import { MeuiStyle } from "@/meui/style"
+import { Div, DivElement, MeuiElementAttribule, MeuiStyle } from "@/meui"
 import { getIconHex, IconsKey } from "./icons"
 
 interface RootProps extends MeuiElementAttribule {

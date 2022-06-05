@@ -2,7 +2,7 @@ import React from "react"
 
 import { MaterialDesignIcon } from "@/components"
 import { IconsKey } from "@/components/icons"
-import { MeuiStyle } from "@/meui/style"
+import { MeuiStyle } from "@/meui"
 
 export function Icon({
     icon,

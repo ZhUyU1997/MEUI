@@ -9,7 +9,7 @@ import ReactMEUI from "@/react-meui"
 import path from "@/path"
 
 import { Center, Row, Column, Root, MaterialDesignIcon } from "@/components"
-import { MeuiStyle } from "@/meui/style"
+import { MeuiStyle } from "@/meui"
 import { Setting } from "./setting"
 import { Icon } from "./icon"
 

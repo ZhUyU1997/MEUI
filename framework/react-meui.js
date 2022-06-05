@@ -1,6 +1,5 @@
 import ReactReconciler from "react-reconciler"
-import { createBox } from "@/meui/core"
-import { CanvasElement } from "@/meui/canvas"
+import { createElement, CanvasElement } from "@/meui"
 
 function shallowDiff(oldObj, newObj) {
     // Return a diff between the new and the old object
@@ -53,7 +52,7 @@ const hostConfig = {
         workInProgress
     ) => {
         log("createInstance " + type)
-        const domElement = createBox(type)
+        const domElement = createElement(type)
 
         if (typeof children === "string" || typeof children === "number") {
             domElement.setStyle({ text: children })
