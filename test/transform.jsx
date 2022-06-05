@@ -1,5 +1,7 @@
 import React, { useState } from "react"
-import { Div, MEUI, ReactMEUI } from "@/meui"
+import { Div, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { Root, Button } from "@/components"
 
 import { parseTransform } from "@/meui"

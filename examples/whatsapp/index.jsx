@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, ReactMEUI, MEUI } from "@/meui"
+import { Div, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function Circle({ radius, style, children }) {

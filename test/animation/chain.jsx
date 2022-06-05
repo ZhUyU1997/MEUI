@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import Button from "@/components/button"
-import { Div, MEUI, ReactMEUI } from "@/meui"
+import { Div, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import {
     useTransition,
     useSpring,

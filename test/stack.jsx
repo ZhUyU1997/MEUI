@@ -1,5 +1,7 @@
 import React from "react"
-import { Div, ReactMEUI } from "@/meui"
+import { Div } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { MEUI } from "@/meui"
 import { Root } from "@/components"
 

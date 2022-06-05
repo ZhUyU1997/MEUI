@@ -56,5 +56,3 @@ export interface MeuiElements {
     Stack: JSX.IntrinsicElements["Stack"]
     Canvas: JSX.IntrinsicElements["Canvas"]
 }
-
-export { default as ReactMEUI } from "./ReactMEUI"

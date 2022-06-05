@@ -1,5 +1,7 @@
 import React, { useState } from "react"
-import { Div, MEUI, ReactMEUI } from "@/meui"
+import { Div, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
 import TextArea from "@/components/text-area"
 import { MeuiStyle } from "@/meui/style"

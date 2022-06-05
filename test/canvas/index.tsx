@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
-import { Canvas, Div, MEUI, ReactMEUI } from "@/meui"
+import { Canvas, Div, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { Root, Button } from "@/components"
 import { CanvasElement } from "@/meui/canvas"
 

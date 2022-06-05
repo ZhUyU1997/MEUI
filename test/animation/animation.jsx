@@ -1,5 +1,7 @@
 import React from "react"
-import { MEUI, ReactMEUI } from "@/meui"
+import { MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { animated, useSpring } from "@/react-sping-meui"
 
 function App() {

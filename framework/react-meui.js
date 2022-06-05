@@ -1,6 +1,6 @@
 import ReactReconciler from "react-reconciler"
-import { createBox } from "."
-import { CanvasElement } from "./canvas"
+import { createBox } from "@/meui/core"
+import { CanvasElement } from "@/meui/canvas"
 
 function shallowDiff(oldObj, newObj) {
     // Return a diff between the new and the old object

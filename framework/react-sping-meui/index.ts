@@ -3,10 +3,8 @@ import { createHost } from "@react-spring/animated"
 import { primitives } from "./primitives"
 import { WithAnimated } from "./animated"
 import { AnimatedStyle } from "./AnimatedStyle"
-import { batchedUpdates } from "@/meui/ReactMEUI"
 
 Globals.assign({
-    batchedUpdates: batchedUpdates,
     createStringInterpolator,
     colors,
 })

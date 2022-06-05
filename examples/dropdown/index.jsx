@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, MEUI, ReactMEUI, Stack } from "@/meui"
+import { Div, MEUI, Stack } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function DropDownList({ option = [], style }) {

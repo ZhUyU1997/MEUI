@@ -3,7 +3,9 @@ import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
 import * as std from "std"
 
-import { Div, Stack, MEUI, ReactMEUI } from "@/meui"
+import { Div, Stack, MEUI } from "@/meui"
+import ReactMEUI from "@/react-meui"
+
 import path from "@/path"
 
 import { Center, Row, Column, Root, MaterialDesignIcon } from "@/components"
