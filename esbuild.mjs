@@ -1,6 +1,7 @@
 import { build } from "esbuild"
 import { spawn } from 'child_process'
 import kill from "tree-kill"
+import path from "path"
 
 let childProcess = null
 
@@ -26,8 +27,29 @@ export function execute(command) {
     }
 }
 
+function preactCompatPlugin() {
+    return {
+        name: "preact-compat",
+        setup(build) {
+            const preact = path.join(process.cwd(), "node_modules", "preact", "compat", "dist", "compat.module.js");
+            const preactmeui = path.join(process.cwd(), "framework", "preact-meui.js");
+
+            build.onResolve({ filter: /^(@\/react-meui|react)$/ }, args => {
+                if (args.path === "react") {
+                    return { path: preact };
+                }
+                else (args.path === "@/react-meui")
+                {
+                    return { path: preactmeui };
+                }
+            });
+        }
+    }
+}
+
 build({
     entryPoints: [process.argv[2] ?? 'examples/hello/index.jsx'],
+    // minify: true,
     minify: process.env.NODE_ENV === 'production',
     // bundle: false,
     bundle: true,
@@ -42,5 +64,5 @@ build({
             else console.log('watch build succeeded:')
         },
     },
-    plugins: [execute("./meui dist/index.js")]
+    plugins: [preactCompatPlugin(), execute("./meui dist/index.js")]
 })

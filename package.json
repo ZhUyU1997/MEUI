@@ -13,6 +13,7 @@
     "color-string": "^1.9.0",
     "cssfontparser": "^1.2.1",
     "jsnes": "git+https://gitee.com/891085309/jsnes.git#master",
+    "preact": "git+https://github.com/ZhUyU1997/preact.git#dev-meui",
     "react": "^17.0.2",
     "react-reconciler": "^0.26.0"
   },
