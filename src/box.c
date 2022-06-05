@@ -101,9 +101,9 @@ destructor(Box)
             box_style_free(this->style_array[i]);
             this->style_array[i] = NULL;
         }
-
-        box_style_clear(&this->style);
     }
+
+    box_style_clear(&this->style);
     box_image_cache_free(&this->bg_image_cache);
     box_image_cache_free(&this->content_image_cache);
 
