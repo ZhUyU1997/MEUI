@@ -1,5 +1,5 @@
 import { Path2D as NativePath2D } from "NativeMEUI"
-import { Matrix2D } from "./style"
+import { Matrix2D } from "../../style"
 
 export interface CanvasPath {
     arc(
