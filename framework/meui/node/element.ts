@@ -292,14 +292,14 @@ export class Element extends Node {
             if (k in BOX_STATE) {
                 const otherStyle: any = {}
                 for (const [key, val] of Object.entries(v)) {
-                    otherStyle[key] = val
+                    otherStyle[key] = val ?? null
                 }
                 this._setStyle(
                     otherStyle,
                     BOX_STATE[k as keyof typeof BOX_STATE]
                 )
             } else {
-                defaultStyle[k] = v
+                defaultStyle[k] = v ?? null
             }
         }
 
