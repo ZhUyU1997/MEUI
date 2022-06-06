@@ -1,32 +1,29 @@
 import { Element } from "./element"
 
 export abstract class Node {
-    childNodes: Node[]
-    parentNode: Element | null
+    childNodes: Node[] = []
+    parentNode: Element | null = null
     text = ""
     abstract nodeType: NodeType
+    private _previousSibling: Node | null = null
+    private _nextSibling: Node | null = null
 
-    constructor() {
-        this.childNodes = []
-        this.parentNode = null
-    }
+    constructor() {}
 
     get firstChild() {
         return this.childNodes[0]
     }
+
     get lastChild() {
         return this.childNodes[this.childNodes.length - 1]
     }
+
     get nextSibling(): Node | null {
-        if (!this.parentNode) return null
-        const index = this.parentNode.childNodes.indexOf(this)
-        return this.parentNode.childNodes[index + 1]
+        return this._nextSibling
     }
 
     get previousSibling(): Node | null {
-        if (!this.parentNode) return null
-        const index = this.parentNode.childNodes.indexOf(this)
-        return this.parentNode.childNodes[index - 1]
+        return this._previousSibling
     }
 
     appendChild(child: Node) {
@@ -36,12 +33,16 @@ export abstract class Node {
     insertBefore(child: Node, ref: Node | null) {
         child.remove()
         let index = this.childNodes.length
+
         if (ref) {
             const i = this.childNodes.indexOf(ref)
             index = i == -1 ? index : i
         }
 
         this.childNodes.splice(index, 0, child)
+        child._previousSibling = this.childNodes[index - 1]
+        child._nextSibling = this.childNodes[index + 1]
+
         child.parentNode = this as unknown as Element
         return child
     }
@@ -51,6 +52,8 @@ export abstract class Node {
 
         if (index !== -1) {
             this.childNodes.splice(index, 1)
+            child._previousSibling = null
+            child._nextSibling = null
             child.parentNode = null
         }
     }

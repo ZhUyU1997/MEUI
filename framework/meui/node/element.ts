@@ -342,32 +342,53 @@ export class Element extends Node {
         }
     }
 
+    // insertBefore(child: Node, beforeChild: Node | null) {
+    //     super.insertBefore(child, beforeChild)
+
+    //     if (child.nodeType === NodeType.ELEMENT_NODE) {
+    //         let index = this.children.length
+    //         if (beforeChild) {
+    //             // const beforeEle: Node | null = beforeChild
+    //             let beforeEle: Node | null = beforeChild
+    //             if (beforeChild.nodeType !== NodeType.ELEMENT_NODE) {
+    //                 let findBefore = false
+    //                 beforeEle =
+    //                     this.childNodes.find((value, i) => {
+    //                         if (!findBefore) {
+    //                             if (value === beforeChild) findBefore = true
+    //                             return false
+    //                         }
+    //                         return child.nodeType == NodeType.ELEMENT_NODE
+    //                     }) ?? null
+    //             }
+
+    //             if (beforeEle) {
+    //                 index = this.children.indexOf(beforeEle)
+    //                 if (index == -1) {
+    //                     throw new Error("Logic error")
+    //                 }
+    //             }
+    //         }
+
+    //         this.insertChildElement(child as Element, index)
+    //     } else if (child.nodeType === NodeType.TEXT_NODE) {
+    //         this.updateText()
+    //     }
+
+    //     return child
+    // }
+
     insertBefore(child: Node, beforeChild: Node | null) {
         super.insertBefore(child, beforeChild)
 
+        if (beforeChild && child.nodeType !== beforeChild.nodeType) {
+            throw new Error("Child nodeType must be same")
+        }
+
         if (child.nodeType === NodeType.ELEMENT_NODE) {
-            let beforeEle: Node | null = beforeChild
-            let index = this.children.length
-
-            if (child.nodeType !== NodeType.ELEMENT_NODE) {
-                let findBefore = false
-                beforeEle =
-                    this.childNodes.find((value, i) => {
-                        if (!findBefore) {
-                            if (value === beforeChild) findBefore = true
-                            return false
-                        }
-                        return child.nodeType == NodeType.ELEMENT_NODE
-                    }) ?? null
-
-                if (beforeEle) {
-                    index = this.children.indexOf(beforeEle)
-                    if (index == -1) {
-                        throw new Error("Logic error")
-                    }
-                }
-            }
-
+            const index = beforeChild
+                ? this.children.indexOf(beforeChild)
+                : this.children.length
             this.insertChildElement(child as Element, index)
         } else if (child.nodeType === NodeType.TEXT_NODE) {
             this.updateText()
