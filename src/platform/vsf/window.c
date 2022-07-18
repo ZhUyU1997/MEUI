@@ -29,7 +29,7 @@
 
 #include "usrapp_common.h"
 
-#include <meui.h>
+#include "meui.h"
 
 struct window_t {
     struct {

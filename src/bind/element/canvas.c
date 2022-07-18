@@ -1,10 +1,11 @@
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
-#include <text.h>
-#include <meui.h>
-#include <box.h>
-#include <element.h>
+#include "meui.h"
+#include "meui/text.h"
+#include "meui/box.h"
+#include "meui/element.h"
+
 #include <float.h>
 #include <string.h>
 #include <bind/style.h>

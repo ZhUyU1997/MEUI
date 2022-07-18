@@ -1,7 +1,8 @@
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
-#include <box.h>
+#include "meui/box.h"
+
 #include <string.h>
 #include <bind/style.h>
 

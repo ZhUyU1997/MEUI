@@ -1,10 +1,10 @@
-#include "box.h"
-#include "element.h"
-#include "image.h"
+#include "meui/box.h"
+#include "meui/element.h"
+#include "meui/image.h"
+#include "meui/text.h"
 #include "meui.h"
-#include "log.h"
-#include "text.h"
-#include "list.h"
+#include "common/log.h"
+#include "common/list.h"
 #include "pqueue.h"
 
 #include <FlexLayout.h>

@@ -1,9 +1,9 @@
-#include "box.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
+#include "meui/box.h"
 #include "gen/style.c"
 
 static box_style_t default_style = {

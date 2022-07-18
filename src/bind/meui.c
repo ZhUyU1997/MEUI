@@ -1,7 +1,7 @@
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
-#include <meui.h>
+#include "meui.h"
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 

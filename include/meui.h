@@ -1,10 +1,11 @@
 #pragma once
 
+#include "meui/event.h"
+#include "meui/box.h"
+
 #include <time.h>
 #include <plutovg.h>
 #include <FlexLayout.h>
-#include <meui/event.h>
-#include <box.h>
 #include <hashmap.h>
 
 struct meui_t;

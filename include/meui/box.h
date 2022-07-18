@@ -2,10 +2,10 @@
 
 #include <FlexLayout.h>
 #include <plutovg.h>
-#include <meui/event.h>
+#include "meui/event.h"
 
-#include <list.h>
-#include <class.h>
+#include "common/list.h"
+#include "common/class.h"
 
 typedef FlexNodeRef box_t;
 

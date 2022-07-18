@@ -1,9 +1,8 @@
 #define _XOPEN_SOURCE 600
 
-#include <meui.h>
-#include <box.h>
-#include <log.h>
-#include <macro/function.h>
+#include "meui.h"
+#include "meui/box.h"
+#include "common/log.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>

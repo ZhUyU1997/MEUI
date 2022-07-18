@@ -1,7 +1,7 @@
 #pragma once
 
-#include <box.h>
-#include <class.h>
+#include "common/class.h"
+#include "meui/box.h"
 #include <plutovg.h>
 
 class(DivEle, Box){};

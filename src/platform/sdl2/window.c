@@ -26,7 +26,7 @@
 #include <sys/eventfd.h>
 
 #include <SDL2/SDL.h>
-#include <meui.h>
+#include "meui.h"
 
 #ifndef dimof
 #define dimof(__arr) (sizeof(__arr) / sizeof((__arr)[0]))

@@ -1,11 +1,10 @@
-#include "box.h"
-#include "class.h"
+#include "meui.h"
+#include "meui/box.h"
+#include "common/class.h"
 
 #include "cutils.h"
 #include "quickjs.h"
 #include "quickjs-libc.h"
-
-#include <macro/function.h>
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -17,7 +16,6 @@
 #include <stdint.h>
 #include <time.h>
 
-#include <meui.h>
 
 #ifdef PROFILE
 #include <gperftools/profiler.h>

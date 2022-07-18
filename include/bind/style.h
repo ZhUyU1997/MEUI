@@ -1,7 +1,7 @@
 #pragma once
 #include "quickjs.h"
 #include "gen/style.h"
-#include <box.h>
+#include "meui/box.h"
 
 typedef struct box_style_t box_style_t;
 

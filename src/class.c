@@ -1,7 +1,8 @@
-#include <class.h>
+#include "common/log.h"
+#include "common/class.h"
+
 #include <assert.h>
 #include <string.h>
-#include <log.h>
 #include <malloc.h>
 #include <assert.h>
 
