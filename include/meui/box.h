@@ -31,14 +31,6 @@ enum BOX_STATE
     BOX_STATE_MAX,
 };
 
-typedef struct box_image_cache_t
-{
-    int width;
-    int height;
-    const char *path;
-    plutovg_surface_t *image;
-} box_image_cache_t;
-
 class(Box)
 {
     box_t node;
@@ -51,9 +43,6 @@ class(Box)
     double scroll_width, scroll_height;
     double client_width, client_height;
     double offset_width, offset_height;
-
-    box_image_cache_t bg_image_cache;
-    box_image_cache_t content_image_cache;
 
     int out_of_screen;
     int index_in_parent; // for search hitbox

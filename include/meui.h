@@ -60,3 +60,6 @@ int meui_pending(struct meui_t *meui);
 void meui_next_event(struct meui_t *meui, struct meui_event_t *event);
 
 box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_point_t *point, void (*cb)(box_t node, bool hit, void *data));
+
+void meui_image_cache_init();
+plutovg_surface_t *meui_image_cache_load(const char *path, int width, int height);

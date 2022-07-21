@@ -3,6 +3,7 @@
 #include "meui.h"
 #include "meui/box.h"
 #include "common/log.h"
+#include "cache/image.h"
 
 #include <FlexLayout.h>
 #include <plutovg.h>
@@ -66,6 +67,7 @@ struct meui_t *meui_start(int width, int height)
     meui->platform_data = platform;
     meui_instance = meui;
 
+    meui_image_cache_init();
     box_default_style_init();
     return meui;
 exit2:
@@ -405,4 +407,17 @@ void meui_next_event(struct meui_t *meui, struct meui_event_t *event)
 
     struct meui_platform_t *platform = meui->platform_data;
     window_next_event(platform->window, event);
+}
+
+static struct lru_t *image_lru = NULL;
+
+void meui_image_cache_init()
+{
+    if (image_lru == NULL)
+        image_lru = image_lru_alloc();
+}
+
+plutovg_surface_t *meui_image_cache_load(const char *path, int width, int height)
+{
+    return image_lru_load(image_lru, path, width, height);
 }

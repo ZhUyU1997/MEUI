@@ -11,7 +11,7 @@ W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function \
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include
-SRC			+= src/*.c src/element/*.c src/bind/*.c src/bind/element/*.c
+SRC			+= src/*.c src/element/*.c src/bind/*.c src/bind/element/*.c src/cache/*.c
 
 SRC			+= src/platform/x11/*.c
 X_LDFLAGS	+= -lX11 -lXext 
