@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
@@ -11,6 +11,8 @@ function App() {
         to: { rotateZ: 360 },
     })
 
+    const [text, setText] = useState("Hello MEUI!")
+
     return (
         <animated.Div
             style={{
@@ -21,8 +23,11 @@ function App() {
                 textAlign: "center",
                 ...styles,
             }}
+            onClick={() => {
+                setText("Hello MEUI!\nHello React!")
+            }}
         >
-            Hello MEUI!
+            {text}
         </animated.Div>
     )
 }

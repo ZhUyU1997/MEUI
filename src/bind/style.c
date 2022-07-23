@@ -276,13 +276,21 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_t node, box_style
             const char *s = JS_ToCStringLen(ctx, &len, val);                                                   \
             if (!s)                                                                                            \
                 return JS_EXCEPTION;                                                                           \
-            else if ((len > 0) && (s[len - 1] == '%'))                                                         \
+            else if ((len > 1) && (s[len - 1] == '%'))                                                         \
             {                                                                                                  \
                 float percent = strtof(s, NULL);                                                               \
+                JS_FreeCString(ctx, s);                                                                        \
                 box_style_##Name##Percent(style, percent);                                                     \
+            }                                                                                                  \
+            else if ((len > 2) && (s[len - 2] == 'p') && (s[len - 1] == 'x'))                                  \
+            {                                                                                                  \
+                float percent = strtof(s, NULL);                                                               \
+                JS_FreeCString(ctx, s);                                                                        \
+                box_style_##Name(style, percent);                                                              \
             }                                                                                                  \
             else                                                                                               \
             {                                                                                                  \
+                JS_FreeCString(ctx, s);                                                                        \
                 return JS_EXCEPTION;                                                                           \
             }                                                                                                  \
         }                                                                                                      \
@@ -314,14 +322,23 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_t node, box_style
             if (!strcmp(s, "auto"))                                                                            \
             {                                                                                                  \
                 box_style_##Name##Auto(style);                                                                 \
+                JS_FreeCString(ctx, s);                                                                        \
             }                                                                                                  \
-            else if ((len > 0) && (s[len - 1] == '%'))                                                         \
+            else if ((len > 1) && (s[len - 1] == '%'))                                                         \
             {                                                                                                  \
                 float percent = strtof(s, NULL);                                                               \
+                JS_FreeCString(ctx, s);                                                                        \
                 box_style_##Name##Percent(style, percent);                                                     \
+            }                                                                                                  \
+            else if ((len > 2) && (s[len - 2] == 'p') && (s[len - 1] == 'x'))                                  \
+            {                                                                                                  \
+                float percent = strtof(s, NULL);                                                               \
+                JS_FreeCString(ctx, s);                                                                        \
+                box_style_##Name(style, percent);                                                              \
             }                                                                                                  \
             else                                                                                               \
             {                                                                                                  \
+                JS_FreeCString(ctx, s);                                                                        \
                 return JS_EXCEPTION;                                                                           \
             }                                                                                                  \
         }                                                                                                      \

@@ -34,7 +34,18 @@ static void setBoxStyleFromJSValue(JSContext *ctx, box_t node, box_style_t *styl
         JSValue value = JS_GetPropertyStr(ctx, obj, jsStyleGetSet[i].name);
         if (JS_IsUndefined(value))
             continue;
-        if (JS_IsNull(value))
+
+        // Empty string means unset for preact
+        int should_unset = 0;
+        if (JS_IsString(value))
+        {
+            size_t len;
+            const char *str = JS_ToCStringLen(ctx, &len, value);
+            should_unset = str == NULL || len == 0;
+            JS_FreeCString(ctx, str);
+        }
+
+        if (JS_IsNull(value) || should_unset)
             box_style_unset(style, jsStyleGetSet[i].enumValue);
         else
             jsStyleGetSet[i].set(ctx, node, style, value);

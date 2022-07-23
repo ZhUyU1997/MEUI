@@ -177,7 +177,6 @@ const Transform = {
 
 const lengthReg = /^(\d*\.?\d+)([a-zA-Z]*)?$/
 export function parseLength(value: string): number {
-    console.log(value)
     const found = lengthReg.exec(value)
 
     if (!found) throw new Error("Invalid value")

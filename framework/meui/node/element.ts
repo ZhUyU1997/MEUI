@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
 import * as colorString from "color-string"
-import { MeuiStyle, parseTransform } from "../style"
+import { MeuiStyle, parseLength, parseTransform } from "../style"
 import { Node, NodeType } from "./node"
 
 interface MeuiEventMap {
@@ -190,6 +190,21 @@ export class Element extends Node {
     focusable = false
     style: any
     nodeType: NodeType = NodeType.ELEMENT_NODE
+
+    // correct casing for DOM built-in events
+    // preact dependents on them
+    onmousedown = null
+    onmouseup = null
+    onmousemove = null
+    onmouseout = null
+    onmouseover = null
+    onmousewheel = null
+    onkeydown = null
+    onkeyup = null
+    onclick = null
+    onfocusin = null
+    onfocusout = null
+
     constructor(type = "Div", style?: MeuiStyle) {
         super()
 
@@ -213,6 +228,10 @@ export class Element extends Node {
                     key: keyof MeuiStyle,
                     value: MeuiStyle[keyof MeuiStyle]
                 ) => {
+                    // preact appends the "px" if the value is a number
+                    if (typeof value === "string" && value.endsWith("px")) {
+                        value = parseLength(value)
+                    }
                     this.setStyle({ [key]: value })
                 },
             },
@@ -222,6 +241,10 @@ export class Element extends Node {
                 //     return ""
                 // },
                 set: (obj, prop, value) => {
+                    // preact appends the "px" if the value is a number
+                    if (typeof value === "string" && value.endsWith("px")) {
+                        value = parseLength(value)
+                    }
                     this.setStyle({ [prop]: value })
                     return true
                 },
