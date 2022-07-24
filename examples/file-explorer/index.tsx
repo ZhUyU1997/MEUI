@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"

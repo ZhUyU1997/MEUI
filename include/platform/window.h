@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #pragma once
 struct meui_event_t;
 struct window_t;

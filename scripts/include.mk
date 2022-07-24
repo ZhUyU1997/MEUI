@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+#
+# SPDX-License-Identifier: MIT
+
 ifeq ($(include_Makefile_include),)
 include_Makefile_include:=1
 

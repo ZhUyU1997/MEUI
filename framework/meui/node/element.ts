@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 /* eslint-disable no-unreachable */
 import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
 import * as colorString from "color-string"

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Globals, createStringInterpolator, colors } from "@react-spring/shared"
 import { createHost } from "@react-spring/animated"
 import { primitives } from "./primitives"

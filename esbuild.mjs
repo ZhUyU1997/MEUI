@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import { build } from "esbuild"
 import { spawn } from 'child_process'
 import kill from "tree-kill"

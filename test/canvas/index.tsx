@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import React, { useEffect, useRef, useState } from "react"
 import { Canvas, Div, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"

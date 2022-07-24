@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import ReactReconciler from "react-reconciler"
 import { createElement, CanvasElement } from "@/meui"
 

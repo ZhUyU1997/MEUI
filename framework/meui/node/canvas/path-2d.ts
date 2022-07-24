@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import { Path2D as NativePath2D } from "NativeMEUI"
 import { Matrix2D } from "../../style"
 

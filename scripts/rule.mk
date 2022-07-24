@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+#
+# SPDX-License-Identifier: MIT
+
 include $(XBUILD_DIR)/include.mk
 
 quiet_cmd_cc_o_c = $(ECHO_CC) $(@:.o=)

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 declare module "os" {
     export function open(filename: string, flags: number, mode: number): number
     export const O_RDONLY: number

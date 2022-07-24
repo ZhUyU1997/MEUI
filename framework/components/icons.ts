@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 export const icons = {
     "ab-testing": "\u{F01C9}",
     abacus: "\u{F16E0}",

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Yu Zhu <891085309@qq.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import { NativeMEUI, BOX_STATE, MeuiMouseRawEvent } from "NativeMEUI"
 import * as os from "os"
 import * as std from "std"
