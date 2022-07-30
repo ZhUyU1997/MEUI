@@ -632,103 +632,94 @@ void box_style_transformOriginOffset(box_style_t *style, double x, double y)
     style->flags |= UINT64_C(1) << 45;
     style->dirty |= UINT64_C(1) << 45;
 }
-void box_style_text(box_style_t *style, const char *text)
-{
-    assert(style);
-    assert(text);
-    if (style->text) free(style->text);
-    style->text = strdup(text);
-    style->flags |= UINT64_C(1) << 46;
-    style->dirty |= UINT64_C(1) << 46;
-}
 void box_style_fontFamily(box_style_t *style, const char *fontFamily)
 {
     assert(style);
     assert(fontFamily);
     if (style->fontFamily) free(style->fontFamily);
     style->fontFamily = strdup(fontFamily);
-    style->flags |= UINT64_C(1) << 47;
-    style->dirty |= UINT64_C(1) << 47;
+    style->flags |= UINT64_C(1) << 46;
+    style->dirty |= UINT64_C(1) << 46;
 }
 void box_style_overflow(box_style_t *style, CSS_OVERFLOW overflow)
 {
     assert(style);
     style->overflow = overflow;
-    style->flags |= UINT64_C(1) << 48;
-    style->dirty |= UINT64_C(1) << 48;
+    style->flags |= UINT64_C(1) << 47;
+    style->dirty |= UINT64_C(1) << 47;
 }
 void box_style_left(box_style_t *style, float left)
 {
     assert(style);
     style->left.value = left;
     style->left.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 49;
-    style->dirty |= UINT64_C(1) << 49;
+    style->flags |= UINT64_C(1) << 48;
+    style->dirty |= UINT64_C(1) << 48;
 }
 void box_style_leftPercent(box_style_t *style, float left)
 {
     assert(style);
     style->left.value = left;
     style->left.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 49;
-    style->dirty |= UINT64_C(1) << 49;
+    style->flags |= UINT64_C(1) << 48;
+    style->dirty |= UINT64_C(1) << 48;
 }
 void box_style_right(box_style_t *style, float right)
 {
     assert(style);
     style->right.value = right;
     style->right.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 50;
-    style->dirty |= UINT64_C(1) << 50;
+    style->flags |= UINT64_C(1) << 49;
+    style->dirty |= UINT64_C(1) << 49;
 }
 void box_style_rightPercent(box_style_t *style, float right)
 {
     assert(style);
     style->right.value = right;
     style->right.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 50;
-    style->dirty |= UINT64_C(1) << 50;
+    style->flags |= UINT64_C(1) << 49;
+    style->dirty |= UINT64_C(1) << 49;
 }
 void box_style_top(box_style_t *style, float top)
 {
     assert(style);
     style->top.value = top;
     style->top.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 51;
-    style->dirty |= UINT64_C(1) << 51;
+    style->flags |= UINT64_C(1) << 50;
+    style->dirty |= UINT64_C(1) << 50;
 }
 void box_style_topPercent(box_style_t *style, float top)
 {
     assert(style);
     style->top.value = top;
     style->top.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 51;
-    style->dirty |= UINT64_C(1) << 51;
+    style->flags |= UINT64_C(1) << 50;
+    style->dirty |= UINT64_C(1) << 50;
 }
 void box_style_bottom(box_style_t *style, float bottom)
 {
     assert(style);
     style->bottom.value = bottom;
     style->bottom.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 52;
-    style->dirty |= UINT64_C(1) << 52;
+    style->flags |= UINT64_C(1) << 51;
+    style->dirty |= UINT64_C(1) << 51;
 }
 void box_style_bottomPercent(box_style_t *style, float bottom)
 {
     assert(style);
     style->bottom.value = bottom;
     style->bottom.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 52;
-    style->dirty |= UINT64_C(1) << 52;
+    style->flags |= UINT64_C(1) << 51;
+    style->dirty |= UINT64_C(1) << 51;
 }
 void box_style_zIndex(box_style_t *style, int zIndex)
 {
     assert(style);
     style->zIndex = zIndex;
-    style->flags |= UINT64_C(1) << 53;
-    style->dirty |= UINT64_C(1) << 53;
+    style->flags |= UINT64_C(1) << 52;
+    style->dirty |= UINT64_C(1) << 52;
 }
-// 54 54
+// 53 53
 
 box_style_t *box_style_new()
 {
@@ -751,11 +742,6 @@ void box_style_clear(box_style_t *style)
     if (style->contentImage)
         free(style->contentImage);
     style->contentImage = NULL;
-
-
-    if (style->text)
-        free(style->text);
-    style->text = NULL;
 
 
     if (style->fontFamily)
@@ -807,7 +793,7 @@ void box_style_merge(box_style_t *dst, const box_style_t *src)
     if(!flags)
         return;
 
-    for(int i = 0; i < 54; i++)
+    for(int i = 0; i < 53; i++)
     {
         if(!(flags & (UINT64_C(1) << i)))
             continue;
@@ -1001,36 +987,31 @@ void box_style_merge(box_style_t *dst, const box_style_t *src)
                 break;
 
             case 46:
-                if(dst->text) free(dst->text);
-                dst->text = strdup(src->text);
-                break;
-
-            case 47:
                 if(dst->fontFamily) free(dst->fontFamily);
                 dst->fontFamily = strdup(src->fontFamily);
                 break;
 
-            case 48:
+            case 47:
                 dst->overflow = src->overflow;
                 break;
 
-            case 49:
+            case 48:
                 dst->left = src->left;
                 break;
 
-            case 50:
+            case 49:
                 dst->right = src->right;
                 break;
 
-            case 51:
+            case 50:
                 dst->top = src->top;
                 break;
 
-            case 52:
+            case 51:
                 dst->bottom = src->bottom;
                 break;
 
-            case 53:
+            case 52:
                 dst->zIndex = src->zIndex;
                 break;
 

@@ -44,6 +44,7 @@ class(Box)
     int state_changed;
     box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
+    char *text;
 
     double scroll_top, scroll_left;
     double scroll_width, scroll_height;
@@ -70,6 +71,9 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
 enum BOX_STATE box_get_state(box_t node);
 void box_set_state(box_t node, enum BOX_STATE state);
 box_style_t *box_get_style(box_t node, enum BOX_STATE state);
+
+const char *box_get_text_content(box_t node);
+void box_set_text_content(box_t node, const char *text);
 
 int box_get_client_width(box_t node);
 int box_get_client_height(box_t node);

@@ -73,6 +73,9 @@ destructor(Box)
 
     box_style_clear(&this->style);
 
+    if (this->text)
+        free(this->text);
+
     Flex_setContext(this->node, NULL);
     Flex_freeNode(this->node);
 }
@@ -138,6 +141,20 @@ void box_set_state(box_t node, enum BOX_STATE state)
     Box *box = Flex_getContext(node);
     box->state = state;
     box->state_changed = 1;
+}
+
+const char *box_get_text_content(box_t node)
+{
+    Box *box = Flex_getContext(node);
+    return box->text;
+}
+
+void box_set_text_content(box_t node, const char *text)
+{
+    Box *box = Flex_getContext(node);
+    if (box->text)
+        free(box->text);
+    box->text = strdup(text);
 }
 
 int box_get_client_width(box_t node)
@@ -560,7 +577,7 @@ FlexSize box_measure_text(void *context, FlexSize constrainedSize)
     const char *fontFamily = box->style.fontFamily;
     double size = box->style.fontSize;
     TEXT_ALIGN align = box->style.textAlign;
-    const char *utf8 = box->style.text;
+    const char *utf8 = box->text;
     if (utf8 && utf8[0] != '\0')
     {
         plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
@@ -679,8 +696,8 @@ static void box_draw_self(Box *box, plutovg_t *pluto)
                         },
                         box->style.borderColor, box->style.backgroundColor);
 
-    if (box->style.text && box->style.text[0] != '\0')
-        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->style.text, &content_rect);
+    if (box->text && box->text[0] != '\0')
+        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->text, &content_rect);
 }
 
 static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)

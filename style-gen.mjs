@@ -53,7 +53,6 @@ const style_table = [
     ["char *", "contentImage", false, false],
     ["plutovg_matrix_t", "transform", false, false],
     ["struct transform_origin_t", "transformOrigin", false, false],
-    ["char *", "text", false, false],
     ["char *", "fontFamily", false, false],
     ["CSS_OVERFLOW", "overflow", false, false],
     ["FlexLength", "left", false, false],

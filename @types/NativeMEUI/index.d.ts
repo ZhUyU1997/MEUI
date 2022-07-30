@@ -63,18 +63,14 @@ declare module "NativeMEUI" {
         search(x: number, y: number): number[]
         toClient(x: number, y: number): [number, number]
         toOffset(x: number, y: number): [number, number]
-        get scrollLeft(): number
-        set scrollLeft(value: number)
-        get scrollTop(): number
-        set scrollTop(value: number)
-        get scrollWidth(): number
-        set scrollWidth(value: number)
-        get scrollHeight(): number
-        set scrollHeight(value: number)
-        get clientWidth(): number
-        set clientWidth(value: number)
-        get clientHeight(): number
-        set clientHeight(value: number)
+
+        textContent: string
+        scrollLeft: number
+        scrollTop: number
+        scrollWidth: number
+        scrollHeight: number
+        clientWidth: number
+        clientHeight: number
     }
     export const BOX_STATE: {
         DEFAULT: 0
