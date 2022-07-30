@@ -17,11 +17,14 @@ X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 X_INCDIRS	+= include
 SRC			+= src/*.c src/element/*.c src/bind/*.c src/bind/element/*.c src/cache/*.c
 
-SRC			+= src/platform/x11/*.c
-X_LDFLAGS	+= -lX11 -lXext 
+# SRC			+= src/platform/x11/*.c
+# X_LDFLAGS	+= -lX11 -lXext 
 
 # SRC			+= src/platform/sdl2/*.c
 # X_LDFLAGS	+= -lSDL2
+
+SRC			+= src/platform/sdl2-core/*.c
+X_LDFLAGS	+= -lSDL2
 
 # stb
 X_INCDIRS	+= lib/stb/include

@@ -69,13 +69,13 @@ export class MEUI {
         this.focusElement = null
         this.onunload = () => {}
 
-        os.setReadHandler(this.getConnectNumber(), this.onEvent.bind(this))
+        os.setEventHandler(this.onEvent.bind(this))
         this.intervalId = setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
 
     onExit() {
         this.onunload?.()
-        os.setReadHandler(this.getConnectNumber(), null)
+        os.setEventHandler(null)
         clearInterval(this.intervalId)
         std.gc()
         std.exit(0)
