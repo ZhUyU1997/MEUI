@@ -30,6 +30,7 @@
     "@types/react-reconciler": "^0.26.6",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
+    "2048-engine": "^0.1.1",
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.39",
     "eslint": "^8.10.0",
