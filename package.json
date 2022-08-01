@@ -36,6 +36,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "mathjs": "^11.0.1",
     "postcss-value-parser": "^4.2.0",
     "prettier": "^2.6.2",
     "prettier-check": "^2.0.0",
