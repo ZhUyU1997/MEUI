@@ -6,3 +6,4 @@ justify-content: flex-end;
 overflow-y: scroll;
 ```
 - JSON.stringify issue
+- Dispatch keyboard event to root element if no focused element
