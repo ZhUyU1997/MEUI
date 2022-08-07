@@ -5,6 +5,8 @@
  */
 
 #include "xshm.h"
+#include "keysym.h"
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
@@ -200,8 +202,7 @@ void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
         KeySym ks = NoSymbol;
         const char *s = NULL;
         if (XkbLookupKeySym(window->dis, event.xkey.keycode, event.xkey.state, NULL, &ks))
-            s = XKeysymToString(ks);
-
+            s = xkb_keysym_to_dom_key(ks);
         *meui_event = (struct meui_event_t){
             .type = MEUI_EVENT_KEY_DOWN,
             .KEY_DOWN = {
@@ -218,7 +219,7 @@ void window_next_event(struct window_t *window, struct meui_event_t *meui_event)
         KeySym ks = NoSymbol;
         const char *s = NULL;
         if (XkbLookupKeySym(window->dis, event.xkey.keycode, event.xkey.state, NULL, &ks))
-            s = XKeysymToString(ks);
+            s = xkb_keysym_to_dom_key(ks);
         *meui_event = (struct meui_event_t){
             .type = MEUI_EVENT_KEY_UP,
             .KEY_UP = {

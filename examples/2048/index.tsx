@@ -84,17 +84,16 @@ function App() {
             }}
             focusable={true}
             onKeyDown={(e) => {
-                // TODO: fix key name
-                if (e.key == "Up") {
+                if (e.key == "ArrowUp") {
                     // up arrow
                     game.move(Direction.UP)
-                } else if (e.key == "Down") {
+                } else if (e.key == "ArrowDown") {
                     // down arrow
                     game.move(Direction.DOWN)
-                } else if (e.key == "Left") {
+                } else if (e.key == "ArrowLeft") {
                     // left arrow
                     game.move(Direction.LEFT)
-                } else if (e.key == "Right") {
+                } else if (e.key == "ArrowRight") {
                     // right arrow
                     game.move(Direction.RIGHT)
                 }
