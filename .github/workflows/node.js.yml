@@ -32,7 +32,7 @@ jobs:
         cache: 'npm'
     - name: Install Packages
       run: |
-        sudo apt install gcc make
+        sudo apt install gcc make libxkbcommon-dev
     - run: npm ci
     - run: npm run gen
     - run: npm run build --if-present

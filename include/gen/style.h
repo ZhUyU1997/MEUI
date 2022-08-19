@@ -51,7 +51,6 @@ typedef struct box_style_t
 	char * contentImage;
 	plutovg_matrix_t transform;
 	struct transform_origin_t transformOrigin;
-	char * text;
 	char * fontFamily;
 	CSS_OVERFLOW overflow;
 	FlexLength left;
@@ -108,14 +107,13 @@ typedef uint64_t box_style_flag_t;
 #define BOX_STYLE_contentImage (UINT64_C(1) << 43)
 #define BOX_STYLE_transform (UINT64_C(1) << 44)
 #define BOX_STYLE_transformOrigin (UINT64_C(1) << 45)
-#define BOX_STYLE_text (UINT64_C(1) << 46)
-#define BOX_STYLE_fontFamily (UINT64_C(1) << 47)
-#define BOX_STYLE_overflow (UINT64_C(1) << 48)
-#define BOX_STYLE_left (UINT64_C(1) << 49)
-#define BOX_STYLE_right (UINT64_C(1) << 50)
-#define BOX_STYLE_top (UINT64_C(1) << 51)
-#define BOX_STYLE_bottom (UINT64_C(1) << 52)
-#define BOX_STYLE_zIndex (UINT64_C(1) << 53)
+#define BOX_STYLE_fontFamily (UINT64_C(1) << 46)
+#define BOX_STYLE_overflow (UINT64_C(1) << 47)
+#define BOX_STYLE_left (UINT64_C(1) << 48)
+#define BOX_STYLE_right (UINT64_C(1) << 49)
+#define BOX_STYLE_top (UINT64_C(1) << 50)
+#define BOX_STYLE_bottom (UINT64_C(1) << 51)
+#define BOX_STYLE_zIndex (UINT64_C(1) << 52)
 
 void box_style_wrap(box_style_t *style, FlexWrapMode wrap);
 void box_style_direction(box_style_t *style, FlexDirection direction);
@@ -201,7 +199,6 @@ void box_style_contentImage(box_style_t *style, const char *contentImage);
 void box_style_transform(box_style_t *style, double m00, double m10, double m01, double m11, double m02, double m12);
 void box_style_transformOriginKeyword(box_style_t *style, TRANSFORM_ORIGIN x, TRANSFORM_ORIGIN y);
 void box_style_transformOriginOffset(box_style_t *style, double x, double y);
-void box_style_text(box_style_t *style, const char *text);
 void box_style_fontFamily(box_style_t *style, const char *fontFamily);
 void box_style_overflow(box_style_t *style, CSS_OVERFLOW overflow);
 void box_style_left(box_style_t *style, float left);
@@ -213,7 +210,7 @@ void box_style_topPercent(box_style_t *style, float top);
 void box_style_bottom(box_style_t *style, float bottom);
 void box_style_bottomPercent(box_style_t *style, float bottom);
 void box_style_zIndex(box_style_t *style, int zIndex);
-// 54 54
+// 53 53
 box_style_t *box_style_new();
 void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);

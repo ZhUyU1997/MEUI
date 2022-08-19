@@ -543,28 +543,6 @@ static JSValue js_set_style_font_color(JSContext *ctx, box_t node, box_style_t *
     return JS_UNDEFINED;
 }
 
-static JSValue js_get_style_text(JSContext *ctx, box_t node, box_style_t *style)
-{
-    if (!style)
-        return JS_EXCEPTION;
-
-    return JS_NewString(ctx, style->text);
-}
-
-static JSValue js_set_style_text(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
-{
-    if (!style)
-        return JS_EXCEPTION;
-    const char *s = JS_ToCString(ctx, val);
-    if (!s)
-        return JS_EXCEPTION;
-
-    box_style_text(style, s);
-    flex_markDirty(node);
-    JS_FreeCString(ctx, s);
-    return JS_UNDEFINED;
-}
-
 static JSValue js_set_style_font_size(JSContext *ctx, box_t node, box_style_t *style, JSValue val)
 {
     if (!style)
@@ -820,7 +798,6 @@ const JSStyleGetSet jsStyleGetSet[] = {
     {"borderColor", NULL, js_set_style_border_color, BOX_STYLE_borderColor},
     {"backgroundColor", NULL, js_set_style_fill_color, BOX_STYLE_backgroundColor},
     {"fontColor", NULL, js_set_style_font_color, BOX_STYLE_fontColor},
-    {"text", js_get_style_text, js_set_style_text, BOX_STYLE_text},
     {"fontSize", NULL, js_set_style_font_size, BOX_STYLE_fontSize},
     {"fontFamily", NULL, js_set_style_font_family, BOX_STYLE_fontFamily},
     {"textAlign", NULL, js_set_style_text_align, BOX_STYLE_textAlign},

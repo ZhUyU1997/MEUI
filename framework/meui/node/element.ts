@@ -352,7 +352,7 @@ export class Element extends Node {
             .filter((child) => child.nodeType === NodeType.TEXT_NODE)
             .map((child) => child.text)
             .join("")
-        this.setStyle({ text })
+        this.textContent = text
     }
 
     removeChild(child: Node) {
@@ -560,6 +560,14 @@ export class Element extends Node {
             box = box.parentNode
         }
         return path
+    }
+
+    get textContent() {
+        return this.nativeBox.textContent
+    }
+
+    set textContent(val) {
+        this.nativeBox.textContent = val
     }
 
     get scrollWidth() {

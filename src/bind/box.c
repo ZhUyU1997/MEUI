@@ -283,6 +283,33 @@ static JSValue js_search(JSContext *ctx, JSValueConst this_val,
     return path;
 }
 
+static JSValue js_get_textContent(JSContext *ctx, JSValueConst this_val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+    return JS_NewString(ctx, box_get_text_content(node));
+}
+
+static JSValue js_set_textContent(JSContext *ctx, JSValueConst this_val, JSValue val)
+{
+    box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
+
+    if (!node)
+        return JS_EXCEPTION;
+
+    const char *str = JS_ToCString(ctx, val);
+
+    if (str)
+    {
+        box_set_text_content(node, str);
+        JS_FreeCString(ctx, str);
+    }
+
+    return JS_UNDEFINED;
+}
+
 static JSValue js_get_scroll_left(JSContext *ctx, JSValueConst this_val)
 {
     box_t node = JS_GetOpaque2(ctx, this_val, js_box_class_id);
@@ -380,6 +407,7 @@ static const JSCFunctionListEntry js_box_proto_funcs[] = {
     JS_CFUNC_DEF("toClient", 2, js_toClient),
     JS_CFUNC_DEF("toOffset", 2, js_toOffset),
 
+    JS_CGETSET_DEF("textContent", js_get_textContent, js_set_textContent),
     JS_CGETSET_DEF("scrollLeft", js_get_scroll_left, js_set_scroll_left),
     JS_CGETSET_DEF("scrollTop", js_get_scroll_top, js_set_scroll_top),
     JS_CGETSET_DEF("scrollWidth", js_get_scroll_width, NULL),

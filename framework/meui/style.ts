@@ -19,7 +19,6 @@ export interface MeuiStyle {
     borderColor?: string
     backgroundColor?: Property.BackgroundColor
     fontColor?: Property.Color
-    text?: string
     fontSize?: number
     fontFamily?: string
     textAlign?:
