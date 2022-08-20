@@ -67,13 +67,10 @@ ReactMEUI.render(<App />, meui)
 - ### Install `Node.js` & `NPM`
 
 ```sh
-sudo apt install nodejs
-sudo apt install npm
-
-# Update version using below commands if necessary (optional)
-sudo npm install -g n
-sudo n stable
-sudo npm install npm@latest -g
+cd ~
+curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+sudo apt -y install nodejs
+node -v
 ```
 - ### Install `GCC` & `Make`
 
