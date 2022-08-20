@@ -92,7 +92,6 @@ plutovg_surface_t *image_lru_get(struct lru_t *lru, const char *path, int width,
 
 static plutovg_surface_t *__image_lru_set(struct lru_t *lru, const char *path, int width, int height)
 {
-    printf("__image_lru_set %s %d %d\n", path, width, height);
     plutovg_surface_t *img = NULL;
 
     if (strcmp(fileext(path), "svg") == 0)
