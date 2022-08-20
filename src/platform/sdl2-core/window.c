@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-#include <unistd.h>
-#include <sys/eventfd.h>
-
+#include <malloc.h>
 #include <SDL2/SDL.h>
 #include "meui.h"
 
@@ -105,7 +103,6 @@ void window_set_name(struct window_t *window, const char *name)
 
 int window_pending(struct window_t *window)
 {
-    eventfd_t value;
     return SDL_HasEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
 }
 
