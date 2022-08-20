@@ -11,11 +11,7 @@ import React, {
     useState,
 } from "react"
 import { Div, Stack, Canvas, MeuiElementAttribule } from "@/meui"
-import {
-    CanvasElement,
-    CanvasRenderingContext2D,
-    TextMetrics,
-} from "@/meui"
+import { CanvasElement, CanvasRenderingContext2D, TextMetrics } from "@/meui"
 
 import { MeuiKeyboardEvent, MeuiMouseEvent } from "@/meui"
 
@@ -414,11 +410,7 @@ class CanvasTextEditor {
                 this.cursor[0] = cursor[0]
                 this.cursor[1] = cursor[1]
             }
-        } else if (
-            /^[ -~]$/.test(
-                e.key
-            )
-        ) {
+        } else if (/^[ -~]$/.test(e.key)) {
             // https://stackoverflow.com/questions/12052825/regular-expression-for-all-printable-characters-in-javascript
             this.removeSelected()
             this.insertChar(this.cursor[0], this.cursor[1], e.key)

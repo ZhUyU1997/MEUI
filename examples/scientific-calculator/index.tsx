@@ -13,13 +13,7 @@ import TextArea from "@/components/text-area"
 import { MeuiStyle } from "@/meui"
 import { evaluate } from "mathjs"
 
-function Screen({
-    log,
-    style,
-}: {
-    log: string
-    style?: MeuiStyle
-}) {
+function Screen({ log, style }: { log: string; style?: MeuiStyle }) {
     return (
         <Center
             style={{
