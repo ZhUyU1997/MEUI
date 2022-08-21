@@ -100,10 +100,10 @@ void meui_platform_fps(struct meui_t *meui)
     {
         unsigned long ticks = time - platform->start_ticks;
 
-        if (ticks >= CLOCKS_PER_SEC)
+        if (ticks >= 1000000)
         {
             char buf[128] = {0};
-            snprintf(buf, 128, "FPS: %f", (double)platform->frame * CLOCKS_PER_SEC / ticks);
+            snprintf(buf, 128, "FPS: %f", (double)platform->frame * 1000000 / ticks);
             window_set_name(platform->window, buf);
             platform->frame = 0;
             platform->start_ticks = time;
