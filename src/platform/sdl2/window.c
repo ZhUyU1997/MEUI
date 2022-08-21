@@ -82,12 +82,14 @@ struct window_t *window_create(const char *title, int width, int height)
         return NULL;
     }
 
+    SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
+
     struct window_t *window = calloc(1, sizeof(struct window_t));
     if (NULL == window)
     {
         goto fail;
     }
-    window->sdl.window = SDL_CreateWindow(title, 0, 0, width, height, 0);
+    window->sdl.window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (NULL == window->sdl.window)
     {
         goto free_window_and_fail;
