@@ -66,7 +66,7 @@ ReactMEUI.render(<App />, meui)
 ### Windows
 - #### Download and Install below packages
 
-  [Nodejs 17.x](https://nodejs.org/en/)
+  [Nodejs 16.x](https://nodejs.org/en/)
 
   [MinGW-w64 x86_64-posix-seh-rt](https://github.com/niXman/mingw-builds-binaries/releases)
 
