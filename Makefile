@@ -4,6 +4,12 @@
 
 sinclude scripts/env.mk
 
+ifeq ($(HOSTOS),windows)
+PLATFORM		?= sdl2-core
+else
+PLATFORM		?= x11
+endif
+
 # i386 platform
 # CC			:= gcc -m32
 # LD			:= ld -m elf_i386
@@ -54,15 +60,20 @@ X_LDFLAGS	+= -lm -lpthread
 # X_DEFINES	+= PROFILE
 # X_LDFLAGS	+= -lprofiler
 
-SRC			+= src/platform/x11/*.c
+ifeq ($(wildcard src/platform/$(strip $(PLATFORM))),)
+$(error Not existed PLATFORM:$(PLATFORM))
+endif
+
+SRC			+= src/platform/$(strip $(PLATFORM))/*.c
+
+ifeq ($(strip $(PLATFORM)),x11)
 SRC			+= lib/QuickJS/quickjs-libc.c
 X_LDFLAGS	+= -ldl -lX11 -lXext
-
-# SRC			+= src/platform/sdl2/*.c
-# SRC			+= lib/QuickJS/quickjs-libc.c
-# X_LDFLAGS	+= -ldl -lSDL2
-
-# SRC			+= src/platform/sdl2-core/*.c
-# X_LDFLAGS	+= -lSDL2
+else ifeq ($(strip $(PLATFORM)),sdl2)
+SRC			+= lib/QuickJS/quickjs-libc.c
+X_LDFLAGS	+= -ldl -lSDL2
+else ifeq ($(strip $(PLATFORM)),sdl2-core)
+X_LDFLAGS	+= -lSDL2
+endif
 
 NAME		:= meui
