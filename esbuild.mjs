@@ -11,7 +11,7 @@ import path from "path"
 
 let childProcess = null
 
-export function execute(command) {
+export function execute(command, args) {
     return {
         name: 'execute',
         setup(build) {
@@ -21,13 +21,13 @@ export function execute(command) {
                     kill(childProcess.pid, 'SIGKILL')
                 }
                 console.log("[execute]", command)
-                childProcess = spawn(command, {
+                childProcess = spawn(command, args, {
                     shell: true,
                     stdio: 'inherit',
                     env: process.env
                 })
 
-                console.log("spawn", command, childProcess.pid)
+                console.log("spawn", command, args, childProcess.pid)
             })
         },
     }
@@ -70,5 +70,5 @@ build({
             else console.log('watch build succeeded:')
         },
     },
-    plugins: [preactCompatPlugin(), execute("./meui dist/index.js")]
+    plugins: [preactCompatPlugin(), execute(path.resolve("./meui"), [path.resolve("./dist/index.js")])]
 })
