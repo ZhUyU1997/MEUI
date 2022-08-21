@@ -15,6 +15,16 @@
 
 `MEUI` is a modern ui library for embedded platform based on `quickjs` and `React.js`
 
+<p align="center">
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/2048.png" width="150">
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/nes.png" width="150">
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/signin.png" width="150">
+  <br>
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/file-explorer.png" height="250">
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/whatsapp.png" height="250">
+  <img src="https://zhuyu1997.github.io/MEUI-page/assets/scientific-calculator.png" height="250">
+</p>
+
 ## [Example](examples/hello/index.jsx)
 
 ```tsx
