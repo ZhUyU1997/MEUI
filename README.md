@@ -62,30 +62,57 @@ ReactMEUI.render(<App />, meui)
 - Support `ES2020`
 - Support `canvas` api
 
-## Getting Started (`Ubuntu`/`WSLg`)
+## Getting Started
+### Windows
+- #### Download and Install below packages
 
-- ### Install `Node.js` & `NPM`
+  [Nodejs 17.x](https://nodejs.org/en/)
 
-```sh
-cd ~
-curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
-sudo apt -y install nodejs
-node -v
-```
-- ### Install `GCC` & `Make`
+  [MinGW-w64 x86_64-posix-seh-rt](https://github.com/niXman/mingw-builds-binaries/releases)
 
-```sh
-sudo apt install gcc make
-```
+  [SDL2-devel-mingw](https://github.com/libsdl-org/SDL/releases/)
 
-- ### Build & Run MEUI
+- #### Add `MinGW` into Environment Variables
 
-```sh
-npm install
-npm run dev
-# specified entry
-npm run dev examples/signin/index.tsx
-```
+- #### Copy the `SDL2` files to `MinGW`
+
+  ```
+  [path to SDL2]\x86_64-w64-mingw32 => [path to MinGW]\x86_64-w64-mingw32
+  ```
+
+- #### Build & Run MEUI
+
+  ```shell
+  npm install
+  npm run dev
+  # Or specified entry
+  npm run dev examples/signin/index.tsx
+  ```
+
+### Ubuntu/WSLg
+- #### Install `Node.js` & `NPM`
+
+  ```sh
+  cd ~
+  curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+  sudo apt -y install nodejs
+  node -v
+  ```
+
+- #### Install `GCC` & `Make`
+
+  ```sh
+  sudo apt install gcc make
+  ```
+
+- #### Build & Run MEUI
+
+  ```sh
+  npm install
+  npm run dev
+  # Or specified entry
+  npm run dev examples/signin/index.tsx
+  ```
 
 ## API References
 
