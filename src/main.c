@@ -105,8 +105,6 @@ int main(int argc, char **argv)
     atexit(ProfilerStop);
 #endif
 
-    do_class_init();
-
     JSRuntime *rt;
     JSContext *ctx;
     rt = JS_NewRuntime();

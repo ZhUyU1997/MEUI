@@ -48,7 +48,7 @@ X_INCDIRS	+= lib/pqueue
 SRC			+= lib/pqueue/*.c
 
 X_CFLAGS	+=
-X_LDFLAGS	+= -lm -ldl -lpthread
+X_LDFLAGS	+= -lm -lpthread
 # X_LDFLAGS	+= -ltcmalloc
 # X_CFLAGS	+= -march=native
 # X_DEFINES	+= PROFILE
@@ -56,19 +56,13 @@ X_LDFLAGS	+= -lm -ldl -lpthread
 
 SRC			+= src/platform/x11/*.c
 SRC			+= lib/QuickJS/quickjs-libc.c
-X_LDFLAGS	+= -lX11 -lXext
+X_LDFLAGS	+= -ldl -lX11 -lXext
 
 # SRC			+= src/platform/sdl2/*.c
 # SRC			+= lib/QuickJS/quickjs-libc.c
-# X_LDFLAGS	+= -lSDL2
+# X_LDFLAGS	+= -ldl -lSDL2
 
 # SRC			+= src/platform/sdl2-core/*.c
 # X_LDFLAGS	+= -lSDL2
 
 NAME		:= meui
-
-define CUSTOM_TARGET_CMD
-echo [OUTPUT] $@
-$(LD) -r -T class.lds -o $@.o $(X_OBJS)
-$(CC) -o $@ $@.o $(X_LDFLAGS)
-endef
