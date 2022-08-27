@@ -6,6 +6,10 @@
 
 #include <plutovg.h>
 #include <stdint.h>
+#include <string.h>
+
+#include "meui/box.h"
+#include "meui.h"
 
 static inline int decode_utf8(const char **begin, const char *end, int *codepoint)
 {
@@ -132,4 +136,154 @@ plutovg_rect_t measure_textn_oneline_path(const plutovg_font_t *font, const char
     *out_w = advance;
 
     return text_rect;
+}
+
+FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
+{
+    FlexSize outSize = {.width = 0, .height = 0};
+
+    double advance = 0;
+    const char *end = utf8 + size;
+    plutovg_font_face_t *face = plutovg_font_get_face(font);
+    double ascent = plutovg_font_get_ascent(font);
+    double descent = plutovg_font_get_descent(font);
+    double line_gap = plutovg_font_get_line_gap(font);
+    double leading = plutovg_font_get_leading(font);
+
+    double y = 0;
+
+    while (utf8 < end)
+    {
+        if (y + ascent > h)
+            break;
+
+        y += ascent;
+
+        double line_width = 0;
+        measure_textn_oneline_path(font, &utf8, end, w, &line_width);
+
+        if (line_width > outSize.width)
+        {
+            outSize.width = line_width + 1; // + 1 to fix precision
+        }
+    }
+    outSize.height = y - descent;
+
+    return outSize;
+}
+
+static void draw_oneline(plutovg_t *pluto, TEXT_ALIGN align, const char **utf8, const char *end, double w)
+{
+    plutovg_path_t *result = plutovg_path_create();
+    double advance = 0;
+    const plutovg_font_t *font = plutovg_get_font(pluto);
+    double scale = plutovg_font_get_scale(font);
+    plutovg_font_face_t *face = plutovg_font_get_face(font);
+
+    const char *utf8_origin = *utf8;
+
+    double line_width = 0;
+    plutovg_rect_t rect = measure_textn_oneline_path(font, &utf8_origin, end, w, &line_width);
+
+    plutovg_matrix_t origin;
+    plutovg_get_matrix(pluto, &origin);
+
+    if (align & TEXT_ALIGN_LEFT)
+        plutovg_translate(pluto, 0, 0);
+    else if (align & TEXT_ALIGN_RIGHT)
+        plutovg_translate(pluto, w - line_width, 0);
+    else if (align & TEXT_ALIGN_CENTER_H)
+        plutovg_translate(pluto, (w - line_width) / 2.0, 0);
+
+    while (*utf8 < end)
+    {
+        int ch = 0;
+        const char *start = *utf8;
+        if (!decode_utf8(utf8, end, &ch))
+            break;
+
+        if (ch == '\n')
+            break;
+
+        plutovg_matrix_t matrix;
+        plutovg_matrix_init_translate(&matrix, advance, 0);
+        plutovg_matrix_scale(&matrix, scale, -scale);
+
+        double char_advance = plutovg_font_get_char_advance(font, ch);
+
+        if (advance + char_advance > w)
+        {
+            *utf8 = start;
+            break;
+        }
+
+        advance += char_advance;
+        plutovg_path_t *path = plutovg_font_face_get_char_path(face, ch);
+        plutovg_path_add_path(result, path, &matrix);
+        plutovg_path_destroy(path);
+
+        plutovg_add_path(pluto, result);
+        plutovg_fill(pluto);
+
+        plutovg_path_clear(result);
+    }
+
+    plutovg_path_destroy(result);
+
+    plutovg_set_matrix(pluto, &origin);
+}
+
+static void draw_textn(plutovg_t *pluto, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
+{
+    double advance = 0;
+    const plutovg_font_t *font = plutovg_get_font(pluto);
+    double scale = plutovg_font_get_scale(font);
+    const char *end = utf8 + size;
+    plutovg_font_face_t *face = plutovg_font_get_face(font);
+    double ascent = plutovg_font_get_ascent(font);
+    double descent = plutovg_font_get_descent(font);
+    double line_gap = plutovg_font_get_line_gap(font);
+    double leading = plutovg_font_get_leading(font);
+
+    double y = 0;
+
+    while (utf8 < end)
+    {
+        if (y + ascent > h)
+            break;
+
+        y += ascent;
+
+        plutovg_translate(pluto, 0, ascent);
+        draw_oneline(pluto, align, &utf8, end, w);
+    }
+}
+
+void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double fontSize, plutovg_color_t *color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
+{
+    plutovg_save(pluto);
+
+    plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, fontSize);
+    plutovg_set_font(pluto, font);
+    double ascent = plutovg_font_get_ascent(font);
+    double text_h = 0.0;
+
+    FlexSize size = measure_font_get_textn_path(font, align, utf8, strlen(utf8), rect->w, rect->h);
+
+    plutovg_matrix_t matrix[1];
+    // LOGI($(rect->w) " "$(text_h));
+    if (align & TEXT_ALIGN_TOP)
+        plutovg_matrix_init_translate(matrix, rect->x, rect->y);
+    else if (align & TEXT_ALIGN_BOTTOM)
+        plutovg_matrix_init_translate(matrix, rect->x, size.height >= rect->h ? rect->y : rect->y + rect->h - size.height);
+    else if (align & TEXT_ALIGN_CENTER_V)
+        plutovg_matrix_init_translate(matrix, rect->x, size.height >= rect->h ? rect->y : rect->y + (rect->h - size.height) / 2.0);
+
+    plutovg_transform(pluto, matrix);
+    plutovg_set_source_color(pluto, color);
+
+    draw_textn(pluto, align, utf8, strlen(utf8), rect->w, rect->h);
+
+    plutovg_font_destroy(font);
+    plutovg_restore(pluto);
 }

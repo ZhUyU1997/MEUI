@@ -462,114 +462,6 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
     }
 }
 
-static plutovg_path_t *draw_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h, double *text_h)
-{
-    plutovg_path_t *result = plutovg_path_create();
-    double advance = 0;
-    double scale = plutovg_font_get_scale(font);
-    const char *end = utf8 + size;
-    plutovg_font_face_t *face = plutovg_font_get_face(font);
-    double ascent = plutovg_font_get_ascent(font);
-    double descent = plutovg_font_get_descent(font);
-    double line_gap = plutovg_font_get_line_gap(font);
-    double leading = plutovg_font_get_leading(font);
-
-    double y = 0;
-
-    while (utf8 < end)
-    {
-        if (y + ascent > h)
-            break;
-
-        y += ascent;
-
-        double line_width = 0;
-        plutovg_path_t *line_path = get_textn_oneline_path(font, &utf8, end, w, &line_width);
-
-        plutovg_matrix_t matrix;
-
-        if (align & TEXT_ALIGN_LEFT)
-            plutovg_matrix_init_translate(&matrix, 0, y);
-        else if (align & TEXT_ALIGN_RIGHT)
-            plutovg_matrix_init_translate(&matrix, w - line_width, y);
-        else if (align & TEXT_ALIGN_CENTER_H)
-            plutovg_matrix_init_translate(&matrix, (w - line_width) / 2.0, y);
-
-        plutovg_path_add_path(result, line_path, &matrix);
-        plutovg_path_destroy(line_path);
-    }
-
-    *text_h = y - descent;
-
-    return result;
-}
-
-static void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double size, struct plutovg_color color, TEXT_ALIGN align, const char *utf8, plutovg_rect_t *rect)
-{
-    plutovg_save(pluto);
-
-    plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
-
-    plutovg_set_font(pluto, font);
-    double ascent = plutovg_font_get_ascent(font);
-    double text_h = 0.0;
-
-    plutovg_path_t *path = draw_font_get_textn_path(plutovg_get_font(pluto), align, utf8, strlen(utf8), rect->w, rect->h, &text_h);
-
-    plutovg_matrix_t matrix[1];
-    // LOGI($(rect->w) " "$(text_h));
-    if (align & TEXT_ALIGN_TOP)
-        plutovg_matrix_init_translate(matrix, rect->x, rect->y);
-    else if (align & TEXT_ALIGN_BOTTOM)
-        plutovg_matrix_init_translate(matrix, rect->x, text_h >= rect->h ? rect->y : rect->y + rect->h - text_h);
-    else if (align & TEXT_ALIGN_CENTER_V)
-        plutovg_matrix_init_translate(matrix, rect->x, text_h >= rect->h ? rect->y : rect->y + (rect->h - text_h) / 2.0);
-
-    plutovg_path_transform(path, matrix);
-    plutovg_add_path(pluto, path);
-    plutovg_path_destroy(path);
-
-    plutovg_set_source_color(pluto, &color);
-    plutovg_fill(pluto);
-
-    plutovg_font_destroy(font);
-    plutovg_restore(pluto);
-}
-
-static FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
-{
-    FlexSize outSize = {.width = 0, .height = 0};
-
-    double advance = 0;
-    const char *end = utf8 + size;
-    plutovg_font_face_t *face = plutovg_font_get_face(font);
-    double ascent = plutovg_font_get_ascent(font);
-    double descent = plutovg_font_get_descent(font);
-    double line_gap = plutovg_font_get_line_gap(font);
-    double leading = plutovg_font_get_leading(font);
-
-    double y = 0;
-
-    while (utf8 < end)
-    {
-        if (y + ascent > h)
-            break;
-
-        y += ascent;
-
-        double line_width = 0;
-        measure_textn_oneline_path(font, &utf8, end, w, &line_width);
-
-        if (line_width > outSize.width)
-        {
-            outSize.width = line_width + 1; // + 1 to fix precision
-        }
-    }
-    outSize.height = y - descent;
-
-    return outSize;
-}
-
 FlexSize box_measure_text(void *context, FlexSize constrainedSize)
 {
     Box *box = context;
@@ -697,7 +589,7 @@ static void box_draw_self(Box *box, plutovg_t *pluto)
                         box->style.borderColor, box->style.backgroundColor);
 
     if (box->text && box->text[0] != '\0')
-        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, box->style.fontColor, box->style.textAlign, box->text, &content_rect);
+        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, &box->style.fontColor, box->style.textAlign, box->text, &content_rect);
 }
 
 static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
