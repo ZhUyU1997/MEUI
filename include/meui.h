@@ -69,3 +69,6 @@ box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_poin
 
 void meui_image_cache_init();
 plutovg_surface_t *meui_image_cache_load(const char *path, int width, int height);
+
+void meui_text_cache_init();
+plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size);

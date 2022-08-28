@@ -9,6 +9,9 @@
 #include "meui/image.h"
 #include "meui/text.h"
 #include "meui.h"
+
+#include "utils/file.h"
+
 #include "common/log.h"
 #include "common/list.h"
 #include "pqueue.h"
@@ -25,26 +28,6 @@
 #include <assert.h>
 
 #define KAPPA90 (0.5522847493f)
-
-static const char *fileext(const char *filename)
-{
-    const char *ret = NULL;
-    const char *p;
-
-    if (filename != NULL)
-    {
-        ret = p = strchr(filename, '.');
-        while (p != NULL)
-        {
-            p = strchr(p + 1, '.');
-            if (p != NULL)
-                ret = p;
-        }
-        if (ret != NULL)
-            ret++;
-    }
-    return ret;
-}
 
 static void box_draw_self(Box *box, plutovg_t *pluto);
 
@@ -589,7 +572,14 @@ static void box_draw_self(Box *box, plutovg_t *pluto)
                         box->style.borderColor, box->style.backgroundColor);
 
     if (box->text && box->text[0] != '\0')
-        draw_text(box, pluto, box->style.fontFamily, box->style.fontSize, &box->style.fontColor, box->style.textAlign, box->text, &content_rect);
+    {
+        char *fontFamily = box->style.fontFamily;
+
+        if (fontFamily == NULL)
+            fontFamily = meui_get_default_font_family(meui_get_instance());
+
+        draw_text(box, pluto, fontFamily, box->style.fontSize, &box->style.fontColor, box->style.textAlign, box->text, &content_rect);
+    }
 }
 
 static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
