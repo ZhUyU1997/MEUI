@@ -172,13 +172,13 @@ FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN alig
     return outSize;
 }
 
-static void draw_char(plutovg_t *pluto, const char *fontFamily, double fontSize, double w, double h, int ch, plutovg_font_face_t *face, plutovg_matrix_t *m)
+static void draw_char(plutovg_t *pluto, const char *fontFamily, double fontSize, double w, double h, int ch)
 {
     plutovg_surface_t *text = meui_text_cache_load(fontFamily, ch, fontSize);
 
     if (!text)
     {
-        printf("Unable to load text: %d\n", text);
+        printf("Unable to load text: [%c]\n", ch);
         return;
     }
 
@@ -230,7 +230,7 @@ static void draw_oneline(plutovg_t *pluto, const char *fontFamily, double fontSi
         }
 
         advance += char_advance;
-        draw_char(pluto, fontFamily, fontSize, char_advance, ascent - descent, ch, face, &scale_m);
+        draw_char(pluto, fontFamily, fontSize, char_advance, ascent - descent, ch);
         plutovg_translate(pluto, char_advance, 0);
     }
 
