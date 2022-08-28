@@ -274,16 +274,13 @@ void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double fontSi
 
     FlexSize size = measure_font_get_textn_path(font, align, utf8, strlen(utf8), rect->w, rect->h);
 
-    plutovg_matrix_t matrix[1];
-    // LOGI($(rect->w) " "$(text_h));
     if (align & TEXT_ALIGN_TOP)
-        plutovg_matrix_init_translate(matrix, rect->x, rect->y);
+        plutovg_translate(pluto, rect->x, rect->y);
     else if (align & TEXT_ALIGN_BOTTOM)
-        plutovg_matrix_init_translate(matrix, rect->x, size.height >= rect->h ? rect->y : rect->y + rect->h - size.height);
+        plutovg_translate(pluto, rect->x, size.height >= rect->h ? rect->y : rect->y + rect->h - size.height);
     else if (align & TEXT_ALIGN_CENTER_V)
-        plutovg_matrix_init_translate(matrix, rect->x, size.height >= rect->h ? rect->y : rect->y + (rect->h - size.height) / 2.0);
+        plutovg_translate(pluto, rect->x, size.height >= rect->h ? rect->y : rect->y + (rect->h - size.height) / 2.0);
 
-    plutovg_transform(pluto, matrix);
     plutovg_set_source_color(pluto, color);
 
     draw_textn(pluto, fontFamily, fontSize, align, utf8, strlen(utf8), rect->w, rect->h);
