@@ -172,9 +172,9 @@ FlexSize measure_font_get_textn_path(const plutovg_font_t *font, TEXT_ALIGN alig
     return outSize;
 }
 
-static void draw_char(plutovg_t *pluto, const char *fontFamily, double fontSize, double w, double h, int ch)
+static void draw_char(plutovg_t *pluto, const char *fontFamily, double fontSize, plutovg_color_t *color, double w, double h, int ch)
 {
-    plutovg_surface_t *text = meui_text_cache_load(fontFamily, ch, fontSize);
+    plutovg_surface_t *text = meui_text_cache_load(fontFamily, ch, fontSize, *color);
 
     if (!text)
     {
@@ -188,7 +188,7 @@ static void draw_char(plutovg_t *pluto, const char *fontFamily, double fontSize,
     plutovg_surface_destroy(text);
 }
 
-static void draw_oneline(plutovg_t *pluto, const char *fontFamily, double fontSize, TEXT_ALIGN align, const char **utf8, const char *end, double w)
+static void draw_oneline(plutovg_t *pluto, const char *fontFamily, double fontSize, plutovg_color_t *color, TEXT_ALIGN align, const char **utf8, const char *end, double w)
 {
     double advance = 0;
     const plutovg_font_t *font = plutovg_get_font(pluto);
@@ -230,14 +230,14 @@ static void draw_oneline(plutovg_t *pluto, const char *fontFamily, double fontSi
         }
 
         advance += char_advance;
-        draw_char(pluto, fontFamily, fontSize, char_advance, ascent - descent, ch);
+        draw_char(pluto, fontFamily, fontSize, color, char_advance, ascent - descent, ch);
         plutovg_translate(pluto, char_advance, 0);
     }
 
     plutovg_set_matrix(pluto, &origin);
 }
 
-static void draw_textn(plutovg_t *pluto, const char *fontFamily, double fontSize, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
+static void draw_textn(plutovg_t *pluto, const char *fontFamily, double fontSize, plutovg_color_t *color, TEXT_ALIGN align, const char *utf8, int size, double w, double h)
 {
     double advance = 0;
     const plutovg_font_t *font = plutovg_get_font(pluto);
@@ -258,7 +258,7 @@ static void draw_textn(plutovg_t *pluto, const char *fontFamily, double fontSize
 
         y += ascent;
 
-        draw_oneline(pluto, fontFamily, fontSize, align, &utf8, end, w);
+        draw_oneline(pluto, fontFamily, fontSize, color, align, &utf8, end, w);
         plutovg_translate(pluto, 0, ascent);
     }
 }
@@ -281,9 +281,7 @@ void draw_text(Box *box, plutovg_t *pluto, const char *fontFamily, double fontSi
     else if (align & TEXT_ALIGN_CENTER_V)
         plutovg_translate(pluto, rect->x, size.height >= rect->h ? rect->y : rect->y + (rect->h - size.height) / 2.0);
 
-    plutovg_set_source_color(pluto, color);
-
-    draw_textn(pluto, fontFamily, fontSize, align, utf8, strlen(utf8), rect->w, rect->h);
+    draw_textn(pluto, fontFamily, fontSize, color, align, utf8, strlen(utf8), rect->w, rect->h);
 
     plutovg_font_destroy(font);
     plutovg_restore(pluto);

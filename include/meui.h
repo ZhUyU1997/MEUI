@@ -71,4 +71,4 @@ void meui_image_cache_init();
 plutovg_surface_t *meui_image_cache_load(const char *path, int width, int height);
 
 void meui_text_cache_init();
-plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size);
+plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size, plutovg_color_t font_color);

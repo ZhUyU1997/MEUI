@@ -439,7 +439,7 @@ void meui_text_cache_init()
         text_lru = text_lru_alloc();
 }
 
-plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size)
+plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size, plutovg_color_t font_color)
 {
-    return text_lru_load(text_lru, font_family, ch, font_size);
+    return text_lru_load(text_lru, font_family, ch, font_size, font_color);
 }
