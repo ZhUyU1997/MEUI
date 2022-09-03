@@ -7,7 +7,7 @@
 #include "meui/element.h"
 #include "meui.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <assert.h>
 
 class_impl(CanvasEle, Box){

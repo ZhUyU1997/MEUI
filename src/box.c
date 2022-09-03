@@ -22,7 +22,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
@@ -573,7 +572,7 @@ static void box_draw_self(Box *box, plutovg_t *pluto)
 
     if (box->text && box->text[0] != '\0')
     {
-        char *fontFamily = box->style.fontFamily;
+        const char *fontFamily = box->style.fontFamily;
 
         if (fontFamily == NULL)
             fontFamily = meui_get_default_font_family(meui_get_instance());

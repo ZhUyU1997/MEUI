@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "common/lru.h"
 #include "common/sizes.h"
 

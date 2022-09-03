@@ -16,7 +16,6 @@
 #include <X11/extensions/XShm.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include "meui.h"
 
 struct window_t

@@ -6,6 +6,8 @@ sinclude scripts/env.mk
 
 ifeq ($(HOSTOS),windows)
 PLATFORM		?= sdl2-core
+else ifeq ($(HOSTOS),macos)
+PLATFORM		?= sdl2-core
 else
 PLATFORM		?= x11
 endif
@@ -16,8 +18,13 @@ endif
 # export CC LD
 
 W_FLAGS		= -Wall -Werror=implicit-function-declaration -Wno-unused-function \
-				-Werror=return-type -Wno-unused-but-set-variable -Wno-unused-variable \
+				-Werror=return-type  -Wno-unused-variable \
 				-Werror=incompatible-pointer-types
+
+ifneq ($(HOSTOS),macos)
+W_FLAGS		+= -Wno-unused-but-set-variable
+endif
+
 X_CFLAGS	+= -std=gnu11 -O3 -g -ggdb $(W_FLAGS)
 
 X_INCDIRS	+= include

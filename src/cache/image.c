@@ -10,7 +10,7 @@
 
 #include <plutovg.h>
 #include <plutosvg.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct

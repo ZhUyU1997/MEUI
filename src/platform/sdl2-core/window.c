@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include "meui.h"
 

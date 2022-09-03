@@ -9,8 +9,7 @@
 
 #include <assert.h>
 #include <string.h>
-#include <malloc.h>
-#include <assert.h>
+#include <stdlib.h>
 
 #define LOG(fmt, args...) printf(fmt, ##args)
 
@@ -26,6 +25,9 @@ typedef struct class_object_head
 } class_object_head_t;
 
 class_impl(object_t){};
+
+constructor(object_t) {}
+destructor(object_t) {}
 
 struct list_head *get_class_child(type_index type)
 {
