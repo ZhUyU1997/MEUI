@@ -14,6 +14,7 @@ extern "C"{
 
 #include <math.h>
 #include <stddef.h>
+#include <assert.h>
 #ifndef __cplusplus
 #   include <stdbool.h>
 #endif
@@ -213,11 +214,7 @@ FlexNodeRef Flex_getParent         (FlexNodeRef node);
 void        Flex_layout            (FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale);
 void        Flex_print             (FlexNodeRef node, FlexPrintOptions options);
 
-#if DEBUG
-#   define flex_assert(e) assert(e)
-#else
-#   define flex_assert(e) ((void)0)
-#endif
+#define flex_assert(e) assert(e)
 
 #define FlexTreatNanAsInf(n) (isnan(n) ? INFINITY : n)
 #define FlexFloatEquals(a, b) ((isnan(a) && isnan(b)) || a == b)

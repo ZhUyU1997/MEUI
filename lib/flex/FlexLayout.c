@@ -1173,13 +1173,6 @@ void flex_setupProperties(FlexNodeRef node) {
     flex_assert(node->justifyContent == FlexStart || node->justifyContent == FlexCenter || node->justifyContent == FlexEnd || node->justifyContent == FlexSpaceBetween || node->justifyContent == FlexSpaceAround);
     flex_assert(node->alignContent == FlexStretch || node->alignContent == FlexStart || node->alignContent == FlexCenter || node->alignContent == FlexEnd || node->alignContent == FlexSpaceBetween || node->alignContent == FlexSpaceAround);
     
-#if DEBUG
-    node->result.position[FLEX_LEFT] = NAN;
-    node->result.position[FLEX_TOP] = NAN;
-    node->result.size[FLEX_WIDTH] = NAN;
-    node->result.size[FLEX_HEIGHT] = NAN;
-#endif
-    
     for (size_t i=0;i<Flex_getChildrenCount(node);i++) {
         FlexNodeRef item = Flex_getChild(node, i);
         
