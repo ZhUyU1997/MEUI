@@ -14,6 +14,7 @@ import { terser } from "rollup-plugin-terser"
 import replace from '@rollup/plugin-replace'
 import path from 'path'
 import execute from "./plugin/execute"
+import { visualizer } from "rollup-plugin-visualizer"
 
 const NODE_ENV = process.env.NODE_ENV ?? "development"
 const IS_DEV = NODE_ENV === "development"
@@ -27,9 +28,12 @@ export default commandLineArgs => {
 		external: ['NativeMEUI', 'os', 'std'],
 		plugins: [
 			alias({
-				entries: {
-					'@': 'framework'
-				}
+				entries: [
+					{ find: "@/react-meui", replacement: 'framework/preact-meui' },
+					{ find: '@', replacement: 'framework' },
+					{ find: 'react', replacement: 'preact/compat' },
+					{ find: 'react-dom', replacement: 'preact/compat' }
+				]
 			}),
 			resolve({
 				// browser: true,
@@ -58,6 +62,7 @@ export default commandLineArgs => {
 			}),
 			IS_DEV ? execute("./meui dist/index.js") : undefined,
 			IS_DEV ? undefined : terser(),
+			visualizer()
 		]
 	}
 }

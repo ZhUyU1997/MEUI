@@ -8,9 +8,9 @@ import React, { useRef, useState } from "react"
 import { Div, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Center, Column, Root, Row } from "@/components"
-import { createGame, Direction } from "2048-engine"
+import { createGame, Direction, Tile } from "2048-engine"
 
-function getColor(val) {
+function getColor(val: number) {
     let color = "#ffffff"
     switch (val) {
         case 2:
@@ -52,7 +52,7 @@ function getColor(val) {
     return color
 }
 
-function Tile({ value }) {
+function Tile({ value }: { value: Tile | null }) {
     return (
         <Div
             focusable={true}
