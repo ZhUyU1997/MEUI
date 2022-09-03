@@ -49,39 +49,54 @@ void delete_class_object(void *obj);
 void *class_cast(type_index type, void *obj);
 
 #define constructor_real_name(type_name, ...) CAT(type_name##_constructor, VARIADIC_SIZE(__VA_ARGS__))
-#define constructor(type_name, args...) void constructor_real_name(type_name, ##args)(type_name * this, ##args)
-#define destructor(type_name) void type_name##_destructor(type_name * this)
+#define constructor_decl(type_name, args...) void constructor_real_name(type_name, ##args)(type_name * this, ##args)
 
-#define __CLASS(type_name, parent_type_name)                                                        \
-	extern class_table_info_t parent_type_name##class_table_info;                                   \
-	extern type_index parent_type_name##_class_type;                                                \
-	static type_name type_name##_class_init;                                                        \
-	constructor(type_name) __attribute__((weak));                                                   \
-	destructor(type_name) __attribute__((weak));                                                    \
-	class_table_info_t type_name##class_table_info = {                                              \
-		.type = &type_name##class_table_info,                                                       \
-		.name = #type_name,                                                                         \
-		.parent_type = &parent_type_name##class_table_info,                                         \
-		.size = sizeof(type_name),                                                                  \
-		.init_obj = &type_name##_class_init,                                                        \
-		.pointer_constructor = (void *)constructor_real_name(type_name),                            \
-		.pointer_destructor = (void *)type_name##_destructor,                                       \
-		.list = {NULL, NULL},                                                                       \
-		.child = {NULL, NULL},                                                                      \
-	};                                                                                              \
-	type_index type_name##_class_type = &type_name##class_table_info;                               \
-	void __attribute__((constructor)) type_name##info_init()                                        \
+#define __constructor0(type_name)                                                                   \
+	static void constructor_real_name(type_name)(type_name * this);                                 \
+	extern class_table_info_t type_name##class_table_info;                                          \
+	static void __attribute__((constructor)) type_name##_constructor_init()                         \
 	{                                                                                               \
-		set_class_table_info(&type_name##class_table_info);                                         \
 		type_name##class_table_info.pointer_constructor = (void *)constructor_real_name(type_name); \
-		type_name##class_table_info.pointer_destructor = (void *)type_name##_destructor;            \
 	}                                                                                               \
+	void constructor_real_name(type_name)(type_name * this)
+
+#define __constructor1(type_name, args...) void constructor_real_name(type_name, ##args)(type_name * this, ##args)
+
+#define constructor(type_name, args...)     \
+	CAT(__constructor, VARIADIC_SIZE(args)) \
+	(type_name, ##args)
+
+#define destructor(type_name)                                                            \
+	static void type_name##_destructor(type_name *this);                                 \
+	extern class_table_info_t type_name##class_table_info;                               \
+	static void __attribute__((constructor)) type_name##_destructor_init()               \
+	{                                                                                    \
+		type_name##class_table_info.pointer_destructor = (void *)type_name##_destructor; \
+	}                                                                                    \
+	void type_name##_destructor(type_name *this)
+
+#define __CLASS(type_name, parent_type_name)                          \
+	extern class_table_info_t parent_type_name##class_table_info;     \
+	extern type_index parent_type_name##_class_type;                  \
+	static type_name type_name##_class_init;                          \
+	class_table_info_t type_name##class_table_info = {                \
+		.type = &type_name##class_table_info,                         \
+		.name = #type_name,                                           \
+		.parent_type = &parent_type_name##class_table_info,           \
+		.size = sizeof(type_name),                                    \
+		.init_obj = &type_name##_class_init,                          \
+	};                                                                \
+	type_index type_name##_class_type = &type_name##class_table_info; \
+	static void __attribute__((constructor)) type_name##_info_init()  \
+	{                                                                 \
+		set_class_table_info(&type_name##class_table_info);           \
+	}                                                                 \
 	static type_name type_name##_class_init =
 
 #define __CLASS0(type_name) __CLASS(type_name, object_t)
 #define __CLASS1(type_name, parent_type_name) __CLASS(type_name, parent_type_name)
-#define class_impl(type_name, args...)      \
-	CAT(__CLASS, VARIADIC_SIZE(args))       \
+#define class_impl(type_name, args...) \
+	CAT(__CLASS, VARIADIC_SIZE(args))  \
 	(type_name, ##args)
 
 #define class(type_name, args...)             \
@@ -93,11 +108,11 @@ void *class_cast(type_index type, void *obj);
 #define __NEW0(type, args...) constructor_real_name(type, ##args)(obj, ##args)
 #define __NEW1(type)
 
-#define __NEW(type, ...)                        \
-	if (obj)                                    \
-	{                                           \
-		CAT(__NEW, IS_EMPTY(__VA_ARGS__))       \
-		(type, ##__VA_ARGS__);                  \
+#define __NEW(type, ...)                  \
+	if (obj)                              \
+	{                                     \
+		CAT(__NEW, IS_EMPTY(__VA_ARGS__)) \
+		(type, ##__VA_ARGS__);            \
 	}
 
 #define new(type, args...) ({type * obj = (type *)new_class_object(type##_class_type); __NEW(type, ##args);obj; })

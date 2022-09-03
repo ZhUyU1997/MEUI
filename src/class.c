@@ -26,9 +26,6 @@ typedef struct class_object_head
 
 class_impl(object_t){};
 
-constructor(object_t) {}
-destructor(object_t) {}
-
 struct list_head *get_class_child(type_index type)
 {
 	return &type->child;
