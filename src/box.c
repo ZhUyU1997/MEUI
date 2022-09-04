@@ -151,7 +151,11 @@ enum BOX_STATE box_get_state(box_t node)
 void box_set_state(box_t node, enum BOX_STATE state)
 {
     Box *box = Flex_getContext(node);
-    box_mark_dirty(node, box->state != state);
+
+    int state_eq_default = state == BOX_STATE_DEFAULT || box->style_array[state] == NULL;
+    int old_state_eq_default = box->state == BOX_STATE_DEFAULT || box->style_array[box->state] == NULL;
+
+    box_mark_dirty(node, box->state != state && !(state_eq_default && old_state_eq_default));
     box->state = state;
 }
 
