@@ -8,6 +8,7 @@
 
 #include "meui.h"
 #include "meui/box.h"
+#include "meui/render.h"
 #include "common/log.h"
 #include "cache/image.h"
 #include "cache/text.h"
@@ -228,7 +229,7 @@ void meui_update(struct meui_t *meui)
     plutovg_destroy(pluto);
 
     box_t root = meui_get_root_node(meui);
-    box_updateStyleRecursive(root);
+    box_update_style(root);
     Flex_layout(root, FlexUndefined, FlexUndefined, 1);
     box_draw(root);
     meui_flush(meui);

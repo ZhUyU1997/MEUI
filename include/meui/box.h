@@ -87,7 +87,4 @@ int box_hit(box_t node, int x, int y);
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
 
-void box_updateStyleRecursive(box_t node);
-void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
-void box_draw(box_t root);
 box_t box_search_queue(box_t node, int x, int y);
