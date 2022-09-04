@@ -75,6 +75,7 @@ static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *
 
 static int merge_styles(Box *box)
 {
+    // TODO: make a faster function to check dirty
     if (box_get_dirty(box->node) == 0)
     {
         return 0;
@@ -113,7 +114,8 @@ int box_update_style_recursive(box_t node)
     int ret = merge_styles(box);
 
     // TODO: may unset layout related style, should reset after merge style
-    box_style_to_flex(&box->style, node);
+    if (ret)
+        box_style_to_flex(&box->style, node);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
