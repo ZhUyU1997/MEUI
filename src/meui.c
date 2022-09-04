@@ -229,9 +229,7 @@ void meui_update(struct meui_t *meui)
     plutovg_destroy(pluto);
 
     box_t root = meui_get_root_node(meui);
-    box_update_style(root);
-    Flex_layout(root, FlexUndefined, FlexUndefined, 1);
-    box_draw(root);
+    box_render(root, meui_get_surface(meui));
     meui_flush(meui);
 
     meui_platform_fps(meui);

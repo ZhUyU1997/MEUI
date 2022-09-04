@@ -115,7 +115,7 @@ void box_update_style_recursive(box_t node)
     }
 }
 
-void box_update_style(box_t node)
+static void box_update_style(box_t node)
 {
     box_update_style_recursive(node);
 }
@@ -223,9 +223,12 @@ static void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
     pqueue_free(pq);
 }
 
-void box_draw(box_t root)
+void box_render(box_t root, plutovg_surface_t *surface)
 {
-    plutovg_t *pluto = plutovg_create(meui_get_surface(meui_get_instance()));
+    box_update_style(root);
+    Flex_layout(root, FlexUndefined, FlexUndefined, 1);
+
+    plutovg_t *pluto = plutovg_create(surface);
     Box *box = Flex_getContext(root);
     plutovg_matrix_init_identity(&box->result.to_screen_matrix);
 

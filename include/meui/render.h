@@ -8,5 +8,4 @@
 
 #include "meui/box.h"
 
-void box_update_style(box_t node);
-void box_draw(box_t root);
+void box_render(box_t root, plutovg_surface_t *surface);
