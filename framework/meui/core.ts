@@ -42,9 +42,14 @@ export class MEUI {
     private mouseHit: Element | null
     private focusElement: Element | null
     private intervalId: any
+    private width: number
+    private height: number
     onunload: () => void
     constructor(width: number, height: number) {
         this.nativeMEUI = new NativeMEUI(width, height)
+        this.width = width
+        this.height = height
+
         this.root = createElement("Div", {
             justifyContent: "center",
             alignItems: "center",
@@ -112,11 +117,11 @@ export class MEUI {
                     this.mouseHit?.getPath().forEach((item) => {
                         item.setState(BOX_STATE.DEFAULT)
                     })
-                }
 
-                box?.getPath().forEach((item) => {
-                    item.setState(BOX_STATE.HOVER)
-                })
+                    box?.getPath().forEach((item) => {
+                        item.setState(BOX_STATE.HOVER)
+                    })
+                }
 
                 if (event.type === "mousedown") {
                     box?.getPath()
@@ -129,14 +134,17 @@ export class MEUI {
                         })
                 }
             } else if (event.type === "mousewheel") {
-                this.mouseHit?.getPath().forEach((item) => {
-                    item.setState(BOX_STATE.DEFAULT)
-                })
                 box = this.searchNode(this.mouseX, this.mouseY)
 
-                box?.getPath().forEach((item) => {
-                    item.setState(BOX_STATE.HOVER)
-                })
+                if (box !== this.mouseHit) {
+                    this.mouseHit?.getPath().forEach((item) => {
+                        item.setState(BOX_STATE.DEFAULT)
+                    })
+
+                    box?.getPath().forEach((item) => {
+                        item.setState(BOX_STATE.HOVER)
+                    })
+                }
             } else if (event.type === "unload") {
                 this.onExit()
             }
@@ -181,11 +189,7 @@ export class MEUI {
                     )
                 }
 
-                if (
-                    event.type === "mouseup" &&
-                    event.button === 0 &&
-                    box.getState() === BOX_STATE.HOVER
-                ) {
+                if (event.type === "mouseup" && event.button === 0) {
                     box.dispatchEvent(new CustomEvent("click"))
                 }
             }
@@ -247,18 +251,21 @@ export class MEUI {
         this.nativeMEUI.flush()
     }
     update() {
+        // The layout or position may change even if the mouse is not moving
         const hit = this.searchNode(this.mouseX, this.mouseY)
 
-        if (this.mouseHit != hit) {
-            this.mouseHit = hit
+        if (this.mouseHit !== hit) {
+            // TODO: if keep the mouse down, we should set the element to "active" state
             this.mouseHit?.getPath().forEach((item) => {
                 item.setState(BOX_STATE.DEFAULT)
             })
-        }
 
-        this.mouseHit?.getPath().forEach((item) => {
-            item.setState(BOX_STATE.HOVER)
-        })
+            this.mouseHit = hit
+
+            this.mouseHit?.getPath().forEach((item) => {
+                item.setState(BOX_STATE.HOVER)
+            })
+        }
 
         this.nativeMEUI.update()
     }
@@ -283,6 +290,8 @@ export class MEUI {
     }
 
     searchNode(x: number, y: number): Element | null {
+        if (x < 0 || y <= 0 || x >= this.width || y >= this.height) return null
+
         const path = this.root.search(x, y)
 
         let target = this.root
