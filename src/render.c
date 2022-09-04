@@ -200,7 +200,7 @@ static void box_draw_recursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
     //     draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, (plutovg_color_t){1, 0, 0, 0.5});
 }
 
-static void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
+static void box_draw_recursive_queue(plutovg_t *pluto, box_t root)
 {
     pqueue_t *pq = box_pqueue_init(10);
     box_draw_recursive(pluto, root, pq);
@@ -216,7 +216,7 @@ static void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
             plutovg_save(pluto);
 
             plutovg_set_matrix(pluto, &parentBox->result.to_screen_matrix);
-            box_drawRecursiveQueue(pluto, box);
+            box_draw_recursive_queue(pluto, box);
             plutovg_restore(pluto);
         }
     }
@@ -232,6 +232,6 @@ void box_render(box_t root, plutovg_surface_t *surface)
     Box *box = Flex_getContext(root);
     plutovg_matrix_init_identity(&box->result.to_screen_matrix);
 
-    box_drawRecursiveQueue(pluto, root);
+    box_draw_recursive_queue(pluto, root);
     plutovg_destroy(pluto);
 }
