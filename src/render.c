@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-static void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
+static void box_draw_recursive(plutovg_t *pluto, box_t node, pqueue_t *pq);
 
 static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, double h, struct plutovg_color fill_color)
 {
@@ -133,12 +133,12 @@ static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
             continue;
         }
         plutovg_save(pluto);
-        box_drawRecursive(pluto, Flex_getChild(node, i), pq);
+        box_draw_recursive(pluto, Flex_getChild(node, i), pq);
         plutovg_restore(pluto);
     }
 }
 
-static void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
+static void box_draw_recursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 {
     float left = Flex_getResultLeft(node);
     float top = Flex_getResultTop(node);
@@ -203,7 +203,7 @@ static void box_drawRecursive(plutovg_t *pluto, box_t node, pqueue_t *pq)
 static void box_drawRecursiveQueue(plutovg_t *pluto, box_t root)
 {
     pqueue_t *pq = box_pqueue_init(10);
-    box_drawRecursive(pluto, root, pq);
+    box_draw_recursive(pluto, root, pq);
 
     if (pqueue_peek(pq) != NULL)
     {
