@@ -73,11 +73,11 @@ static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *
     }
 }
 
-static void merge_styles(Box *box)
+static int merge_styles(Box *box)
 {
-    if (!box->state_changed && box->state == BOX_STATE_DEFAULT && box_style_is_dirty(box->style_array[BOX_STATE_DEFAULT]) == 0)
+    if (box_get_dirty(box->node) == 0)
     {
-        return;
+        return 0;
     }
 
     // TODO: Optimze, get previous state, then decide if merge by dirty flags
@@ -89,35 +89,44 @@ static void merge_styles(Box *box)
     {
         box_style_t *src = box->style_array[box->state];
         if (src)
+        {
             box_style_merge(&box->style, src);
+            box_style_clear_dirty(src);
+        }
     }
 
     box_style_clear_dirty(box->style_array[BOX_STATE_DEFAULT]);
-    box->state_changed = 0;
+    box_clear_dirty(box->node);
+    return 1;
 }
 
-void box_update_style_recursive(box_t node)
+int box_update_style_recursive(box_t node)
 {
 
     Box *box = Flex_getContext(node);
     if (!box)
     {
         LOGE("Node is not box!");
-        return;
+        return 0;
     }
 
-    merge_styles(box);
+    int ret = merge_styles(box);
+
+    // TODO: may unset layout related style, should reset after merge style
     box_style_to_flex(&box->style, node);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
-        box_update_style_recursive(Flex_getChild(node, i));
+        int r = box_update_style_recursive(Flex_getChild(node, i));
+        ret = ret || r;
     }
+
+    return ret;
 }
 
-static void box_update_style(box_t node)
+static int box_update_style(box_t node)
 {
-    box_update_style_recursive(node);
+    return box_update_style_recursive(node);
 }
 
 static void box_draw_child(box_t node, plutovg_t *pluto, pqueue_t *pq)
@@ -226,9 +235,15 @@ static void box_draw_recursive_queue(plutovg_t *pluto, box_t root)
 void box_render(box_t root, plutovg_surface_t *surface)
 {
     box_update_style(root);
+
     Flex_layout(root, FlexUndefined, FlexUndefined, 1);
 
     plutovg_t *pluto = plutovg_create(surface);
+
+    plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface));
+    plutovg_set_source_rgba(pluto, 0, 0, 0, 1);
+    plutovg_fill(pluto);
+
     Box *box = Flex_getContext(root);
     plutovg_matrix_init_identity(&box->result.to_screen_matrix);
 

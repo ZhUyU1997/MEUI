@@ -106,10 +106,13 @@ export class MEUI {
                 this.mouseX = mouseEvent.x
                 this.mouseY = mouseEvent.y
 
-                this.mouseHit?.getPath().forEach((item) => {
-                    item.setState(BOX_STATE.DEFAULT)
-                })
                 box = this.searchNode(this.mouseX, this.mouseY)
+
+                if (box !== this.mouseHit) {
+                    this.mouseHit?.getPath().forEach((item) => {
+                        item.setState(BOX_STATE.DEFAULT)
+                    })
+                }
 
                 box?.getPath().forEach((item) => {
                     item.setState(BOX_STATE.HOVER)
@@ -244,11 +247,14 @@ export class MEUI {
         this.nativeMEUI.flush()
     }
     update() {
-        this.mouseHit?.getPath().forEach((item) => {
-            item.setState(BOX_STATE.DEFAULT)
-        })
+        const hit = this.searchNode(this.mouseX, this.mouseY)
 
-        this.mouseHit = this.searchNode(this.mouseX, this.mouseY)
+        if (this.mouseHit != hit) {
+            this.mouseHit = hit
+            this.mouseHit?.getPath().forEach((item) => {
+                item.setState(BOX_STATE.DEFAULT)
+            })
+        }
 
         this.mouseHit?.getPath().forEach((item) => {
             item.setState(BOX_STATE.HOVER)
@@ -280,11 +286,10 @@ export class MEUI {
         const path = this.root.search(x, y)
 
         let target = this.root
-
         for (const i of path) {
             if (i === -1) break
             target = target.children[i] as Element
         }
-        return target
+        return path.length > 0 ? target : null
     }
 }

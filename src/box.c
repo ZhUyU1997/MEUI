@@ -33,13 +33,13 @@ static void box_draw_self(Box *box, plutovg_t *pluto);
 
 class_impl(Box){
     .draw = box_draw_self,
+    .dirty = 1,
 };
 
 constructor(Box)
 {
     this->node = Flex_newNode();
     this->style_array[BOX_STATE_DEFAULT] = box_style_new();
-    this->state_changed = 1;
     Flex_setContext(this->node, this);
 }
 
@@ -97,6 +97,30 @@ void box_free_recursive(box_t node)
     box_free(node);
 }
 
+void box_mark_dirty(box_t node, int need)
+{
+    if (!need)
+        return;
+
+    assert(node);
+    Box *box = Flex_getContext(node);
+    box->dirty = 1;
+}
+
+int box_get_dirty(box_t node)
+{
+    assert(node);
+    Box *box = Flex_getContext(node);
+    return box->dirty;
+}
+
+void box_clear_dirty(box_t node)
+{
+    assert(node);
+    Box *box = Flex_getContext(node);
+    box->dirty = 0;
+}
+
 box_style_t *box_get_style(box_t node, enum BOX_STATE state)
 {
     assert(node);
@@ -110,6 +134,11 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
     assert(node && style);
 
     Box *box = Flex_getContext(node);
+
+    int is_using_style = box->state == BOX_STATE_DEFAULT || box->state == state;
+    int style_dirty = box->style_array[state] != style || box_style_is_dirty(style);
+
+    box_mark_dirty(node, is_using_style && style_dirty);
     box->style_array[state] = style;
 }
 
@@ -122,8 +151,8 @@ enum BOX_STATE box_get_state(box_t node)
 void box_set_state(box_t node, enum BOX_STATE state)
 {
     Box *box = Flex_getContext(node);
+    box_mark_dirty(node, box->state != state);
     box->state = state;
-    box->state_changed = 1;
 }
 
 const char *box_get_text_content(box_t node)
@@ -138,6 +167,7 @@ void box_set_text_content(box_t node, const char *text)
     if (box->text)
         free(box->text);
     box->text = strdup(text);
+    box_mark_dirty(node, 1);
 }
 
 int box_get_client_width(box_t node)
@@ -179,6 +209,7 @@ void box_set_scroll_top(box_t node, int scroll_top)
     else if (scroll_top > box->scroll_height - box->client_height)
         scroll_top = box->scroll_height - box->client_height;
 
+    box_mark_dirty(node, box->scroll_top != scroll_top);
     box->scroll_top = scroll_top;
 }
 
@@ -197,6 +228,7 @@ void box_set_scroll_left(box_t node, int scroll_left)
     else if (scroll_left > box->scroll_width - box->client_width)
         scroll_left = box->scroll_width - box->client_width;
 
+    box_mark_dirty(node, box->scroll_left != scroll_left);
     box->scroll_left = scroll_left;
 }
 

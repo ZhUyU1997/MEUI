@@ -270,6 +270,7 @@ void box_style_unset(box_style_t *dst, box_style_flag_t prop)
 {
     assert(dst);
     dst->flags &= ~prop;
+    dst->dirty |= prop;
 }
 
 

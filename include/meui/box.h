@@ -41,9 +41,9 @@ class(Box)
 {
     box_t node;
     enum BOX_STATE state;
-    int state_changed;
     box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
+    int dirty;
     char *text;
 
     double scroll_top, scroll_left;
@@ -66,6 +66,10 @@ class(Box)
 box_t box_new(enum BOX_TYPE type);
 void box_free(box_t node);
 void box_free_recursive(box_t node);
+
+void box_mark_dirty(box_t node, int need);
+int box_get_dirty(box_t node);
+void box_clear_dirty(box_t node);
 
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);
 enum BOX_STATE box_get_state(box_t node);

@@ -33,7 +33,7 @@ static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
     return JS_NULL;
 }
 
-static void setBoxStyleFromJSValue(JSContext *ctx, box_t node, box_style_t *style, JSValueConst obj)
+static void update_style_from_jsvalue(JSContext *ctx, box_t node, box_style_t *style, JSValueConst obj)
 {
     for (int i = 0; i < jsStyleGetSetLength; i++)
     {
@@ -74,12 +74,12 @@ static JSValue js_set_style(JSContext *ctx, JSValueConst this_val,
     box_style_t *style = box_get_style(box, v);
 
     if (!style)
-    {
         style = box_style_new();
-        box_set_style(box, style, v);
-    }
 
-    setBoxStyleFromJSValue(ctx, box, style, argv[0]);
+    update_style_from_jsvalue(ctx, box, style, argv[0]);
+
+    box_set_style(box, style, v);
+
     return JS_UNDEFINED;
 }
 

@@ -222,12 +222,6 @@ void meui_update(struct meui_t *meui)
         return;
     }
 
-    plutovg_t *pluto = plutovg_create(meui_get_surface(meui));
-    plutovg_rect(pluto, 0, 0, meui->width, meui->height);
-    plutovg_set_source_rgba(pluto, 0, 0, 0, 1);
-    plutovg_fill(pluto);
-    plutovg_destroy(pluto);
-
     box_t root = meui_get_root_node(meui);
     box_render(root, meui_get_surface(meui));
     meui_flush(meui);
