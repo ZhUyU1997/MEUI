@@ -178,7 +178,7 @@ static void box_draw_layer(box_t node)
 
     plutovg_t *pluto = plutovg_create(base);
     plutovg_set_operator(pluto, plutovg_operator_src);
-    plutovg_set_source_rgb(pluto, 0, 0, 0);
+    plutovg_set_source_rgba(pluto, 0, 0, 0, 0);
     plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(base), plutovg_surface_get_height(base));
     plutovg_fill(pluto);
 
@@ -351,12 +351,7 @@ static void box_composite(plutovg_t *pluto, box_t lower, box_t upper)
     {
         box_t node = NULL;
         while ((node = pqueue_pop(pq)))
-        {
-            box_t parentNode = Flex_getParent(node);
-            Box *parent = Flex_getContext(parentNode);
-            Box *box = Flex_getContext(node);
             box_composite(pluto, upper, node);
-        }
     }
 
     pqueue_free(pq);
