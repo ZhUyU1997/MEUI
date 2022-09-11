@@ -81,6 +81,20 @@ export class MEUI {
         this.intervalId = setInterval(() => this.onFrameTick(), 1000.0 / FPS)
     }
 
+    private diffPath(
+        oldPath: Element[],
+        newPath: Element[]
+    ): [Element[], Element[]] {
+        const length =
+            oldPath.length < newPath.length ? oldPath.length : newPath.length
+        let i = 0
+        for (i = 0; i < length; i++) {
+            if (oldPath[i] !== newPath[i]) break
+        }
+
+        return [oldPath.slice(i), newPath.slice(i)]
+    }
+
     onExit() {
         this.onunload?.()
 
@@ -91,6 +105,7 @@ export class MEUI {
         std.gc()
         std.exit(0)
     }
+
     onEvent() {
         const eventList = []
         while (this.pending() > 0) {
@@ -114,11 +129,15 @@ export class MEUI {
                 box = this.searchNode(this.mouseX, this.mouseY)
 
                 if (box !== this.mouseHit) {
-                    this.mouseHit?.getPath().forEach((item) => {
+                    const [oldPath, newPath] = this.diffPath(
+                        this.mouseHit?.getPath() ?? [],
+                        box?.getPath() ?? []
+                    )
+                    oldPath.forEach((item) => {
                         item.setState(BOX_STATE.DEFAULT)
                     })
 
-                    box?.getPath().forEach((item) => {
+                    newPath.forEach((item) => {
                         item.setState(BOX_STATE.HOVER)
                     })
                 }
@@ -137,11 +156,15 @@ export class MEUI {
                 box = this.searchNode(this.mouseX, this.mouseY)
 
                 if (box !== this.mouseHit) {
-                    this.mouseHit?.getPath().forEach((item) => {
+                    const [oldPath, newPath] = this.diffPath(
+                        this.mouseHit?.getPath() ?? [],
+                        box?.getPath() ?? []
+                    )
+                    oldPath.forEach((item) => {
                         item.setState(BOX_STATE.DEFAULT)
                     })
 
-                    box?.getPath().forEach((item) => {
+                    newPath.forEach((item) => {
                         item.setState(BOX_STATE.HOVER)
                     })
                 }
@@ -256,15 +279,19 @@ export class MEUI {
 
         if (this.mouseHit !== hit) {
             // TODO: if keep the mouse down, we should set the element to "active" state
-            this.mouseHit?.getPath().forEach((item) => {
+            const [oldPath, newPath] = this.diffPath(
+                this.mouseHit?.getPath() ?? [],
+                hit?.getPath() ?? []
+            )
+            oldPath.forEach((item) => {
                 item.setState(BOX_STATE.DEFAULT)
             })
 
-            this.mouseHit = hit
-
-            this.mouseHit?.getPath().forEach((item) => {
+            newPath.forEach((item) => {
                 item.setState(BOX_STATE.HOVER)
             })
+
+            this.mouseHit = hit
         }
 
         this.nativeMEUI.update()
