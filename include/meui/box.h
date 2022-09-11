@@ -56,6 +56,7 @@ class(Box)
     struct
     {
         plutovg_matrix_t to_screen_matrix; // box to screen
+        plutovg_surface_t *surface;
     } result;
 
     size_t queue_pos;
