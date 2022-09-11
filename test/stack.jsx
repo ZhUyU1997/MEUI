@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { Div } from "@/meui"
+import { Div, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"
@@ -14,7 +14,7 @@ import { Root } from "@/components"
 function App() {
     return (
         <Root style={{}}>
-            <stack
+            <Stack
                 style={{
                     width: 390,
                     height: 844,
@@ -80,7 +80,7 @@ function App() {
                         bottom: 10,
                     }}
                 ></Div>
-            </stack>
+            </Stack>
         </Root>
     )
 }
