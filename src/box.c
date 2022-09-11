@@ -135,7 +135,7 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
 
     Box *box = Flex_getContext(node);
 
-    int is_using_style = box->state == BOX_STATE_DEFAULT || box->state == state;
+    int is_using_style = state == BOX_STATE_DEFAULT || box->state == state;
     int style_dirty = box->style_array[state] != style || box_style_is_dirty(style);
 
     box_mark_dirty(node, is_using_style && style_dirty);
