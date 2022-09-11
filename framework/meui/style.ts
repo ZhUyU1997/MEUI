@@ -180,7 +180,7 @@ const Transform = {
     },
 }
 
-const lengthReg = /^(\d*\.?\d+)([a-zA-Z]*)?$/
+const lengthReg = /^(-?\d*\.?\d+)([a-zA-Z]*)?$/
 export function parseLength(value: string): number {
     const found = lengthReg.exec(value)
 
@@ -197,7 +197,7 @@ export function parseLength(value: string): number {
     throw new Error(`Unexcepted unit [${unit}]`)
 }
 
-const degReg = /^(\d*\.?\d+)(deg|grad|rad|turn)?$/
+const degReg = /^(-?\d*\.?\d+)(deg|grad|rad|turn)?$/
 export function parseAngle(value: string) {
     const found = degReg.exec(value)
 
