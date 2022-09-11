@@ -9,7 +9,7 @@
 
 static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
 {
-    return (next >= curr);
+    return (next > curr);
 }
 
 static pqueue_pri_t get_pri(void *a)
