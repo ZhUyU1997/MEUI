@@ -29,12 +29,15 @@
 
 static void box_draw_recursive(plutovg_t *pluto, box_t node);
 
-static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, double h, struct plutovg_color fill_color)
+static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, double h, plutovg_matrix_t *m)
 {
+    plutovg_rect_t rect = {x, y, w, h};
+    plutovg_matrix_map_rect(m, &rect, &rect);
+
     plutovg_save(pluto);
     plutovg_identity_matrix(pluto);
-    plutovg_rect(pluto, x, y, w, h);
-    plutovg_set_source_color(pluto, &fill_color);
+    plutovg_rect(pluto, rect.x, rect.y, rect.w, rect.h);
+    plutovg_set_source_rgba(pluto, 1, 0, 0, 0.1);
     plutovg_fill(pluto);
     plutovg_restore(pluto);
 }
@@ -59,7 +62,9 @@ static void box_transform_by_origin(Box *box, plutovg_t *pluto, plutovg_rect_t *
     plutovg_matrix_multiply(&m, &box->style.transform, &m);
     plutovg_matrix_translate(&m, -x_off, -y_off);
 
-    plutovg_transform(pluto, &m);
+    // if not a layer
+    if (box->result.surface == NULL)
+        plutovg_transform(pluto, &m);
 
     plutovg_matrix_multiply(&box->result.to_screen_matrix, &m, &box->result.to_screen_matrix);
 }
@@ -171,7 +176,6 @@ static void box_draw_layer(box_t node)
 {
     plutovg_surface_t *base = box_get_surface(node);
     plutovg_t *pluto = plutovg_create(base);
-    plutovg_set_operator(pluto, plutovg_operator_src);
     box_draw_recursive(pluto, node);
     plutovg_destroy(pluto);
 }
@@ -265,8 +269,8 @@ static void box_draw_recursive(plutovg_t *pluto, box_t node)
 
     // if (Flex_getResultScrollWidth(node) != meui_get_instance()->width && Flex_getResultScrollHeight(node) != meui_get_instance()->height)
     // {
-    //     // draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, (plutovg_color_t){1, 0, 0, 0.1});
-    //     draw_debug_rect(pluto, rect.x, rect.y, rect.w, rect.h, (plutovg_color_t){1, 0, 0, 0.1});
+    //     // draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, m);
+    //     draw_debug_rect(pluto, rect.x, rect.y, rect.w, rect.h, m);
     // }
 }
 
@@ -318,6 +322,8 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper)
     plutovg_set_source_surface(pluto, surface, 0, 0);
     plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface));
     plutovg_fill(pluto);
+
+    // draw_debug_rect(pluto, 0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface), &m);
 }
 
 static void box_composite(plutovg_t *pluto, box_t lower, box_t upper)
