@@ -175,7 +175,14 @@ static void box_destory_surface(box_t node)
 static void box_draw_layer(box_t node)
 {
     plutovg_surface_t *base = box_get_surface(node);
+
     plutovg_t *pluto = plutovg_create(base);
+    plutovg_set_operator(pluto, plutovg_operator_src);
+    plutovg_set_source_rgb(pluto, 0, 0, 0);
+    plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(base), plutovg_surface_get_height(base));
+    plutovg_fill(pluto);
+
+    plutovg_set_operator(pluto, plutovg_operator_src_over);
     box_draw_recursive(pluto, node);
     plutovg_destroy(pluto);
 }
@@ -320,6 +327,12 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper)
     plutovg_surface_t *surface = upper_box->result.surface;
     plutovg_set_matrix(pluto, &m);
     plutovg_set_source_surface(pluto, surface, 0, 0);
+
+    if (lower)
+        plutovg_set_operator(pluto, plutovg_operator_src_over);
+    else
+        plutovg_set_operator(pluto, plutovg_operator_src);
+
     plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface));
     plutovg_fill(pluto);
 
