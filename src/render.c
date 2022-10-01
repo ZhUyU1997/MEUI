@@ -480,7 +480,7 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, cons
 
     plutovg_rect_t surface_rect = plutovg_surface_get_rect(surface);
     plutovg_rect_intersect(&update_rect, &surface_rect);
-    // plutovg_rect_ext(&update_rect, 40);
+    plutovg_rect_ext(&update_rect, 1);
     // update_rect = surface_rect;
 
     // draw_debug_rect(pluto, update_rect.x + 1, update_rect.y + 1, update_rect.w - 2, update_rect.h - 2, &m);
