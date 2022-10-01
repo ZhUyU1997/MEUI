@@ -40,3 +40,21 @@ void plutovg_surface_fill(const plutovg_surface_t *s, const plutovg_color_t colo
         }
     }
 }
+
+plutovg_rect_t plutovg_surface_get_rect(plutovg_surface_t *surface)
+{
+    return (plutovg_rect_t){0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface)};
+}
+
+plutovg_rect_t plutovg_surface_get_rect_ext(plutovg_surface_t *surface, int ext_width)
+{
+    return (plutovg_rect_t){0 - ext_width, 0 - ext_width, plutovg_surface_get_width(surface) + 2 * ext_width, plutovg_surface_get_height(surface) + 2 * ext_width};
+}
+
+void plutovg_rect_ext(plutovg_rect_t *rect, int ext_width)
+{
+    rect->x -= ext_width;
+    rect->y -= ext_width;
+    rect->w += 2 * ext_width;
+    rect->h += 2 * ext_width;
+}

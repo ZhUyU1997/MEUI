@@ -13,6 +13,8 @@
 #include "cache/image.h"
 #include "cache/text.h"
 
+#include "utils/surface.h"
+
 #include <FlexLayout.h>
 #include <plutovg.h>
 
@@ -219,6 +221,7 @@ void meui_debug(struct meui_t *meui)
 static void meui_update_rect(struct meui_t *meui, plutovg_rect_t rect)
 {
     struct meui_platform_t *platform = meui->platform_data;
+    plutovg_rect_ext(&rect, 1);
     plutovg_rect_intersect(&rect, &(plutovg_rect_t){0, 0, meui->width, meui->height});
     window_update_image(platform->window, rect.x, rect.y, rect.w, rect.h);
 }

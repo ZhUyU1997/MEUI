@@ -70,6 +70,7 @@ class(Box)
         plutovg_surface_t *surface;
         plutovg_rect_t rect;
         int dirty_layer;
+        bool is_layer;
     } result;
 
     size_t queue_pos;

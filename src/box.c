@@ -42,6 +42,7 @@ constructor(Box)
     this->style_array[BOX_STATE_DEFAULT] = box_style_new();
     Flex_setContext(this->node, this);
     plutovg_rect_init_invalid(&this->result.rect);
+    plutovg_matrix_init_identity(&this->result.to_screen_matrix);
 }
 
 destructor(Box)
