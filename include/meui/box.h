@@ -37,6 +37,16 @@ enum BOX_STATE
     BOX_STATE_MAX,
 };
 
+enum BOX_DIRTY_TYPE
+{
+    BOX_DIRTY_LAYOUT = 1,
+    BOX_DIRTY_TEXT = 1 << 1,
+    BOX_DIRTY_SCROLL = 1 << 2,
+    BOX_DIRTY_COLOR = 1 << 3,
+    BOX_DIRTY_IMAGE = 1 << 4,
+    BOX_DIRTY_OTHER = 1 << 5,
+};
+
 class(Box)
 {
     box_t node;
@@ -56,7 +66,10 @@ class(Box)
     struct
     {
         plutovg_matrix_t to_screen_matrix; // box to screen
+        plutovg_matrix_t layer_to_screen_matrix;
         plutovg_surface_t *surface;
+        plutovg_rect_t rect;
+        int dirty_layer;
     } result;
 
     size_t queue_pos;
@@ -68,7 +81,7 @@ box_t box_new(enum BOX_TYPE type);
 void box_free(box_t node);
 void box_free_recursive(box_t node);
 
-void box_mark_dirty(box_t node, int need);
+void box_mark_dirty(box_t node, enum BOX_DIRTY_TYPE type, int need);
 int box_get_dirty(box_t node);
 void box_clear_dirty(box_t node);
 

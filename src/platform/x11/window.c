@@ -151,20 +151,20 @@ int window_connect_number(struct window_t *window)
     return window->x11_fd;
 }
 
-int window_update_image(struct window_t *window)
+int window_update_image(struct window_t *window, int x, int y, int w, int h)
 {
     Status XShm = XShmQueryExtension(window->dis);
     if (XShm)
     {
         XShmPutImage(window->dis, window->win,
-                     window->gc, window->ximage, 0, 0, 0, 0,
-                     window->width, window->height, 0);
+                     window->gc, window->ximage, x, y, x, y,
+                     w, h, 0);
     }
     else
     {
         XPutImage(window->dis, window->win,
-                  window->gc, window->ximage, 0, 0, 0, 0,
-                  window->width, window->height);
+                  window->gc, window->ximage, x, y, x, y,
+                     w, h);
     }
 
     return XFlush(window->dis);

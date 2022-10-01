@@ -132,7 +132,7 @@ int window_connect_number(struct window_t *window)
     return window->event.sfd->fd;
 }
 
-int window_update_image(struct window_t *window)
+int window_update_image(struct window_t *window, int x, int y, int w, int h)
 {
     vk_disp_area_t area = {
         .pos.x  = 0,

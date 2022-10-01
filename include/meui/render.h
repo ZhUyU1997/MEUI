@@ -8,4 +8,4 @@
 
 #include "meui/box.h"
 
-void box_render(box_t root, plutovg_surface_t *surface);
+plutovg_rect_t box_render(box_t root, plutovg_surface_t *surface);

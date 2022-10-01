@@ -158,7 +158,7 @@ int window_connect_number(struct window_t *window)
     return window->event.fd;
 }
 
-int window_update_image(struct window_t *window)
+int window_update_image(struct window_t *window, int x, int y, int w, int h)
 {
     SDL_UpdateWindowSurface(window->sdl.window);
     return 0;

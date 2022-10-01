@@ -201,7 +201,7 @@ void meui_flush(struct meui_t *meui)
         return;
     }
     struct meui_platform_t *platform = meui->platform_data;
-    window_update_image(platform->window);
+    window_update_image(platform->window, 0, 0, meui->width, meui->height);
 }
 
 void meui_debug(struct meui_t *meui)
@@ -214,6 +214,13 @@ void meui_debug(struct meui_t *meui)
     Flex_print(meui_get_root_node(meui), FlexPrintDefault | FlexPrintResult | FlexPrintChildren);
 }
 
+static void meui_update_rect(struct meui_t *meui, plutovg_rect_t rect)
+{
+    struct meui_platform_t *platform = meui->platform_data;
+    plutovg_rect_intersect(&rect, &(plutovg_rect_t){0, 0, meui->width, meui->height});
+    window_update_image(platform->window, rect.x, rect.y, rect.w, rect.h);
+}
+
 void meui_update(struct meui_t *meui)
 {
     if (!meui)
@@ -223,9 +230,8 @@ void meui_update(struct meui_t *meui)
     }
 
     box_t root = meui_get_root_node(meui);
-    box_render(root, meui_get_surface(meui));
-    meui_flush(meui);
-
+    plutovg_rect_t rect = box_render(root, meui_get_surface(meui));
+    meui_update_rect(meui, rect);
     meui_platform_fps(meui);
 }
 

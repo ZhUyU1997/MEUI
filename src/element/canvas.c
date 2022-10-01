@@ -35,6 +35,12 @@ static void draw(Box *this, plutovg_t *pluto)
     }
 }
 
+static void canvas_mark_dirty(CanvasEle *e)
+{
+    Box *box = dynamic_cast(Box)(e);
+    box_mark_dirty(box->node, BOX_DIRTY_OTHER, 1);
+}
+
 int canvas_get_width(CanvasEle *e)
 {
     return e->width;
@@ -121,6 +127,7 @@ void canvas_fill(CanvasEle *e)
     assert(e->fillPaint);
     plutovg_set_source(e->pluto, e->fillPaint);
     plutovg_fill(e->pluto);
+    canvas_mark_dirty(e);
 }
 
 void canvas_stroke(CanvasEle *e)
@@ -128,6 +135,7 @@ void canvas_stroke(CanvasEle *e)
     assert(e->strokePaint);
     plutovg_set_source(e->pluto, e->strokePaint);
     plutovg_stroke(e->pluto);
+    canvas_mark_dirty(e);
 }
 
 static FlexSize canvas_layout(FlexNodeRef node, float constrainedWidth, float constrainedHeight, float scale)
