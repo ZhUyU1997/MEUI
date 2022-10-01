@@ -65,9 +65,11 @@ struct meui_t *meui_start(int width, int height)
     plutovg_fill(pluto);
     plutovg_destroy(pluto);
 #endif
-
-    Flex_setWidth(meui->render_context.root, width);
-    Flex_setHeight(meui->render_context.root, height);
+    box_t root = meui->render_context.root;
+    box_style_t *style = box_get_style(root, BOX_STATE_DEFAULT);
+    box_style_width(style, width);
+    box_style_height(style, height);
+    box_set_style(root, style, BOX_STATE_DEFAULT);
 
     if (!meui->win_surface)
         goto exit2;

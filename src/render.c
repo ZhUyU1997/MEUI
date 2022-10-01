@@ -113,7 +113,6 @@ int box_update_style_recursive(box_t node)
 
     int ret = merge_styles(box);
 
-    // TODO: may unset layout related style, should reset after merge style
     if (ret)
         box_style_to_flex(&box->style, node);
 

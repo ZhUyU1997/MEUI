@@ -203,11 +203,11 @@ style_table.forEach((item, index) => {
     style_source += GenBoxStyleDefine2(item[1] + "Percent", index, `float ${item[1]}`, `style->${item[1]}.value = ${item[1]};
     style->${item[1]}.type = FlexLengthTypePercent;`)
         if (supportAuto) {
-            style_source += GenBoxStyleDefine2(item[1] + "Auto", index, `style->${item[1]}.type = FlexLengthTypeAuto;`)
+            style_source += GenBoxStyleDefine2(item[1] + "Auto", index, `style->${item[1]} = FlexLengthAuto;`)
         }
 
         if (supportContent) {
-            style_source += GenBoxStyleDefine2(item[1] + "Content", index, `style->${item[1]}.type = FlexLengthTypeContent;`)
+            style_source += GenBoxStyleDefine2(item[1] + "Content", index, `style->${item[1]} = FlexLengthContent;`)
         }
     }
 })

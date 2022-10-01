@@ -59,14 +59,14 @@ void box_style_flexBasisPercent(box_style_t *style, float flexBasis)
 void box_style_flexBasisAuto(box_style_t *style)
 {
     assert(style);
-    style->flexBasis.type = FlexLengthTypeAuto;
+    style->flexBasis = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 6;
     style->dirty |= UINT64_C(1) << 6;
 }
 void box_style_flexBasisContent(box_style_t *style)
 {
     assert(style);
-    style->flexBasis.type = FlexLengthTypeContent;
+    style->flexBasis = FlexLengthContent;
     style->flags |= UINT64_C(1) << 6;
     style->dirty |= UINT64_C(1) << 6;
 }
@@ -103,14 +103,14 @@ void box_style_widthPercent(box_style_t *style, float width)
 void box_style_widthAuto(box_style_t *style)
 {
     assert(style);
-    style->width.type = FlexLengthTypeAuto;
+    style->width = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 9;
     style->dirty |= UINT64_C(1) << 9;
 }
 void box_style_widthContent(box_style_t *style)
 {
     assert(style);
-    style->width.type = FlexLengthTypeContent;
+    style->width = FlexLengthContent;
     style->flags |= UINT64_C(1) << 9;
     style->dirty |= UINT64_C(1) << 9;
 }
@@ -133,14 +133,14 @@ void box_style_heightPercent(box_style_t *style, float height)
 void box_style_heightAuto(box_style_t *style)
 {
     assert(style);
-    style->height.type = FlexLengthTypeAuto;
+    style->height = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 10;
     style->dirty |= UINT64_C(1) << 10;
 }
 void box_style_heightContent(box_style_t *style)
 {
     assert(style);
-    style->height.type = FlexLengthTypeContent;
+    style->height = FlexLengthContent;
     style->flags |= UINT64_C(1) << 10;
     style->dirty |= UINT64_C(1) << 10;
 }
@@ -227,14 +227,14 @@ void box_style_marginLeftPercent(box_style_t *style, float marginLeft)
 void box_style_marginLeftAuto(box_style_t *style)
 {
     assert(style);
-    style->marginLeft.type = FlexLengthTypeAuto;
+    style->marginLeft = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 15;
     style->dirty |= UINT64_C(1) << 15;
 }
 void box_style_marginLeftContent(box_style_t *style)
 {
     assert(style);
-    style->marginLeft.type = FlexLengthTypeContent;
+    style->marginLeft = FlexLengthContent;
     style->flags |= UINT64_C(1) << 15;
     style->dirty |= UINT64_C(1) << 15;
 }
@@ -257,14 +257,14 @@ void box_style_marginTopPercent(box_style_t *style, float marginTop)
 void box_style_marginTopAuto(box_style_t *style)
 {
     assert(style);
-    style->marginTop.type = FlexLengthTypeAuto;
+    style->marginTop = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 16;
     style->dirty |= UINT64_C(1) << 16;
 }
 void box_style_marginTopContent(box_style_t *style)
 {
     assert(style);
-    style->marginTop.type = FlexLengthTypeContent;
+    style->marginTop = FlexLengthContent;
     style->flags |= UINT64_C(1) << 16;
     style->dirty |= UINT64_C(1) << 16;
 }
@@ -287,14 +287,14 @@ void box_style_marginBottomPercent(box_style_t *style, float marginBottom)
 void box_style_marginBottomAuto(box_style_t *style)
 {
     assert(style);
-    style->marginBottom.type = FlexLengthTypeAuto;
+    style->marginBottom = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 17;
     style->dirty |= UINT64_C(1) << 17;
 }
 void box_style_marginBottomContent(box_style_t *style)
 {
     assert(style);
-    style->marginBottom.type = FlexLengthTypeContent;
+    style->marginBottom = FlexLengthContent;
     style->flags |= UINT64_C(1) << 17;
     style->dirty |= UINT64_C(1) << 17;
 }
@@ -317,14 +317,14 @@ void box_style_marginRightPercent(box_style_t *style, float marginRight)
 void box_style_marginRightAuto(box_style_t *style)
 {
     assert(style);
-    style->marginRight.type = FlexLengthTypeAuto;
+    style->marginRight = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 18;
     style->dirty |= UINT64_C(1) << 18;
 }
 void box_style_marginRightContent(box_style_t *style)
 {
     assert(style);
-    style->marginRight.type = FlexLengthTypeContent;
+    style->marginRight = FlexLengthContent;
     style->flags |= UINT64_C(1) << 18;
     style->dirty |= UINT64_C(1) << 18;
 }
@@ -347,14 +347,14 @@ void box_style_marginStartPercent(box_style_t *style, float marginStart)
 void box_style_marginStartAuto(box_style_t *style)
 {
     assert(style);
-    style->marginStart.type = FlexLengthTypeAuto;
+    style->marginStart = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 19;
     style->dirty |= UINT64_C(1) << 19;
 }
 void box_style_marginStartContent(box_style_t *style)
 {
     assert(style);
-    style->marginStart.type = FlexLengthTypeContent;
+    style->marginStart = FlexLengthContent;
     style->flags |= UINT64_C(1) << 19;
     style->dirty |= UINT64_C(1) << 19;
 }
@@ -377,14 +377,14 @@ void box_style_marginEndPercent(box_style_t *style, float marginEnd)
 void box_style_marginEndAuto(box_style_t *style)
 {
     assert(style);
-    style->marginEnd.type = FlexLengthTypeAuto;
+    style->marginEnd = FlexLengthAuto;
     style->flags |= UINT64_C(1) << 20;
     style->dirty |= UINT64_C(1) << 20;
 }
 void box_style_marginEndContent(box_style_t *style)
 {
     assert(style);
-    style->marginEnd.type = FlexLengthTypeContent;
+    style->marginEnd = FlexLengthContent;
     style->flags |= UINT64_C(1) << 20;
     style->dirty |= UINT64_C(1) << 20;
 }
