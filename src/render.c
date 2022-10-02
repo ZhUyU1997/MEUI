@@ -36,6 +36,7 @@ static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, doub
     plutovg_matrix_map_rect(m, &rect, &rect);
 
     plutovg_save(pluto);
+    plutovg_set_operator(pluto, plutovg_operator_src_over);
     plutovg_identity_matrix(pluto);
     plutovg_rect(pluto, rect.x, rect.y, rect.w, rect.h);
     plutovg_set_source_rgba(pluto, 1, 0, 0, 0.1);
@@ -59,8 +60,6 @@ static plutovg_surface_t *box_create_layer(box_t node)
 
     if (box->result.surface)
     {
-        box->result.to_screen_matrix = box->result.layer_to_screen_matrix;
-
         if (plutovg_surface_get_width(box->result.surface) == (int)width &&
             plutovg_surface_get_height(box->result.surface) == (int)height)
         {
@@ -69,12 +68,15 @@ static plutovg_surface_t *box_create_layer(box_t node)
 
         plutovg_surface_destroy(box->result.surface);
     }
-    else
-    {
-        box->result.layer_to_screen_matrix = box->result.to_screen_matrix;
-    }
+
     box->result.surface = plutovg_surface_create(width, height);
     return box->result.surface;
+}
+
+static void box_transform_layer(box_t node)
+{
+    Box *box = Flex_getContext(node);
+    box->result.to_screen_matrix = box->result.layer_to_screen_matrix;
 }
 
 static void box_destory_layer(box_t node)
@@ -100,12 +102,15 @@ static void box_mark_layer(box_t node, bool is_layer)
     box->result.is_layer = is_layer;
 
     if (is_layer)
+    {
+        box->result.layer_to_screen_matrix = box->result.to_screen_matrix;
         box_create_layer(node);
+    }
     else
         box_destory_layer(node);
 }
 
-static void box_transform_by_origin(box_t node, plutovg_t *pluto)
+static plutovg_matrix_t box_transform_by_origin(box_t node)
 {
     float width = Flex_getResultWidth(node);
     float height = Flex_getResultHeight(node);
@@ -130,11 +135,9 @@ static void box_transform_by_origin(box_t node, plutovg_t *pluto)
     plutovg_matrix_multiply(&m, &box->style.transform, &m);
     plutovg_matrix_translate(&m, -x_off, -y_off);
 
-    // if not a layer
-    if (box_is_layer(node) == false)
-        plutovg_transform(pluto, &m);
-
     plutovg_matrix_multiply(&box->result.to_screen_matrix, &m, &box->result.to_screen_matrix);
+
+    return m;
 }
 
 static int merge_styles(box_t node)
@@ -153,17 +156,9 @@ static int merge_styles(box_t node)
     box_style_merge(&box->style, box_default_style());
     box_style_merge(&box->style, box->style_array[BOX_STATE_DEFAULT]);
 
-    if (box->state != BOX_STATE_DEFAULT)
-    {
-        box_style_t *src = box->style_array[box->state];
-        if (src)
-        {
-            box_style_merge(&box->style, src);
-            box_style_clear_dirty(src);
-        }
-    }
-
-    box_style_clear_dirty(box->style_array[BOX_STATE_DEFAULT]);
+    box_style_t *style = box->style_array[box->state];
+    if (box->state != BOX_STATE_DEFAULT && style)
+        box_style_merge(&box->style, style);
 
     if (dirty & BOX_DIRTY_LAYOUT)
         box_style_to_flex(&box->style, node);
@@ -302,8 +297,13 @@ static void box_calc_size_position(box_t node)
 
 static void box_draw_recursive(box_t node, plutovg_t *pluto)
 {
-    box_transform_by_origin(node, pluto);
+    plutovg_matrix_t m = box_transform_by_origin(node);
+
     box_calc_size_position(node);
+
+    // if not a layer
+    if (box_is_layer(node) == false)
+        plutovg_transform(pluto, &m);
     box_draw_self(node, pluto);
     box_draw_child(node, pluto);
 
@@ -353,7 +353,7 @@ static uint64_t box_check_dirty(box_t node)
 static uint64_t box_get_zindex_queue(box_t node, pqueue_t *pq)
 {
     int len = Flex_getChildrenCount(node);
-    uint64_t result = box_check_dirty(node);
+    uint64_t result = 0;
 
     for (int i = 0; i < len; i++)
     {
@@ -367,8 +367,8 @@ static uint64_t box_get_zindex_queue(box_t node, pqueue_t *pq)
             continue;
         }
 
-        uint64_t dirty = box_get_zindex_queue(child, pq);
-        result = result | dirty;
+        result |= box_check_dirty(child);
+        result |= box_get_zindex_queue(child, pq);
     }
 
     box_clear_dirty(node);
@@ -398,11 +398,12 @@ static plutovg_rect_t box_draw(box_t root)
     plutovg_rect_t result;
     plutovg_rect_init_invalid(&result);
 
+    uint64_t self_dirty = box_check_dirty(root);
     uint64_t dirty = box_get_zindex_queue(root, pq);
 
-    if (dirty)
+    if (dirty || self_dirty)
     {
-        // printf("dirty layer\n");
+        box_transform_layer(root);
         box_draw_layer(root);
         result = box_rect(root);
     }
@@ -434,27 +435,10 @@ static void box_map_rect_to_local(box_t node, plutovg_rect_t *rect)
 
 static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, const plutovg_rect_t *rect)
 {
-    Box *upper_box = Flex_getContext(upper);
-
-    plutovg_matrix_t m;
     plutovg_rect_t update_rect = *rect;
 
-    if (lower)
-    {
-        Box *lower_box = Flex_getContext(lower);
-
-        plutovg_matrix_t *lower_m = &lower_box->result.to_screen_matrix;
-        plutovg_matrix_t *upper_m = &upper_box->result.to_screen_matrix;
-
-        m = *lower_m;
-        plutovg_matrix_invert(&m);
-        plutovg_matrix_multiply(&m, upper_m, &m);
-    }
-    else
-    {
-        plutovg_matrix_t *upper_m = &upper_box->result.to_screen_matrix;
-        m = *upper_m;
-    }
+    Box *upper_box = Flex_getContext(upper);
+    plutovg_matrix_t m = upper_box->result.to_screen_matrix;
 
     box_map_rect_to_local(upper, &update_rect);
 
@@ -472,10 +456,10 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, cons
     plutovg_rect_ext(&update_rect, 1);
     // update_rect = surface_rect;
 
-    // draw_debug_rect(pluto, update_rect.x + 1, update_rect.y + 1, update_rect.w - 2, update_rect.h - 2, &m);
     // printf("%f %f %f %f\n", update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_rect(pluto, update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_fill(pluto);
+    // draw_debug_rect(pluto, update_rect.x + 1, update_rect.y + 1, update_rect.w - 2, update_rect.h - 2, &m);
 }
 
 static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, const plutovg_rect_t *rect)
@@ -498,6 +482,7 @@ static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, const plut
 
 plutovg_rect_t box_render(box_t root, plutovg_surface_t *surface)
 {
+    // printf("render\n");
     uint64_t dirty = box_update_style(root);
 
     if (!dirty)

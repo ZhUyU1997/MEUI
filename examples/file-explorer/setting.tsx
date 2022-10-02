@@ -294,6 +294,7 @@ export function Setting({ onClose }: { onClose: () => void }) {
                     borderColor: "#9B9B9B",
                     width: "70%",
                     height: "80%",
+                    zIndex: 1,
                 }}
             >
                 <Row style={{ width: "100%", justifyContent: "flex-end" }}>
@@ -332,6 +333,7 @@ export function Setting({ onClose }: { onClose: () => void }) {
                     <Column
                         style={{
                             backgroundColor: "#F8F8F8",
+                            borderRadius: 20,
                             flexGrow: 1,
                             width: "100%",
                             height: "100%",

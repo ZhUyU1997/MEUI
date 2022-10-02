@@ -122,6 +122,12 @@ void box_clear_dirty(box_t node)
     assert(node);
     Box *box = Flex_getContext(node);
     box->dirty = 0;
+
+    box_style_t *style = box->style_array[box->state];
+    if (box->state != BOX_STATE_DEFAULT && style)
+        box_style_clear_dirty(style);
+
+    box_style_clear_dirty(box->style_array[BOX_STATE_DEFAULT]);
 }
 
 box_style_t *box_get_style(box_t node, enum BOX_STATE state)
