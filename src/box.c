@@ -33,7 +33,7 @@ static void box_draw_self(Box *box, plutovg_t *pluto);
 
 class_impl(Box){
     .draw = box_draw_self,
-    .dirty = 1,
+    .dirty = 0xffffffff,
 };
 
 constructor(Box)
@@ -41,7 +41,8 @@ constructor(Box)
     this->node = Flex_newNode();
     this->style_array[BOX_STATE_DEFAULT] = box_style_new();
     Flex_setContext(this->node, this);
-    plutovg_rect_init_invalid(&this->result.rect);
+    plutovg_rect_init_invalid(&this->result.last_screen_rect);
+    plutovg_rect_init_invalid(&this->result.last_local_rect);
     plutovg_matrix_init_identity(&this->result.to_screen_matrix);
 }
 
@@ -139,8 +140,13 @@ void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
 
     int is_using_style = state == BOX_STATE_DEFAULT || box->state == state;
     int style_dirty = box->style_array[state] != style || box_style_is_dirty(style);
+    int is_layout_related = box_style_layout_flags & box_style_is_dirty(style);
 
-    box_mark_dirty(node, BOX_DIRTY_OTHER, is_using_style && style_dirty);
+    if (is_layout_related)
+        box_mark_dirty(node, BOX_DIRTY_STYLE | BOX_DIRTY_LAYOUT, is_using_style && style_dirty);
+    else
+        box_mark_dirty(node, BOX_DIRTY_STYLE, is_using_style && style_dirty);
+
     box->style_array[state] = style;
 }
 
@@ -157,7 +163,7 @@ void box_set_state(box_t node, enum BOX_STATE state)
     int state_eq_default = state == BOX_STATE_DEFAULT || box->style_array[state] == NULL;
     int old_state_eq_default = box->state == BOX_STATE_DEFAULT || box->style_array[box->state] == NULL;
 
-    box_mark_dirty(node, BOX_DIRTY_OTHER, box->state != state && !(state_eq_default && old_state_eq_default));
+    box_mark_dirty(node, BOX_DIRTY_STYLE, box->state != state && !(state_eq_default && old_state_eq_default));
     box->state = state;
 }
 
@@ -236,6 +242,24 @@ void box_set_scroll_left(box_t node, int scroll_left)
 
     box_mark_dirty(node, BOX_DIRTY_SCROLL, box->scroll_left != scroll_left);
     box->scroll_left = scroll_left;
+}
+
+void box_add_child(box_t node, box_t child)
+{
+    Flex_addChild(node, child);
+    box_mark_dirty(node, BOX_DIRTY_CHILD, true);
+}
+
+void box_insert_child(box_t node, box_t child, int32_t index)
+{
+    Flex_insertChild(node, child, index);
+    box_mark_dirty(node, BOX_DIRTY_CHILD, true);
+}
+
+void box_remove_child(box_t node, box_t child)
+{
+    Flex_removeChild(node, child);
+    box_mark_dirty(node, BOX_DIRTY_CHILD, true);
 }
 
 int box_hit(box_t node, int x, int y)

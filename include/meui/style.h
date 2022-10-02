@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 typedef enum TEXT_ALIGN
 {
     // private
@@ -64,6 +66,8 @@ typedef enum CSS_OVERFLOW
 } CSS_OVERFLOW;
 
 #include <gen/style.h>
+
+extern uint64_t box_style_layout_flags;
 
 void box_default_style_init();
 const box_style_t *box_default_style();

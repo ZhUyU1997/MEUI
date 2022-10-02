@@ -137,10 +137,13 @@ static void box_transform_by_origin(box_t node, plutovg_t *pluto)
     plutovg_matrix_multiply(&box->result.to_screen_matrix, &m, &box->result.to_screen_matrix);
 }
 
-static int merge_styles(Box *box)
+static int merge_styles(box_t node)
 {
+    Box *box = Flex_getContext(node);
+
+    uint64_t dirty = box_get_dirty(node);
     // TODO: make a faster function to check dirty
-    if (box_get_dirty(box->node) == 0)
+    if (!(dirty & BOX_DIRTY_STYLE))
     {
         return 0;
     }
@@ -161,28 +164,22 @@ static int merge_styles(Box *box)
     }
 
     box_style_clear_dirty(box->style_array[BOX_STATE_DEFAULT]);
+
+    if (dirty & BOX_DIRTY_LAYOUT)
+        box_style_to_flex(&box->style, node);
     return 1;
 }
 
-int box_update_style_recursive(box_t node)
+uint64_t box_update_style_recursive(box_t node)
 {
+    merge_styles(node);
 
-    Box *box = Flex_getContext(node);
-    if (!box)
-    {
-        LOGE("Node is not box!");
-        return 0;
-    }
-
-    int ret = merge_styles(box);
-
-    if (ret)
-        box_style_to_flex(&box->style, node);
+    uint64_t ret = box_get_dirty(node);
 
     for (size_t i = 0; i < Flex_getChildrenCount(node); i++)
     {
         int r = box_update_style_recursive(Flex_getChild(node, i));
-        ret = ret || r;
+        ret = ret | r;
     }
 
     return ret;
@@ -207,7 +204,6 @@ static void box_matrix_init(box_t node, plutovg_matrix_t *m)
 
 static void box_draw_layer(box_t node)
 {
-
     plutovg_surface_t *base = box_create_layer(node);
 
     plutovg_t *pluto = plutovg_create(base);
@@ -318,67 +314,65 @@ static void box_draw_recursive(box_t node, plutovg_t *pluto)
     // }
 }
 
-static void box_get_zindex_queue(box_t node, pqueue_t *pq)
+static bool box_check_layout_dirty(box_t node)
 {
-    int len = Flex_getChildrenCount(node);
+    Box *box = Flex_getContext(node);
+    float left = Flex_getResultLeft(node);
+    float top = Flex_getResultTop(node);
+    float width = Flex_getResultWidth(node);
+    float height = Flex_getResultHeight(node);
 
-    for (int i = 0; i < len; i++)
-    {
-        box_t child = Flex_getChild(node, i);
-        Box *box = Flex_getContext(child);
-        box->index_in_parent = i;
+    plutovg_rect_t rect = {
+        left,
+        top,
+        width,
+        height,
+    };
 
-        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
-        {
-            pqueue_insert(pq, child);
-            continue;
-        }
+    bool result = plutovg_rect_equal(&rect, &box->result.last_local_rect) == false;
 
-        box_get_zindex_queue(child, pq);
-    }
-}
-
-static int box_mark_dirty_layer_queue(box_t node, pqueue_t *pq)
-{
-    int len = Flex_getChildrenCount(node);
-    int result = box_get_dirty(node);
-    for (int i = 0; i < len; i++)
-    {
-        box_t child = Flex_getChild(node, i);
-        Box *box = Flex_getContext(child);
-        box->index_in_parent = i;
-
-        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
-        {
-            pqueue_insert(pq, child);
-            continue;
-        }
-
-        int ret = box_mark_dirty_layer_queue(child, pq);
-        result = result || ret;
-    }
-
-    box_clear_dirty(node);
+    box->result.last_local_rect = rect;
 
     return result;
 }
 
-static void box_mark_dirty_layer(box_t root)
+static uint64_t box_check_dirty(box_t node)
 {
-    pqueue_t *pq = box_pqueue_init(10);
+    uint64_t result = box_get_dirty(node);
 
-    int result = box_mark_dirty_layer_queue(root, pq);
-    Box *box = Flex_getContext(root);
-    box->result.dirty_layer = result;
-
-    if (pqueue_peek(pq) != NULL)
+    // FlexLayout != layout change
+    // Mark layout dirty != layout change
+    // so we have to check the layout change flag regardless of flags
+    if (box_check_layout_dirty(node))
     {
-        box_t node = NULL;
-        while ((node = pqueue_pop(pq)))
-            box_mark_dirty_layer(node);
+        result |= BOX_DIRTY_LAYOUT;
+    }
+    return result;
+}
+
+static uint64_t box_get_zindex_queue(box_t node, pqueue_t *pq)
+{
+    int len = Flex_getChildrenCount(node);
+    uint64_t result = box_check_dirty(node);
+
+    for (int i = 0; i < len; i++)
+    {
+        box_t child = Flex_getChild(node, i);
+        Box *box = Flex_getContext(child);
+        box->index_in_parent = i;
+
+        if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
+        {
+            pqueue_insert(pq, child);
+            continue;
+        }
+
+        uint64_t dirty = box_get_zindex_queue(child, pq);
+        result = result | dirty;
     }
 
-    pqueue_free(pq);
+    box_clear_dirty(node);
+    return result;
 }
 
 static plutovg_rect_t box_rect(box_t node)
@@ -392,31 +386,26 @@ static plutovg_rect_t box_rect(box_t node)
     plutovg_matrix_map_rect(m, &rect, &rect);
 
     plutovg_rect_t temp = rect;
-    plutovg_rect_unite(&rect, &box->result.rect);
-    box->result.rect = temp;
+    plutovg_rect_unite(&rect, &box->result.last_screen_rect);
+    box->result.last_screen_rect = temp;
     return rect;
 }
 
 static plutovg_rect_t box_draw(box_t root)
 {
     pqueue_t *pq = box_pqueue_init(10);
-    Box *box = Flex_getContext(root);
 
     plutovg_rect_t result;
-
     plutovg_rect_init_invalid(&result);
 
-    if (box->result.dirty_layer)
+    uint64_t dirty = box_get_zindex_queue(root, pq);
+
+    if (dirty)
     {
+        // printf("dirty layer\n");
         box_draw_layer(root);
-        Box *box = Flex_getContext(root);
-
         result = box_rect(root);
-
-        box->result.dirty_layer = 0;
     }
-
-    box_get_zindex_queue(root, pq);
 
     if (pqueue_peek(pq) != NULL)
     {
@@ -509,16 +498,22 @@ static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, const plut
 
 plutovg_rect_t box_render(box_t root, plutovg_surface_t *surface)
 {
-    if (!box_update_style(root))
+    uint64_t dirty = box_update_style(root);
+
+    if (!dirty)
     {
         plutovg_rect_t rect;
         plutovg_rect_init_invalid(&rect);
         return rect;
     }
 
-    Flex_layout(root, FlexUndefined, FlexUndefined, 1);
+    uint64_t dirty_layout = dirty & (BOX_DIRTY_CHILD | BOX_DIRTY_LAYOUT | BOX_DIRTY_TEXT);
 
-    box_mark_dirty_layer(root);
+    if (dirty_layout)
+    {
+        // printf("Flex_layout\n");
+        Flex_layout(root, FlexUndefined, FlexUndefined, 1);
+    }
 
     plutovg_t *pluto = plutovg_create(surface);
 

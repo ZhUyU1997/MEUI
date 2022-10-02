@@ -39,12 +39,13 @@ enum BOX_STATE
 
 enum BOX_DIRTY_TYPE
 {
-    BOX_DIRTY_LAYOUT = 1,
-    BOX_DIRTY_TEXT = 1 << 1,
-    BOX_DIRTY_SCROLL = 1 << 2,
-    BOX_DIRTY_COLOR = 1 << 3,
-    BOX_DIRTY_IMAGE = 1 << 4,
-    BOX_DIRTY_OTHER = 1 << 5,
+    BOX_DIRTY_CHILD = 1 << 0,
+    BOX_DIRTY_LAYOUT = 1 << 1,
+    BOX_DIRTY_STYLE = 1 << 2,
+    BOX_DIRTY_TEXT = 1 << 3,
+    BOX_DIRTY_SCROLL = 1 << 4,
+    BOX_DIRTY_IMAGE = 1 << 5,
+    BOX_DIRTY_OTHER = 1 << 6,
 };
 
 class(Box)
@@ -68,8 +69,9 @@ class(Box)
         plutovg_matrix_t to_screen_matrix; // box to screen
         plutovg_matrix_t layer_to_screen_matrix;
         plutovg_surface_t *surface;
-        plutovg_rect_t rect;
-        int dirty_layer;
+        plutovg_rect_t last_local_rect;
+        plutovg_rect_t last_screen_rect;
+        uint64_t dirty_layer;
         bool is_layer;
     } result;
 
@@ -103,6 +105,10 @@ void box_set_scroll_top(box_t node, int scroll_top);
 int box_get_scroll_left(box_t node);
 void box_set_scroll_left(box_t node, int scroll_left);
 int box_hit(box_t node, int x, int y);
+
+void box_add_child(box_t node, box_t child);
+void box_insert_child(box_t node, box_t child, int32_t index);
+void box_remove_child(box_t node, box_t child);
 
 FlexSize box_measure_text(void *context, FlexSize constrainedSize);
 

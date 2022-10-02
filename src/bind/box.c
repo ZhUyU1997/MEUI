@@ -106,7 +106,7 @@ static JSValue js_add_child(JSContext *ctx, JSValueConst this_val,
     if (!child)
         return JS_EXCEPTION;
 
-    Flex_addChild(box, child);
+    box_add_child(box, child);
     return JS_UNDEFINED;
 }
 
@@ -125,7 +125,7 @@ static JSValue js_insert_child(JSContext *ctx, JSValueConst this_val,
     int32_t index;
     if (JS_ToInt32(ctx, &index, argv[1]))
         return JS_EXCEPTION;
-    Flex_insertChild(box, child, index);
+    box_insert_child(box, child, index);
     return JS_UNDEFINED;
 }
 
@@ -140,7 +140,7 @@ static JSValue js_remove_child(JSContext *ctx, JSValueConst this_val,
     box_t child = JS_GetOpaque2(ctx, argv[0], js_box_class_id);
     if (!child)
         return JS_EXCEPTION;
-    Flex_removeChild(box, child);
+    box_remove_child(box, child);
     return JS_UNDEFINED;
 }
 

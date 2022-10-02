@@ -6,6 +6,7 @@
 
 #include <plutovg.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 static inline void memfill32(uint32_t *dest, uint32_t value, int length)
 {
@@ -57,4 +58,12 @@ void plutovg_rect_ext(plutovg_rect_t *rect, int ext_width)
     rect->y -= ext_width;
     rect->w += 2 * ext_width;
     rect->h += 2 * ext_width;
+}
+
+bool plutovg_rect_equal(plutovg_rect_t *a, plutovg_rect_t *b)
+{
+    return a->x == b->x &&
+           a->y == b->y &&
+           a->w == b->w &&
+           a->h == b->h;
 }

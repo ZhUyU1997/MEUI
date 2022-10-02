@@ -12,6 +12,60 @@
 #include "meui/box.h"
 #include "gen/style.c"
 
+uint64_t box_style_layout_flags = BOX_STYLE_wrap |
+                                  BOX_STYLE_direction |
+                                  BOX_STYLE_alignItems |
+                                  BOX_STYLE_alignSelf |
+                                  BOX_STYLE_alignContent |
+                                  BOX_STYLE_justifyContent |
+                                  BOX_STYLE_flexBasis |
+                                  BOX_STYLE_flexGrow |
+                                  BOX_STYLE_flexShrink |
+                                  BOX_STYLE_width |
+                                  BOX_STYLE_height |
+                                  BOX_STYLE_minWidth |
+                                  BOX_STYLE_minHeight |
+                                  BOX_STYLE_maxWidth |
+                                  BOX_STYLE_maxHeight |
+                                  BOX_STYLE_marginLeft |
+                                  BOX_STYLE_marginTop |
+                                  BOX_STYLE_marginBottom |
+                                  BOX_STYLE_marginRight |
+                                  BOX_STYLE_marginStart |
+                                  BOX_STYLE_marginEnd |
+                                  BOX_STYLE_paddingLeft |
+                                  BOX_STYLE_paddingTop |
+                                  BOX_STYLE_paddingBottom |
+                                  BOX_STYLE_paddingRight |
+                                  BOX_STYLE_paddingStart |
+                                  BOX_STYLE_paddingEnd |
+                                  BOX_STYLE_borderLeft |
+                                  BOX_STYLE_borderTop |
+                                  BOX_STYLE_borderBottom |
+                                  BOX_STYLE_borderRight |
+                                  BOX_STYLE_borderStart |
+                                  BOX_STYLE_borderEnd |
+                                  BOX_STYLE_borderTopLeftRadius |
+                                  BOX_STYLE_borderTopRightRadius |
+                                  BOX_STYLE_borderBottomRightRadius |
+                                  BOX_STYLE_borderBottomLeftRadius |
+                                  //   BOX_STYLE_borderColor |
+                                  //   BOX_STYLE_backgroundColor |
+                                  //   BOX_STYLE_fontColor |
+                                  BOX_STYLE_textAlign |
+                                  BOX_STYLE_fontSize |
+                                  //   BOX_STYLE_backgroundImage |
+                                  //   BOX_STYLE_contentImage |
+                                  //   BOX_STYLE_transform |
+                                  //   BOX_STYLE_transformOrigin |
+                                  //   BOX_STYLE_fontFamily |
+                                  BOX_STYLE_overflow |
+                                  BOX_STYLE_left |
+                                  BOX_STYLE_right |
+                                  BOX_STYLE_top |
+                                  BOX_STYLE_bottom |
+                                  0;
+
 static box_style_t default_style = {
     .flags =
         BOX_STYLE_wrap |
