@@ -391,23 +391,19 @@ static plutovg_rect_t box_draw(box_t root)
     plutovg_rect_t result;
     plutovg_rect_init_invalid(&result);
 
-    uint64_t self_dirty = box_check_dirty(root);
-    uint64_t dirty = box_get_zindex_queue(root, pq);
+    uint64_t dirty = box_check_dirty(root);
+    dirty |= box_get_zindex_queue(root, pq);
 
-    box_draw_layer(root, dirty | self_dirty);
+    box_draw_layer(root, dirty);
 
-    if (dirty | self_dirty)
+    if (dirty)
         result = box_rect(root);
 
-    if (pqueue_peek(pq) != NULL)
+    box_t node = NULL;
+    while ((node = pqueue_pop(pq)))
     {
-        box_t node = NULL;
-        while ((node = pqueue_pop(pq)))
-        {
-            plutovg_rect_t rect = box_draw(node);
-
-            plutovg_rect_unite(&result, &rect);
-        }
+        plutovg_rect_t rect = box_draw(node);
+        plutovg_rect_unite(&result, &rect);
     }
 
     pqueue_free(pq);
@@ -463,13 +459,9 @@ static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, const plut
 
     box_get_zindex_queue(upper, pq);
 
-    if (pqueue_peek(pq) != NULL)
-    {
-        box_t node = NULL;
-        while ((node = pqueue_pop(pq)))
-            box_composite(pluto, upper, node, rect);
-    }
-
+    box_t node = NULL;
+    while ((node = pqueue_pop(pq)))
+        box_composite(pluto, upper, node, rect);
     pqueue_free(pq);
 }
 
