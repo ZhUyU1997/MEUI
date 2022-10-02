@@ -18,6 +18,12 @@ function App() {
         to: [
             { rotateZ: 45, scale: 2 },
             { rotateZ: 90, scale: 1.0 },
+            { rotateZ: 135, scale: 2 },
+            { rotateZ: 180, scale: 1.0 },
+            { rotateZ: 225, scale: 2 },
+            { rotateZ: 270, scale: 1.0 },
+            { rotateZ: 315, scale: 2 },
+            { rotateZ: 360, scale: 1.0 },
         ],
         config: {
             // mass: 10000,

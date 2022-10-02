@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-static void box_draw_recursive(box_t node, plutovg_t *pluto);
+static void box_draw_node(box_t node, plutovg_t *pluto);
 
 static void draw_debug_rect(plutovg_t *pluto, double x, double y, double w, double h, plutovg_matrix_t *m)
 {
@@ -197,28 +197,6 @@ static void box_matrix_init(box_t node, plutovg_matrix_t *m)
     box->result.to_screen_matrix = *m;
 }
 
-static void box_draw_layer(box_t node)
-{
-    plutovg_surface_t *base = box_create_layer(node);
-
-    plutovg_t *pluto = plutovg_create(base);
-    plutovg_set_operator(pluto, plutovg_operator_src);
-    plutovg_set_source_rgba(pluto, 0, 0, 0, 0);
-    plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(base), plutovg_surface_get_height(base));
-    plutovg_fill(pluto);
-
-    plutovg_set_operator(pluto, plutovg_operator_src_over);
-    box_draw_recursive(node, pluto);
-    plutovg_destroy(pluto);
-}
-
-static void box_draw_root_layer(box_t node)
-{
-    Box *box = Flex_getContext(node);
-    plutovg_matrix_init_identity(&box->result.to_screen_matrix);
-    box_draw_layer(node);
-}
-
 static void box_draw_child(box_t node, plutovg_t *pluto)
 {
     Box *parent = Flex_getContext(node);
@@ -254,7 +232,7 @@ static void box_draw_child(box_t node, plutovg_t *pluto)
             plutovg_set_operator(pluto, plutovg_operator_src_over);
 
             plutovg_translate(pluto, off_x + Flex_getResultLeft(child), off_y + Flex_getResultTop(child));
-            box_draw_recursive(Flex_getChild(node, i), pluto);
+            box_draw_node(Flex_getChild(node, i), pluto);
             plutovg_restore(pluto);
         }
     }
@@ -295,23 +273,38 @@ static void box_calc_size_position(box_t node)
     box->scroll_height = fmax(Flex_getResultScrollHeight(node), box->client_height);
 }
 
-static void box_draw_recursive(box_t node, plutovg_t *pluto)
+static void box_draw_node(box_t node, plutovg_t *pluto)
 {
     plutovg_matrix_t m = box_transform_by_origin(node);
+    box_calc_size_position(node);
+    plutovg_transform(pluto, &m);
+    box_draw_self(node, pluto);
+    box_draw_child(node, pluto);
+}
 
+static void box_draw_layer(box_t node, uint64_t dirty)
+{
+    box_transform_layer(node);
+    box_transform_by_origin(node);
     box_calc_size_position(node);
 
-    // if not a layer
-    if (box_is_layer(node) == false)
-        plutovg_transform(pluto, &m);
+    if (!dirty)
+        return;
+
+    plutovg_surface_t *base = box_create_layer(node);
+
+    plutovg_t *pluto = plutovg_create(base);
+    plutovg_set_operator(pluto, plutovg_operator_src);
+    plutovg_set_source_rgba(pluto, 0, 0, 0, 0);
+    plutovg_rect(pluto, 0, 0, plutovg_surface_get_width(base), plutovg_surface_get_height(base));
+    plutovg_fill(pluto);
+
+    plutovg_set_operator(pluto, plutovg_operator_src_over);
+
     box_draw_self(node, pluto);
     box_draw_child(node, pluto);
 
-    // if (Flex_getResultScrollWidth(node) != meui_get_instance()->width && Flex_getResultScrollHeight(node) != meui_get_instance()->height)
-    // {
-    //     // draw_debug_rect(pluto, Flex_getResultBorderLeft(node) - box->scroll_left, Flex_getResultBorderTop(node) - box->scroll_top, box->client_width, box->scroll_height, m);
-    //     draw_debug_rect(pluto, rect.x, rect.y, rect.w, rect.h, m);
-    // }
+    plutovg_destroy(pluto);
 }
 
 static bool box_check_layout_dirty(box_t node)
@@ -401,12 +394,10 @@ static plutovg_rect_t box_draw(box_t root)
     uint64_t self_dirty = box_check_dirty(root);
     uint64_t dirty = box_get_zindex_queue(root, pq);
 
-    if (dirty || self_dirty)
-    {
-        box_transform_layer(root);
-        box_draw_layer(root);
+    box_draw_layer(root, dirty | self_dirty);
+
+    if (dirty | self_dirty)
         result = box_rect(root);
-    }
 
     if (pqueue_peek(pq) != NULL)
     {
@@ -454,11 +445,13 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, cons
     plutovg_rect_t surface_rect = plutovg_surface_get_rect(surface);
     plutovg_rect_intersect(&update_rect, &surface_rect);
     plutovg_rect_ext(&update_rect, 1);
-    // update_rect = surface_rect;
-
-    // printf("%f %f %f %f\n", update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_rect(pluto, update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_fill(pluto);
+
+    // plutovg_rect_t screen_rect = update_rect;
+    // plutovg_matrix_map_rect(&m, &screen_rect, &screen_rect);
+    // printf("%f %f %f %f\n", screen_rect.x, screen_rect.y, screen_rect.w, screen_rect.h);
+
     // draw_debug_rect(pluto, update_rect.x + 1, update_rect.y + 1, update_rect.w - 2, update_rect.h - 2, &m);
 }
 
