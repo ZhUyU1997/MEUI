@@ -249,10 +249,10 @@ static int js_set_path(JSContext *ctx, box_t node, JSValue path)
 {
     Box *box = Flex_getContext(node);
 
-    if (box->index_in_parent == -1)
+    if (box->index == -1)
         return 0;
     int index = js_set_path(ctx, Flex_getParent(node), path);
-    JS_SetPropertyInt64(ctx, path, index, JS_NewInt32(ctx, box->index_in_parent));
+    JS_SetPropertyInt64(ctx, path, index, JS_NewInt32(ctx, box->index));
     return index + 1;
 }
 
@@ -271,7 +271,7 @@ static JSValue js_search(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
 
     Box *box = Flex_getContext(node);
-    box->index_in_parent = -1;
+    box->index = -1;
 
     JSValue path = JS_NewArray(ctx);
     box_t hitbox = box_search_queue(node, x, y);

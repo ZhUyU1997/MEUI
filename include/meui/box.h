@@ -48,36 +48,39 @@ enum BOX_DIRTY_TYPE
     BOX_DIRTY_OTHER = 1 << 6,
 };
 
+typedef uint32_t dirty_flags_t;
+
 class(Box)
 {
     box_t node;
-    enum BOX_STATE state;
-    box_style_t *style_array[BOX_STATE_MAX];
     box_style_t style;
-    int dirty;
+    box_style_t *style_array[BOX_STATE_MAX];
     char *text;
 
-    double scroll_top, scroll_left;
-    double scroll_width, scroll_height;
-    double client_width, client_height;
-    double offset_width, offset_height;
+    size_t index; // for search hitbox
+    size_t queue_pos;
 
-    int out_of_screen;
-    int index_in_parent; // for search hitbox
+    void (*draw)(Box * this, plutovg_t * pluto);
+    enum BOX_STATE state;
+
+    float scroll_top, scroll_left;
+    float scroll_width, scroll_height;
+    float client_width, client_height;
+    float offset_width, offset_height;
+
     struct
     {
         plutovg_matrix_t to_screen_matrix; // box to screen
         plutovg_matrix_t layer_to_screen_matrix;
-        plutovg_surface_t *surface;
         plutovg_rect_t last_local_rect;
         plutovg_rect_t last_screen_rect;
-        uint64_t dirty_layer;
+        plutovg_surface_t *surface;
+
         bool is_layer;
+        bool out_of_screen;
     } result;
 
-    size_t queue_pos;
-
-    void (*draw)(Box * this, plutovg_t * pluto);
+    dirty_flags_t dirty;
 };
 
 box_t box_new(enum BOX_TYPE type);
@@ -85,7 +88,7 @@ void box_free(box_t node);
 void box_free_recursive(box_t node);
 
 void box_mark_dirty(box_t node, enum BOX_DIRTY_TYPE type, int need);
-int box_get_dirty(box_t node);
+dirty_flags_t box_get_dirty(box_t node);
 void box_clear_dirty(box_t node);
 
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state);

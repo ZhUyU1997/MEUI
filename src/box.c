@@ -116,7 +116,7 @@ void box_mark_dirty(box_t node, enum BOX_DIRTY_TYPE type, int need)
     box->dirty |= type;
 }
 
-int box_get_dirty(box_t node)
+dirty_flags_t box_get_dirty(box_t node)
 {
     assert(node);
     Box *box = Flex_getContext(node);
@@ -278,7 +278,7 @@ int box_hit(box_t node, int x, int y)
 {
     Box *box = Flex_getContext(node);
 
-    if (box->out_of_screen)
+    if (box->result.out_of_screen)
         return 0;
 
     float left = Flex_getResultLeft(node);
@@ -579,7 +579,7 @@ static void box_get_zindex_queue(box_t node, pqueue_t *pq)
     {
         box_t child = Flex_getChild(node, i);
         Box *box = Flex_getContext(child);
-        box->index_in_parent = i;
+        box->index = i;
 
         if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
         {
@@ -599,7 +599,7 @@ static box_t box_search(box_t node, int x, int y)
     {
         box_t child = Flex_getChild(node, i);
         Box *box = Flex_getContext(child);
-        box->index_in_parent = i;
+        box->index = i;
 
         if (!box_style_is_unset(&box->style, BOX_STYLE_zIndex))
             continue;
