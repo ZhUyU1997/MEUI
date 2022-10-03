@@ -62,6 +62,12 @@ destructor(Box)
     if (this->text)
         free(this->text);
 
+    if (this->result.surface)
+    {
+        plutovg_surface_destroy(this->result.surface);
+        this->result.surface = NULL;
+    }
+
     Flex_setContext(this->node, NULL);
     Flex_freeNode(this->node);
 }
@@ -516,6 +522,7 @@ FlexSize box_measure_text(void *context, FlexSize constrainedSize)
     {
         plutovg_font_t *font = meui_get_font(meui_get_instance(), fontFamily, size);
         FlexSize outSize = measure_font_get_textn_path(font, align, utf8, strlen(utf8), constrainedSize.width, constrainedSize.height);
+        plutovg_font_destroy(font);
         return outSize;
     }
     return (FlexSize){.width = constrainedSize.width, .height = 0};

@@ -852,6 +852,8 @@ static JSValue js_canvas_measureText(JSContext *ctx, JSValueConst this_val,
     plutovg_rect_t rect = measure_textn_oneline_path(font, &begin, s + len, DBL_MAX, &width);
     JS_FreeCString(ctx, s);
 
+    plutovg_font_destroy(font);
+
     JSValue obj = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, obj, "actualBoundingBoxAscent", JS_NewFloat64(ctx, -rect.y));
     JS_SetPropertyStr(ctx, obj, "actualBoundingBoxDescent", JS_NewFloat64(ctx, rect.h + rect.y));
