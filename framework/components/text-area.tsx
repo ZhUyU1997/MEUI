@@ -60,6 +60,7 @@ class CanvasTextEditor {
     updateSelected = false
     focused = false
 
+    rafId = -1
     constructor(
         private canvas: CanvasElement,
         private option: CanvasTextEditorOption
@@ -68,14 +69,14 @@ class CanvasTextEditor {
         this.startBlinkinTimestamp = Date.now()
         this.initData(option.defaultValue)
 
-        requestAnimationFrame(this.render.bind(this))
-
+        this.render = this.render.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
         this.onMouseDown = this.onMouseDown.bind(this)
         this.onMouseUp = this.onMouseUp.bind(this)
         this.onMouseMove = this.onMouseMove.bind(this)
         this.onMouseOut = this.onMouseOut.bind(this)
 
+        this.rafId = requestAnimationFrame(this.render)
         this.canvas.addEventListener("mousedown", this.onMouseDown)
         this.canvas.addEventListener("mouseup", this.onMouseUp)
         this.canvas.addEventListener("mousemove", this.onMouseMove)
@@ -97,6 +98,8 @@ class CanvasTextEditor {
         this.canvas.removeEventListener("mouseup", this.onMouseUp)
         this.canvas.removeEventListener("mousemove", this.onMouseMove)
         this.canvas.removeEventListener("mouseout", this.onMouseOut)
+
+        cancelAnimationFrame(this.rafId)
     }
 
     get value() {
@@ -676,7 +679,7 @@ class CanvasTextEditor {
     }
 
     render() {
-        requestAnimationFrame(this.render.bind(this))
+        this.rafId = requestAnimationFrame(this.render)
         this.ctx.save()
 
         this.adjustCursor()
@@ -741,6 +744,7 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
         editorRef.current = editor
         return () => {
             editor.destory()
+            editorRef.current = undefined
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
