@@ -79,6 +79,9 @@ X_LDFLAGS	+= -ldl -lX11 -lXext
 else ifeq ($(strip $(PLATFORM)),sdl2)
 SRC			+= lib/QuickJS/quickjs-libc.c
 X_LDFLAGS	+= -ldl -lSDL2
+else ifeq ($(strip $(PLATFORM)),test)
+SRC			+= lib/QuickJS/quickjs-libc.c
+X_LDFLAGS	+= -ldl
 else ifeq ($(strip $(PLATFORM)),sdl2-core)
 X_LDFLAGS	+= -lSDL2
 endif
