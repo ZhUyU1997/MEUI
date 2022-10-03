@@ -115,6 +115,7 @@ int main(int argc, char **argv)
 
     eval_file(ctx, argv[1]);
     js_std_loop(ctx);
+    js_std_free_handlers(rt);
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
     return 0;
