@@ -193,7 +193,7 @@ void meui_render(struct meui_t *meui, box_t box)
     }
 
     box_t root = meui_get_root_node(meui);
-    Flex_addChild(root, box);
+    box_add_child(root, box);
     meui_update(meui);
 }
 
@@ -247,6 +247,9 @@ void meui_end(struct meui_t *meui)
         LOGE("meui == NULL");
         return;
     }
+
+    meui_image_cache_exit();
+    meui_text_cache_exit();
 
     plutovg_font_face_t *val;
     hashmap_foreach_data(val, &meui->render_context.font_map)
@@ -420,30 +423,4 @@ void meui_next_event(struct meui_t *meui, struct meui_event_t *event)
 
     struct meui_platform_t *platform = meui->platform_data;
     window_next_event(platform->window, event);
-}
-
-static struct lru_t *image_lru = NULL;
-
-void meui_image_cache_init()
-{
-    if (image_lru == NULL)
-        image_lru = image_lru_alloc();
-}
-
-plutovg_surface_t *meui_image_cache_load(const char *path, int width, int height)
-{
-    return image_lru_load(image_lru, path, width, height);
-}
-
-static struct lru_t *text_lru = NULL;
-
-void meui_text_cache_init()
-{
-    if (text_lru == NULL)
-        text_lru = text_lru_alloc();
-}
-
-plutovg_surface_t *meui_text_cache_load(const char *font_family, int ch, double font_size, plutovg_color_t font_color)
-{
-    return text_lru_load(text_lru, font_family, ch, font_size, font_color);
 }
