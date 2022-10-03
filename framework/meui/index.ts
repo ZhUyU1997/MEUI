@@ -26,6 +26,8 @@ export interface MeuiElementProps {
     onClick?: (ev: CustomEvent) => any
     onMouseUp?: (ev: MeuiMouseEvent) => any
     onMouseDown?: (ev: MeuiMouseEvent) => any
+    onMouseOver?: (ev: MeuiMouseEvent) => any
+    onMouseOut?: (ev: MeuiMouseEvent) => any
     onKeyDown?: (ev: MeuiKeyboardEvent) => any
     onKeyUp?: (ev: MeuiKeyboardEvent) => any
     onMouseMove?: (ev: MeuiMouseEvent) => any

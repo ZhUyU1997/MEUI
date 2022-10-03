@@ -708,6 +708,7 @@ export interface Props extends Omit<MeuiElementAttribule, "children"> {
     multiline?: boolean
     placeholder?: string
     children?: string
+    onChange?: (text: string) => any
 }
 
 export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
@@ -717,6 +718,7 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
         placeholder = "",
         multiline = true,
         type = "text",
+        onChange,
         ...props
     }: Props,
     ref
@@ -776,8 +778,10 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
             {...props}
             onKeyDown={(e) => {
                 editorRef.current?.onKeyDown(e)
-                const isEmpty = (editorRef.current?.value ?? "") === ""
+                const value = editorRef.current?.value
+                const isEmpty = (value ?? "") === ""
                 setPlaceholderText(isEmpty ? placeholder : "")
+                onChange?.(value ?? "")
             }}
             onFocusIn={() => {
                 editorRef.current?.setFocused(true)
