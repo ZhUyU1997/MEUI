@@ -8,6 +8,7 @@ import { Node, NodeType } from "./node"
 
 export class Text extends Node {
     nodeType = NodeType.TEXT_NODE
+    text: string
     constructor(text: string) {
         super()
         this.text = text

@@ -205,6 +205,30 @@ export class MEUI {
                             deltaZ: event.deltaZ,
                         })
                     )
+
+                    if (event.deltaY !== 0) {
+                        const needScrollBox = box
+                            .getPath()
+                            .reverse()
+                            .find((box) => {
+                                if (box.scrollHeight > box.clientHeight) {
+                                    if (event.deltaY > 0)
+                                        return (
+                                            box.scrollTop + box.clientHeight <
+                                            box.scrollHeight
+                                        )
+                                    else return box.scrollTop > 0
+                                }
+                                return false
+                            })
+
+                        if (needScrollBox) {
+                            needScrollBox.scrollTop += event.deltaY
+                            needScrollBox.dispatchEvent(
+                                new CustomEvent("scroll")
+                            )
+                        }
+                    }
                 } else if (event.type === "keyup" || event.type === "keydown") {
                     focusElement?.dispatchEvent(
                         new MeuiKeyboardEvent(event.type, {

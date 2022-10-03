@@ -9,7 +9,6 @@ import { Element } from "./element"
 export abstract class Node {
     childNodes: Node[] = []
     parentNode: Element | null = null
-    text = ""
     abstract nodeType: NodeType
     private _previousSibling: Node | null = null
     private _nextSibling: Node | null = null

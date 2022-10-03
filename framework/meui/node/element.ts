@@ -188,28 +188,60 @@ type EventCollection = {
     [K in string]: EventRecord<K>
 }
 
+const styleHandler: ProxyHandler<Element> = {
+    set: (target, prop, value) => {
+        // preact appends the "px" if the value is a number
+        if (typeof value === "string" && value.endsWith("px")) {
+            value = parseLength(value)
+        }
+        target.setStyle({ [prop]: value })
+        return true
+    },
+}
+
 export class Element extends Node {
     nativeBox: NativeBox
     children: Node[]
     eventListeners: EventCollection
-    text: string
     focusable = false
     style: any
     nodeType: NodeType = NodeType.ELEMENT_NODE
 
     // correct casing for DOM built-in events
     // preact dependents on them
-    onmousedown = null
-    onmouseup = null
-    onmousemove = null
-    onmouseout = null
-    onmouseover = null
-    onmousewheel = null
-    onkeydown = null
-    onkeyup = null
-    onclick = null
-    onfocusin = null
-    onfocusout = null
+    get onmousedown() {
+        return null
+    }
+    get onmouseup() {
+        return null
+    }
+    get onmousemove() {
+        return null
+    }
+    get onmouseout() {
+        return null
+    }
+    get onmouseover() {
+        return null
+    }
+    get onmousewheel() {
+        return null
+    }
+    get onkeydown() {
+        return null
+    }
+    get onkeyup() {
+        return null
+    }
+    get onclick() {
+        return null
+    }
+    get onfocusin() {
+        return null
+    }
+    get onfocusout() {
+        return null
+    }
 
     constructor(type = "Div", style?: MeuiStyle) {
         super()
@@ -218,44 +250,10 @@ export class Element extends Node {
         this.children = []
 
         this.eventListeners = {} as EventCollection
-        this.text = ""
 
-        if (style) {
-            this.setStyle(style)
-        }
-        this.addEventListener("mousewheel", (e: MeuiWheelEvent) => {
-            this.scrollTop += e.deltaY
-            this.dispatchEvent(new CustomEvent("scroll"))
-        })
+        if (style) this.setStyle(style)
 
-        this.style = new Proxy(
-            {
-                setProperty: (
-                    key: keyof MeuiStyle,
-                    value: MeuiStyle[keyof MeuiStyle]
-                ) => {
-                    // preact appends the "px" if the value is a number
-                    if (typeof value === "string" && value.endsWith("px")) {
-                        value = parseLength(value)
-                    }
-                    this.setStyle({ [key]: value })
-                },
-            },
-            {
-                // get(obj, prop) {
-                //     console.log(obj, prop)
-                //     return ""
-                // },
-                set: (obj, prop, value) => {
-                    // preact appends the "px" if the value is a number
-                    if (typeof value === "string" && value.endsWith("px")) {
-                        value = parseLength(value)
-                    }
-                    this.setStyle({ [prop]: value })
-                    return true
-                },
-            }
-        )
+        this.style = new Proxy(this, styleHandler)
     }
 
     getStyle(state: UI_STATE) {
@@ -350,7 +348,7 @@ export class Element extends Node {
     updateText() {
         const text = this.childNodes
             .filter((child) => child.nodeType === NodeType.TEXT_NODE)
-            .map((child) => child.text)
+            .map((child) => (child as any).text ?? "")
             .join("")
         this.textContent = text
     }
