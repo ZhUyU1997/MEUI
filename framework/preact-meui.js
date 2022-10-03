@@ -10,5 +10,8 @@ import "@/meui/node/dom"
 export default {
     render: (reactElement, meui, callback) => {
         render(reactElement, meui.getRoot())
+        meui.onunload = () => {
+            render(null, meui.getRoot())
+        }
     },
 }
