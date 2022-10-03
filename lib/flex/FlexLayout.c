@@ -1239,12 +1239,17 @@ void Flex_freeNode(FlexNodeRef node) {
 
     if (node->measuredSizeCache) {
         FlexVector_free(FlexMeasureCache, node->measuredSizeCache);
+        node->measuredSizeCache = NULL;
     }
+
     if (node->children) {
         for (;Flex_getChildrenCount(node) > 0;) {
             Flex_removeChild(node, Flex_getChild(node, Flex_getChildrenCount(node) - 1));
         }
+        FlexVector_free(FlexNodeRef, node->children);
+        node->children = NULL;
     }
+
     free(node);
 }
 
