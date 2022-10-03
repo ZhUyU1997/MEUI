@@ -102,8 +102,16 @@ export class MEUI {
         else os.setEventHandler(null)
 
         clearInterval(this.intervalId)
+
+        this.mouseHit = null
+        this.focusElement = null
+
         std.gc()
-        std.exit(0)
+
+        // setTimeout(() => {
+        //     console.log("std.exit(1)")
+        //     std.exit(1)
+        // }, 1000)
     }
 
     onEvent() {
