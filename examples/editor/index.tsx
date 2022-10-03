@@ -13,12 +13,6 @@ import TextArea, { TextAreaHandle } from "@/components/text-area"
 
 function App() {
     const ref = useRef<TextAreaHandle>(null)
-
-    useEffect(() => {
-        setInterval(() => {
-            console.log(ref.current?.value)
-        }, 1000)
-    }, [])
     return (
         <Root
             style={{
