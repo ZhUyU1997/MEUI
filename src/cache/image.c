@@ -33,7 +33,7 @@ static void lru_callback(struct lru_t *l, const char *key, int nkey, void *buf, 
 
 static image_lru_key_t *key_alloc(const char *path, size_t path_len, int width, int height)
 {
-    image_lru_key_t *key = malloc(sizeof(image_lru_key_t) + path_len);
+    image_lru_key_t *key = calloc(1, sizeof(image_lru_key_t) + path_len);
     key->width = width;
     key->height = height;
     memcpy(key->path, path, path_len);

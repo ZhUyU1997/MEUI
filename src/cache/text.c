@@ -19,9 +19,9 @@ typedef struct
 
 typedef struct
 {
-    int ch;
     double font_size;
     plutovg_color_t font_color;
+    int ch;
     char font_family[0];
 } text_lru_key_t;
 
@@ -33,7 +33,7 @@ static void lru_callback(struct lru_t *l, const char *key, int nkey, void *buf, 
 
 static text_lru_key_t *key_alloc(const char *font_family, size_t path_len, int ch, double font_size, plutovg_color_t font_color)
 {
-    text_lru_key_t *key = malloc(sizeof(text_lru_key_t) + path_len);
+    text_lru_key_t *key = calloc(1, sizeof(text_lru_key_t) + path_len);
     key->ch = ch;
     key->font_size = font_size;
     key->font_color = font_color;
