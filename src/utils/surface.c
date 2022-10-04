@@ -54,6 +54,8 @@ plutovg_rect_t plutovg_surface_get_rect_ext(plutovg_surface_t *surface, int ext_
 
 void plutovg_rect_ext(plutovg_rect_t *rect, int ext_width)
 {
+    if (plutovg_rect_invalid(rect))
+        return;
     rect->x -= ext_width;
     rect->y -= ext_width;
     rect->w += 2 * ext_width;

@@ -372,7 +372,7 @@ static plutovg_rect_t box_rect(box_t node)
     Box *box = Flex_getContext(node);
 
     plutovg_surface_t *surface = box->result.surface;
-    plutovg_rect_t rect = {0, 0, plutovg_surface_get_width(surface), plutovg_surface_get_height(surface)};
+    plutovg_rect_t rect = plutovg_surface_get_rect(surface);
     plutovg_matrix_t *m = &box->result.to_screen_matrix;
 
     plutovg_matrix_map_rect(m, &rect, &rect);
@@ -488,13 +488,17 @@ plutovg_rect_t box_render(box_t root, plutovg_surface_t *surface)
         Flex_layout(root, FlexUndefined, FlexUndefined, 1);
     }
 
-    plutovg_t *pluto = plutovg_create(surface);
-
     box_mark_layer(root, true);
 
     plutovg_rect_t rect = box_draw(root);
+
+    if (plutovg_rect_invalid(&rect))
+        return rect;
+
+    plutovg_t *pluto = plutovg_create(surface);
     plutovg_rect_t surface_rect = plutovg_surface_get_rect(surface);
     plutovg_rect_intersect(&rect, &surface_rect);
+    plutovg_rect_ext(&rect, 1);
 
     // printf("screen %f %f %f %f\n", rect.x, rect.y, rect.w, rect.h);
 
