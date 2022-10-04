@@ -447,14 +447,14 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, plut
     plutovg_rect(pluto, update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_fill(pluto);
 
-    // plutovg_rect_t screen_rect = update_rect;
-    // plutovg_matrix_map_rect(&m, &screen_rect, &screen_rect);
-    // printf("%f %f %f %f\n", screen_rect.x, screen_rect.y, screen_rect.w, screen_rect.h);
-
     // draw_debug_rect(pluto, update_rect.x + 1, update_rect.y + 1, update_rect.w - 2, update_rect.h - 2, &m);
+
+    plutovg_matrix_map_rect(&m, &update_rect, &update_rect);
+    plutovg_rect_unite(rect, &update_rect);
+    plutovg_rect_ext(rect, 1);
 }
 
-static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, const plutovg_rect_t *rect)
+static void box_composite(plutovg_t *pluto, box_t lower, box_t upper, plutovg_rect_t *rect)
 {
     pqueue_t *pq = box_pqueue_init(10);
 
