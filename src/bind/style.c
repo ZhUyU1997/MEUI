@@ -753,7 +753,7 @@ static JSValue js_set_style_transform_origin(JSContext *ctx, box_t node, box_sty
             }
         }
 
-        s[1] = JS_ToCString(ctx, v0);
+        s[1] = JS_ToCString(ctx, v1);
         if (!s[1])
         {
             JS_FreeCString(ctx, s[0]);
