@@ -433,6 +433,14 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, plut
         return;
 
     plutovg_surface_t *surface = box_get_layer(upper);
+    plutovg_rect_t surface_rect = plutovg_surface_get_rect(surface);
+    plutovg_rect_intersect(&update_rect, &surface_rect);
+
+    if (plutovg_rect_invalid(&update_rect))
+        return;
+
+    plutovg_rect_ext(&update_rect, 1);
+
     plutovg_set_matrix(pluto, &m);
     plutovg_set_source_surface(pluto, surface, 0, 0);
 
@@ -441,9 +449,6 @@ static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, plut
     else
         plutovg_set_operator(pluto, plutovg_operator_src);
 
-    plutovg_rect_t surface_rect = plutovg_surface_get_rect(surface);
-    plutovg_rect_intersect(&update_rect, &surface_rect);
-    plutovg_rect_ext(&update_rect, 1);
     plutovg_rect(pluto, update_rect.x, update_rect.y, update_rect.w, update_rect.h);
     plutovg_fill(pluto);
 
