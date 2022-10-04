@@ -633,7 +633,7 @@ static box_t box_search(box_t node, int x, int y)
 
 box_t box_search_queue(box_t node, int x, int y)
 {
-    pqueue_t *pq = box_pqueue_init(10);
+    pqueue_t *pq = box_reverse_pqueue_init(10);
     box_get_zindex_queue(node, pq);
 
     if (pqueue_peek(pq) != NULL)

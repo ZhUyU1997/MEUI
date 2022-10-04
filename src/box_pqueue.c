@@ -12,6 +12,11 @@ static int cmp_pri(pqueue_pri_t next, pqueue_pri_t curr)
     return (next > curr);
 }
 
+static int cmp_reverse_pri(pqueue_pri_t next, pqueue_pri_t curr)
+{
+    return (next <= curr);
+}
+
 static pqueue_pri_t get_pri(void *a)
 {
     Box *box = Flex_getContext((box_t)a);
@@ -40,4 +45,9 @@ static void set_pos(void *a, size_t pos)
 pqueue_t *box_pqueue_init(size_t n)
 {
     return pqueue_init(10, cmp_pri, get_pri, set_pri, get_pos, set_pos);
+}
+
+pqueue_t *box_reverse_pqueue_init(size_t n)
+{
+    return pqueue_init(10, cmp_reverse_pri, get_pri, set_pri, get_pos, set_pos);
 }
