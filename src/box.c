@@ -147,17 +147,17 @@ box_style_t *box_get_style(box_t node, enum BOX_STATE state)
 void box_set_style(box_t node, box_style_t *style, enum BOX_STATE state)
 {
     assert(node && style);
-
     Box *box = Flex_getContext(node);
 
     int is_using_style = state == BOX_STATE_DEFAULT || box->state == state;
     int style_dirty = box->style_array[state] != style || box_style_is_dirty(style);
     int is_layout_related = box_style_layout_flags & box_style_is_dirty(style);
 
+    int need_update = is_using_style && style_dirty;
     if (is_layout_related)
-        box_mark_dirty(node, BOX_DIRTY_STYLE | BOX_DIRTY_LAYOUT, is_using_style && style_dirty);
-    else
-        box_mark_dirty(node, BOX_DIRTY_STYLE, is_using_style && style_dirty);
+        box_mark_dirty(node, BOX_DIRTY_LAYOUT, need_update);
+
+    box_mark_dirty(node, BOX_DIRTY_STYLE, is_using_style && style_dirty);
 
     box->style_array[state] = style;
 }
@@ -175,7 +175,16 @@ void box_set_state(box_t node, enum BOX_STATE state)
     int state_eq_default = state == BOX_STATE_DEFAULT || box->style_array[state] == NULL;
     int old_state_eq_default = box->state == BOX_STATE_DEFAULT || box->style_array[box->state] == NULL;
 
-    box_mark_dirty(node, BOX_DIRTY_STYLE, box->state != state && !(state_eq_default && old_state_eq_default));
+    int need_update = box->state != state && !(state_eq_default && old_state_eq_default);
+
+    if (need_update)
+    {
+        bool state_is_layout_related = box_style_is_unset(box->style_array[state_eq_default ? BOX_STATE_DEFAULT : state], box_style_layout_flags) == false;
+        bool old_state_is_layout_related = box_style_is_unset(box->style_array[old_state_eq_default ? BOX_STATE_DEFAULT : box->state], box_style_layout_flags) == false;
+        box_mark_dirty(node, BOX_DIRTY_LAYOUT, state_is_layout_related || old_state_is_layout_related);
+    }
+
+    box_mark_dirty(node, BOX_DIRTY_STYLE, need_update);
     box->state = state;
 }
 
