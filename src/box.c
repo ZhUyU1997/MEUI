@@ -488,7 +488,9 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
             draw_image(pluto, box->style.contentImage, content_rect);
         }
 
-        if (border_color.a != 0)
+        bool has_border = border_top != 0.0 || border_right != 0.0 || border_bottom != 0.0 || border_left != 0.0;
+
+        if (border_color.a != 0 && has_border)
         {
             plutovg_add_path(pluto, outer_path);
             plutovg_set_fill_rule(pluto, plutovg_fill_rule_even_odd);
