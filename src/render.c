@@ -410,23 +410,27 @@ static plutovg_rect_t box_draw(box_t root)
     return result;
 }
 
-static void box_map_rect_to_local(box_t node, plutovg_rect_t *rect)
+static bool box_map_rect_to_local(box_t node, plutovg_rect_t *rect)
 {
     Box *box = Flex_getContext(node);
 
     plutovg_matrix_t m = box->result.to_screen_matrix;
-    plutovg_matrix_invert(&m);
+    if (plutovg_matrix_invert(&m) == 0)
+        return false;
     plutovg_matrix_map_rect(&m, rect, rect);
+
+    return true;
 }
 
-static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, const plutovg_rect_t *rect)
+static void box_composite_layer(plutovg_t *pluto, box_t lower, box_t upper, plutovg_rect_t *rect)
 {
     plutovg_rect_t update_rect = *rect;
 
     Box *upper_box = Flex_getContext(upper);
     plutovg_matrix_t m = upper_box->result.to_screen_matrix;
 
-    box_map_rect_to_local(upper, &update_rect);
+    if (box_map_rect_to_local(upper, &update_rect) == false)
+        return;
 
     plutovg_surface_t *surface = box_get_layer(upper);
     plutovg_set_matrix(pluto, &m);

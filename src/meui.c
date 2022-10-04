@@ -162,7 +162,8 @@ box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_poin
     box_t target = NULL;
 
     plutovg_matrix_t m = box->result.to_screen_matrix;
-    plutovg_matrix_invert(&m);
+    if(plutovg_matrix_invert(&m) == 0)
+        return NULL;
 
     plutovg_point_t dst;
     plutovg_matrix_map_point(&m, point, &dst);

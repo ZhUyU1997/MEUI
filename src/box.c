@@ -298,13 +298,15 @@ int box_hit(box_t node, int x, int y)
     box_t target = node;
 
     plutovg_matrix_t to_local = box->result.to_screen_matrix;
-    plutovg_matrix_invert(&to_local);
+    if (plutovg_matrix_invert(&to_local) == 0)
+        return 0;
 
     plutovg_point_t dst;
     plutovg_matrix_map_point(&to_local, &(plutovg_point_t){x, y}, &dst);
 
     if (dst.x >= 0 && dst.x < width && dst.y >= 0 && dst.y < height)
     {
+        // The point can be displayed indicating that the coordinates of each ancestor mapping are within its visible area
         for (box_t node = Flex_getParent(target); node != NULL; node = Flex_getParent(node))
         {
             Box *box = Flex_getContext(node);
