@@ -21,6 +21,10 @@ function App() {
                     backgroundColor: "red",
                     textAlign: "center",
                     transform: " rotate(20deg) translateX(-20px) scale(1.2)",
+                    HOVER: {
+                        border: 10,
+                        borderColor: "black",
+                    },
                     // zIndex: 3,
                 }}
             >
@@ -34,6 +38,10 @@ function App() {
                     textAlign: "center",
                     transform: " rotate(20deg) translateX(-20px) scale(1.2)",
                     zIndex: 2,
+                    HOVER: {
+                        border: 10,
+                        borderColor: "black",
+                    },
                 }}
             >
                 zindex: 2
@@ -46,6 +54,10 @@ function App() {
                     textAlign: "center",
                     transform: " rotate(20deg) translateX(-20px) scale(1.5)",
                     zIndex: 1,
+                    HOVER: {
+                        border: 10,
+                        borderColor: "black",
+                    },
                 }}
             >
                 zindex: 1
