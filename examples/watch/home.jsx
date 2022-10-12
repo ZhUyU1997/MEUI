@@ -329,11 +329,19 @@ function App() {
             })
     )
 
-    const [offest, setOffset] = useState({
+    const [offset, setOffset] = useState({
         x: 0,
         y: 0,
     })
 
+    const [start, setStart] = useState({
+        offsetX: 0,
+        offsetY: 0,
+        x: 0,
+        y: 0,
+    })
+
+    const [touching, setTouching] = useState(false)
     return (
         <Root>
             <Div
@@ -343,18 +351,32 @@ function App() {
                     width: "100%",
                     overflow: "hidden",
                 }}
-                onMouseMove={(e) => {
-                    setOffset({
-                        x: e.screenX - SCREEN_WIDTH / 2,
-                        y: e.screenY - SCREEN_HEIGHT / 2,
+                onMouseDown={(e) => {
+                    setTouching(true)
+                    setStart({
+                        x: e.screenX,
+                        y: e.screenY,
+                        offsetX: offset.x,
+                        offsetY: offset.y,
                     })
+                }}
+                onMouseUp={(e) => {
+                    setTouching(false)
+                }}
+                onMouseMove={(e) => {
+                    if (touching) {
+                        setOffset(({ x, y }) => ({
+                            x: start.offsetX + (e.screenX - start.x),
+                            y: start.offsetY + (e.screenY - start.y),
+                        }))
+                    }
                 }}
             >
                 <Stack>
                     {icons.map((item, index) => {
                         const { size, x, y } = Calc(
-                            item.col + offest.x / 100,
-                            item.row + offest.y / 100
+                            item.col + offset.x / 100,
+                            item.row + offset.y / 100
                         )
 
                         const scale = (size * 2) / ICON_SIZE
