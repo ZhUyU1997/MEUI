@@ -107,13 +107,6 @@ void box_style_widthAuto(box_style_t *style)
     style->flags |= UINT64_C(1) << 9;
     style->dirty |= UINT64_C(1) << 9;
 }
-void box_style_widthContent(box_style_t *style)
-{
-    assert(style);
-    style->width = FlexLengthContent;
-    style->flags |= UINT64_C(1) << 9;
-    style->dirty |= UINT64_C(1) << 9;
-}
 void box_style_height(box_style_t *style, float height)
 {
     assert(style);
@@ -134,13 +127,6 @@ void box_style_heightAuto(box_style_t *style)
 {
     assert(style);
     style->height = FlexLengthAuto;
-    style->flags |= UINT64_C(1) << 10;
-    style->dirty |= UINT64_C(1) << 10;
-}
-void box_style_heightContent(box_style_t *style)
-{
-    assert(style);
-    style->height = FlexLengthContent;
     style->flags |= UINT64_C(1) << 10;
     style->dirty |= UINT64_C(1) << 10;
 }
@@ -231,13 +217,6 @@ void box_style_marginLeftAuto(box_style_t *style)
     style->flags |= UINT64_C(1) << 15;
     style->dirty |= UINT64_C(1) << 15;
 }
-void box_style_marginLeftContent(box_style_t *style)
-{
-    assert(style);
-    style->marginLeft = FlexLengthContent;
-    style->flags |= UINT64_C(1) << 15;
-    style->dirty |= UINT64_C(1) << 15;
-}
 void box_style_marginTop(box_style_t *style, float marginTop)
 {
     assert(style);
@@ -258,13 +237,6 @@ void box_style_marginTopAuto(box_style_t *style)
 {
     assert(style);
     style->marginTop = FlexLengthAuto;
-    style->flags |= UINT64_C(1) << 16;
-    style->dirty |= UINT64_C(1) << 16;
-}
-void box_style_marginTopContent(box_style_t *style)
-{
-    assert(style);
-    style->marginTop = FlexLengthContent;
     style->flags |= UINT64_C(1) << 16;
     style->dirty |= UINT64_C(1) << 16;
 }
@@ -291,13 +263,6 @@ void box_style_marginBottomAuto(box_style_t *style)
     style->flags |= UINT64_C(1) << 17;
     style->dirty |= UINT64_C(1) << 17;
 }
-void box_style_marginBottomContent(box_style_t *style)
-{
-    assert(style);
-    style->marginBottom = FlexLengthContent;
-    style->flags |= UINT64_C(1) << 17;
-    style->dirty |= UINT64_C(1) << 17;
-}
 void box_style_marginRight(box_style_t *style, float marginRight)
 {
     assert(style);
@@ -318,13 +283,6 @@ void box_style_marginRightAuto(box_style_t *style)
 {
     assert(style);
     style->marginRight = FlexLengthAuto;
-    style->flags |= UINT64_C(1) << 18;
-    style->dirty |= UINT64_C(1) << 18;
-}
-void box_style_marginRightContent(box_style_t *style)
-{
-    assert(style);
-    style->marginRight = FlexLengthContent;
     style->flags |= UINT64_C(1) << 18;
     style->dirty |= UINT64_C(1) << 18;
 }
@@ -351,13 +309,6 @@ void box_style_marginStartAuto(box_style_t *style)
     style->flags |= UINT64_C(1) << 19;
     style->dirty |= UINT64_C(1) << 19;
 }
-void box_style_marginStartContent(box_style_t *style)
-{
-    assert(style);
-    style->marginStart = FlexLengthContent;
-    style->flags |= UINT64_C(1) << 19;
-    style->dirty |= UINT64_C(1) << 19;
-}
 void box_style_marginEnd(box_style_t *style, float marginEnd)
 {
     assert(style);
@@ -378,13 +329,6 @@ void box_style_marginEndAuto(box_style_t *style)
 {
     assert(style);
     style->marginEnd = FlexLengthAuto;
-    style->flags |= UINT64_C(1) << 20;
-    style->dirty |= UINT64_C(1) << 20;
-}
-void box_style_marginEndContent(box_style_t *style)
-{
-    assert(style);
-    style->marginEnd = FlexLengthContent;
     style->flags |= UINT64_C(1) << 20;
     style->dirty |= UINT64_C(1) << 20;
 }
@@ -484,110 +428,142 @@ void box_style_paddingEndPercent(box_style_t *style, float paddingEnd)
     style->flags |= UINT64_C(1) << 26;
     style->dirty |= UINT64_C(1) << 26;
 }
+void box_style_rowGap(box_style_t *style, float rowGap)
+{
+    assert(style);
+    style->rowGap.value = rowGap;
+    style->rowGap.type = FlexLengthTypePoint;
+    style->flags |= UINT64_C(1) << 27;
+    style->dirty |= UINT64_C(1) << 27;
+}
+void box_style_rowGapPercent(box_style_t *style, float rowGap)
+{
+    assert(style);
+    style->rowGap.value = rowGap;
+    style->rowGap.type = FlexLengthTypePercent;
+    style->flags |= UINT64_C(1) << 27;
+    style->dirty |= UINT64_C(1) << 27;
+}
+void box_style_columnGap(box_style_t *style, float columnGap)
+{
+    assert(style);
+    style->columnGap.value = columnGap;
+    style->columnGap.type = FlexLengthTypePoint;
+    style->flags |= UINT64_C(1) << 28;
+    style->dirty |= UINT64_C(1) << 28;
+}
+void box_style_columnGapPercent(box_style_t *style, float columnGap)
+{
+    assert(style);
+    style->columnGap.value = columnGap;
+    style->columnGap.type = FlexLengthTypePercent;
+    style->flags |= UINT64_C(1) << 28;
+    style->dirty |= UINT64_C(1) << 28;
+}
 void box_style_borderLeft(box_style_t *style, float borderLeft)
 {
     assert(style);
     style->borderLeft = borderLeft;
-    style->flags |= UINT64_C(1) << 27;
-    style->dirty |= UINT64_C(1) << 27;
+    style->flags |= UINT64_C(1) << 29;
+    style->dirty |= UINT64_C(1) << 29;
 }
 void box_style_borderTop(box_style_t *style, float borderTop)
 {
     assert(style);
     style->borderTop = borderTop;
-    style->flags |= UINT64_C(1) << 28;
-    style->dirty |= UINT64_C(1) << 28;
+    style->flags |= UINT64_C(1) << 30;
+    style->dirty |= UINT64_C(1) << 30;
 }
 void box_style_borderBottom(box_style_t *style, float borderBottom)
 {
     assert(style);
     style->borderBottom = borderBottom;
-    style->flags |= UINT64_C(1) << 29;
-    style->dirty |= UINT64_C(1) << 29;
+    style->flags |= UINT64_C(1) << 31;
+    style->dirty |= UINT64_C(1) << 31;
 }
 void box_style_borderRight(box_style_t *style, float borderRight)
 {
     assert(style);
     style->borderRight = borderRight;
-    style->flags |= UINT64_C(1) << 30;
-    style->dirty |= UINT64_C(1) << 30;
+    style->flags |= UINT64_C(1) << 32;
+    style->dirty |= UINT64_C(1) << 32;
 }
 void box_style_borderStart(box_style_t *style, float borderStart)
 {
     assert(style);
     style->borderStart = borderStart;
-    style->flags |= UINT64_C(1) << 31;
-    style->dirty |= UINT64_C(1) << 31;
+    style->flags |= UINT64_C(1) << 33;
+    style->dirty |= UINT64_C(1) << 33;
 }
 void box_style_borderEnd(box_style_t *style, float borderEnd)
 {
     assert(style);
     style->borderEnd = borderEnd;
-    style->flags |= UINT64_C(1) << 32;
-    style->dirty |= UINT64_C(1) << 32;
+    style->flags |= UINT64_C(1) << 34;
+    style->dirty |= UINT64_C(1) << 34;
 }
 void box_style_borderTopLeftRadius(box_style_t *style, float borderTopLeftRadius)
 {
     assert(style);
     style->borderTopLeftRadius = borderTopLeftRadius;
-    style->flags |= UINT64_C(1) << 33;
-    style->dirty |= UINT64_C(1) << 33;
+    style->flags |= UINT64_C(1) << 35;
+    style->dirty |= UINT64_C(1) << 35;
 }
 void box_style_borderTopRightRadius(box_style_t *style, float borderTopRightRadius)
 {
     assert(style);
     style->borderTopRightRadius = borderTopRightRadius;
-    style->flags |= UINT64_C(1) << 34;
-    style->dirty |= UINT64_C(1) << 34;
+    style->flags |= UINT64_C(1) << 36;
+    style->dirty |= UINT64_C(1) << 36;
 }
 void box_style_borderBottomRightRadius(box_style_t *style, float borderBottomRightRadius)
 {
     assert(style);
     style->borderBottomRightRadius = borderBottomRightRadius;
-    style->flags |= UINT64_C(1) << 35;
-    style->dirty |= UINT64_C(1) << 35;
+    style->flags |= UINT64_C(1) << 37;
+    style->dirty |= UINT64_C(1) << 37;
 }
 void box_style_borderBottomLeftRadius(box_style_t *style, float borderBottomLeftRadius)
 {
     assert(style);
     style->borderBottomLeftRadius = borderBottomLeftRadius;
-    style->flags |= UINT64_C(1) << 36;
-    style->dirty |= UINT64_C(1) << 36;
+    style->flags |= UINT64_C(1) << 38;
+    style->dirty |= UINT64_C(1) << 38;
 }
 void box_style_borderColor(box_style_t *style, plutovg_color_t borderColor)
 {
     assert(style);
     style->borderColor = borderColor;
-    style->flags |= UINT64_C(1) << 37;
-    style->dirty |= UINT64_C(1) << 37;
+    style->flags |= UINT64_C(1) << 39;
+    style->dirty |= UINT64_C(1) << 39;
 }
 void box_style_backgroundColor(box_style_t *style, plutovg_color_t backgroundColor)
 {
     assert(style);
     style->backgroundColor = backgroundColor;
-    style->flags |= UINT64_C(1) << 38;
-    style->dirty |= UINT64_C(1) << 38;
+    style->flags |= UINT64_C(1) << 40;
+    style->dirty |= UINT64_C(1) << 40;
 }
 void box_style_fontColor(box_style_t *style, plutovg_color_t fontColor)
 {
     assert(style);
     style->fontColor = fontColor;
-    style->flags |= UINT64_C(1) << 39;
-    style->dirty |= UINT64_C(1) << 39;
+    style->flags |= UINT64_C(1) << 41;
+    style->dirty |= UINT64_C(1) << 41;
 }
 void box_style_textAlign(box_style_t *style, TEXT_ALIGN textAlign)
 {
     assert(style);
     style->textAlign = textAlign;
-    style->flags |= UINT64_C(1) << 40;
-    style->dirty |= UINT64_C(1) << 40;
+    style->flags |= UINT64_C(1) << 42;
+    style->dirty |= UINT64_C(1) << 42;
 }
 void box_style_fontSize(box_style_t *style, double fontSize)
 {
     assert(style);
     style->fontSize = fontSize;
-    style->flags |= UINT64_C(1) << 41;
-    style->dirty |= UINT64_C(1) << 41;
+    style->flags |= UINT64_C(1) << 43;
+    style->dirty |= UINT64_C(1) << 43;
 }
 void box_style_backgroundImage(box_style_t *style, const char *backgroundImage)
 {
@@ -595,8 +571,8 @@ void box_style_backgroundImage(box_style_t *style, const char *backgroundImage)
     assert(backgroundImage);
     if (style->backgroundImage) free(style->backgroundImage);
     style->backgroundImage = strdup(backgroundImage);
-    style->flags |= UINT64_C(1) << 42;
-    style->dirty |= UINT64_C(1) << 42;
+    style->flags |= UINT64_C(1) << 44;
+    style->dirty |= UINT64_C(1) << 44;
 }
 void box_style_contentImage(box_style_t *style, const char *contentImage)
 {
@@ -604,15 +580,15 @@ void box_style_contentImage(box_style_t *style, const char *contentImage)
     assert(contentImage);
     if (style->contentImage) free(style->contentImage);
     style->contentImage = strdup(contentImage);
-    style->flags |= UINT64_C(1) << 43;
-    style->dirty |= UINT64_C(1) << 43;
+    style->flags |= UINT64_C(1) << 45;
+    style->dirty |= UINT64_C(1) << 45;
 }
 void box_style_transform(box_style_t *style, double m00, double m10, double m01, double m11, double m02, double m12)
 {
     assert(style);
     plutovg_matrix_init(&style->transform, m00, m10, m01, m11, m02, m12);
-    style->flags |= UINT64_C(1) << 44;
-    style->dirty |= UINT64_C(1) << 44;
+    style->flags |= UINT64_C(1) << 46;
+    style->dirty |= UINT64_C(1) << 46;
 }
 void box_style_transformOriginKeyword(box_style_t *style, TRANSFORM_ORIGIN x, TRANSFORM_ORIGIN y)
 {
@@ -620,8 +596,8 @@ void box_style_transformOriginKeyword(box_style_t *style, TRANSFORM_ORIGIN x, TR
     style->transformOrigin.type = TRANSFORM_ORIGIN_TYPE_KEYWORD;
     style->transformOrigin.x.keyword = x;
     style->transformOrigin.y.keyword = y;
-    style->flags |= UINT64_C(1) << 45;
-    style->dirty |= UINT64_C(1) << 45;
+    style->flags |= UINT64_C(1) << 47;
+    style->dirty |= UINT64_C(1) << 47;
 }
 void box_style_transformOriginOffset(box_style_t *style, double x, double y)
 {
@@ -629,8 +605,8 @@ void box_style_transformOriginOffset(box_style_t *style, double x, double y)
     style->transformOrigin.type = TRANSFORM_ORIGIN_TYPE_OFFSET;
     style->transformOrigin.x.offset = x;
     style->transformOrigin.y.offset = y;
-    style->flags |= UINT64_C(1) << 45;
-    style->dirty |= UINT64_C(1) << 45;
+    style->flags |= UINT64_C(1) << 47;
+    style->dirty |= UINT64_C(1) << 47;
 }
 void box_style_fontFamily(box_style_t *style, const char *fontFamily)
 {
@@ -638,88 +614,88 @@ void box_style_fontFamily(box_style_t *style, const char *fontFamily)
     assert(fontFamily);
     if (style->fontFamily) free(style->fontFamily);
     style->fontFamily = strdup(fontFamily);
-    style->flags |= UINT64_C(1) << 46;
-    style->dirty |= UINT64_C(1) << 46;
+    style->flags |= UINT64_C(1) << 48;
+    style->dirty |= UINT64_C(1) << 48;
 }
 void box_style_overflow(box_style_t *style, CSS_OVERFLOW overflow)
 {
     assert(style);
     style->overflow = overflow;
-    style->flags |= UINT64_C(1) << 47;
-    style->dirty |= UINT64_C(1) << 47;
+    style->flags |= UINT64_C(1) << 49;
+    style->dirty |= UINT64_C(1) << 49;
 }
 void box_style_left(box_style_t *style, float left)
 {
     assert(style);
     style->left.value = left;
     style->left.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 48;
-    style->dirty |= UINT64_C(1) << 48;
+    style->flags |= UINT64_C(1) << 50;
+    style->dirty |= UINT64_C(1) << 50;
 }
 void box_style_leftPercent(box_style_t *style, float left)
 {
     assert(style);
     style->left.value = left;
     style->left.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 48;
-    style->dirty |= UINT64_C(1) << 48;
+    style->flags |= UINT64_C(1) << 50;
+    style->dirty |= UINT64_C(1) << 50;
 }
 void box_style_right(box_style_t *style, float right)
 {
     assert(style);
     style->right.value = right;
     style->right.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 49;
-    style->dirty |= UINT64_C(1) << 49;
+    style->flags |= UINT64_C(1) << 51;
+    style->dirty |= UINT64_C(1) << 51;
 }
 void box_style_rightPercent(box_style_t *style, float right)
 {
     assert(style);
     style->right.value = right;
     style->right.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 49;
-    style->dirty |= UINT64_C(1) << 49;
+    style->flags |= UINT64_C(1) << 51;
+    style->dirty |= UINT64_C(1) << 51;
 }
 void box_style_top(box_style_t *style, float top)
 {
     assert(style);
     style->top.value = top;
     style->top.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 50;
-    style->dirty |= UINT64_C(1) << 50;
+    style->flags |= UINT64_C(1) << 52;
+    style->dirty |= UINT64_C(1) << 52;
 }
 void box_style_topPercent(box_style_t *style, float top)
 {
     assert(style);
     style->top.value = top;
     style->top.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 50;
-    style->dirty |= UINT64_C(1) << 50;
+    style->flags |= UINT64_C(1) << 52;
+    style->dirty |= UINT64_C(1) << 52;
 }
 void box_style_bottom(box_style_t *style, float bottom)
 {
     assert(style);
     style->bottom.value = bottom;
     style->bottom.type = FlexLengthTypePoint;
-    style->flags |= UINT64_C(1) << 51;
-    style->dirty |= UINT64_C(1) << 51;
+    style->flags |= UINT64_C(1) << 53;
+    style->dirty |= UINT64_C(1) << 53;
 }
 void box_style_bottomPercent(box_style_t *style, float bottom)
 {
     assert(style);
     style->bottom.value = bottom;
     style->bottom.type = FlexLengthTypePercent;
-    style->flags |= UINT64_C(1) << 51;
-    style->dirty |= UINT64_C(1) << 51;
+    style->flags |= UINT64_C(1) << 53;
+    style->dirty |= UINT64_C(1) << 53;
 }
 void box_style_zIndex(box_style_t *style, int zIndex)
 {
     assert(style);
     style->zIndex = zIndex;
-    style->flags |= UINT64_C(1) << 52;
-    style->dirty |= UINT64_C(1) << 52;
+    style->flags |= UINT64_C(1) << 54;
+    style->dirty |= UINT64_C(1) << 54;
 }
-// 53 53
+// 55 55
 
 box_style_t *box_style_new()
 {
@@ -794,7 +770,7 @@ void box_style_merge(box_style_t *dst, const box_style_t *src)
     if(!flags)
         return;
 
-    for(int i = 0; i < 53; i++)
+    for(int i = 0; i < 55; i++)
     {
         if(!(flags & (UINT64_C(1) << i)))
             continue;
@@ -910,109 +886,117 @@ void box_style_merge(box_style_t *dst, const box_style_t *src)
                 break;
 
             case 27:
-                dst->borderLeft = src->borderLeft;
+                dst->rowGap = src->rowGap;
                 break;
 
             case 28:
-                dst->borderTop = src->borderTop;
+                dst->columnGap = src->columnGap;
                 break;
 
             case 29:
-                dst->borderBottom = src->borderBottom;
+                dst->borderLeft = src->borderLeft;
                 break;
 
             case 30:
-                dst->borderRight = src->borderRight;
+                dst->borderTop = src->borderTop;
                 break;
 
             case 31:
-                dst->borderStart = src->borderStart;
+                dst->borderBottom = src->borderBottom;
                 break;
 
             case 32:
-                dst->borderEnd = src->borderEnd;
+                dst->borderRight = src->borderRight;
                 break;
 
             case 33:
-                dst->borderTopLeftRadius = src->borderTopLeftRadius;
+                dst->borderStart = src->borderStart;
                 break;
 
             case 34:
-                dst->borderTopRightRadius = src->borderTopRightRadius;
+                dst->borderEnd = src->borderEnd;
                 break;
 
             case 35:
-                dst->borderBottomRightRadius = src->borderBottomRightRadius;
+                dst->borderTopLeftRadius = src->borderTopLeftRadius;
                 break;
 
             case 36:
-                dst->borderBottomLeftRadius = src->borderBottomLeftRadius;
+                dst->borderTopRightRadius = src->borderTopRightRadius;
                 break;
 
             case 37:
-                dst->borderColor = src->borderColor;
+                dst->borderBottomRightRadius = src->borderBottomRightRadius;
                 break;
 
             case 38:
-                dst->backgroundColor = src->backgroundColor;
+                dst->borderBottomLeftRadius = src->borderBottomLeftRadius;
                 break;
 
             case 39:
-                dst->fontColor = src->fontColor;
+                dst->borderColor = src->borderColor;
                 break;
 
             case 40:
-                dst->textAlign = src->textAlign;
+                dst->backgroundColor = src->backgroundColor;
                 break;
 
             case 41:
-                dst->fontSize = src->fontSize;
+                dst->fontColor = src->fontColor;
                 break;
 
             case 42:
+                dst->textAlign = src->textAlign;
+                break;
+
+            case 43:
+                dst->fontSize = src->fontSize;
+                break;
+
+            case 44:
                 if(dst->backgroundImage) free(dst->backgroundImage);
                 dst->backgroundImage = strdup(src->backgroundImage);
                 break;
 
-            case 43:
+            case 45:
                 if(dst->contentImage) free(dst->contentImage);
                 dst->contentImage = strdup(src->contentImage);
                 break;
 
-            case 44:
+            case 46:
                 dst->transform = src->transform;
                 break;
 
-            case 45:
+            case 47:
                 dst->transformOrigin = src->transformOrigin;
                 break;
 
-            case 46:
+            case 48:
                 if(dst->fontFamily) free(dst->fontFamily);
                 dst->fontFamily = strdup(src->fontFamily);
                 break;
 
-            case 47:
+            case 49:
                 dst->overflow = src->overflow;
                 break;
 
-            case 48:
+            case 50:
                 dst->left = src->left;
                 break;
 
-            case 49:
+            case 51:
                 dst->right = src->right;
                 break;
 
-            case 50:
+            case 52:
                 dst->top = src->top;
                 break;
 
-            case 51:
+            case 53:
                 dst->bottom = src->bottom;
                 break;
 
-            case 52:
+            case 54:
                 dst->zIndex = src->zIndex;
                 break;
 
@@ -1143,26 +1127,34 @@ void box_style_to_flex(box_style_t *style, box_t box)
                 break;
 
             case 27:
-                Flex_setBorderLeft(box, style->borderLeft);
+                Flex_setRowGap_Length(box, style->rowGap);
                 break;
 
             case 28:
-                Flex_setBorderTop(box, style->borderTop);
+                Flex_setColumnGap_Length(box, style->columnGap);
                 break;
 
             case 29:
-                Flex_setBorderBottom(box, style->borderBottom);
+                Flex_setBorderLeft(box, style->borderLeft);
                 break;
 
             case 30:
-                Flex_setBorderRight(box, style->borderRight);
+                Flex_setBorderTop(box, style->borderTop);
                 break;
 
             case 31:
-                Flex_setBorderStart(box, style->borderStart);
+                Flex_setBorderBottom(box, style->borderBottom);
                 break;
 
             case 32:
+                Flex_setBorderRight(box, style->borderRight);
+                break;
+
+            case 33:
+                Flex_setBorderStart(box, style->borderStart);
+                break;
+
+            case 34:
                 Flex_setBorderEnd(box, style->borderEnd);
                 break;
 

@@ -137,8 +137,8 @@ typedef struct FlexNode {
 
     // extension
     bool fixed;
-    FlexLength spacing;         // the spacing between each two items. length, percentage(relative to its inner main size)
-    FlexLength lineSpacing;     // the spacing between each two lines. length, percentage(relative to its inner cross size)
+    FlexLength columnGap;       // the columnGap between each two items. length, percentage(relative to its inner main size)
+    FlexLength rowGap;          // the rowGap between each two lines. length, percentage(relative to its inner cross size)
     unsigned int lines;         // the maximum number of lines, 0 means no limit
     unsigned int itemsPerLine;  // the maximum number of items per line, 0 means no limit
 
@@ -187,8 +187,8 @@ static const FlexNode defaultFlexNode = {
     .border = { 0, 0, 0, 0, FlexUndefined, FlexUndefined },
 
     .fixed = false,
-    .spacing = FlexLengthZero,
-    .lineSpacing = FlexLengthZero,
+    .columnGap = FlexLengthZero,
+    .rowGap = FlexLengthZero,
     .lines = 0,
     .itemsPerLine = 0,
 
@@ -458,6 +458,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
     
     bool isReverse = node->direction == FlexHorizontalReverse || node->direction == FlexVerticalReverse;
     bool isWrapReverse = node->wrap == FlexWrapReverse;
+    bool isMainHorizontal = node->direction == FlexHorizontal || node->direction == FlexHorizontalReverse;
     FlexDirection mainAxis = flex_dim[node->direction];
     FlexDirection crossAxis = mainAxis == FlexHorizontal ? FlexVertical : FlexHorizontal;
     
@@ -501,9 +502,11 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
     lines[0].itemsSize = 0;
     size_t linesCount = 1;
     
-    float spacing = flex_auto_to_0(flex_resolve(node->spacing, context, resolvedInnerSize.size[mainAxis]));
-    float lineSpacing = flex_auto_to_0(flex_resolve(node->lineSpacing, context, resolvedInnerSize.size[crossAxis]));
-    
+    float columnGap = flex_auto_to_0(flex_resolve(node->columnGap, context, resolvedInnerSize.size[FLEX_WIDTH]));
+    float rowGap = flex_auto_to_0(flex_resolve(node->rowGap, context, resolvedInnerSize.size[FLEX_HEIGHT]));
+    float mainGap = isMainHorizontal ? columnGap : rowGap;
+    float crossGap = isMainHorizontal ?  rowGap:  columnGap;
+
     // 3. Determine the flex base size and hypothetical main size of each item:
     for (i=0;i<flexItemsCount;i++) {
         FlexNodeRef item = items[i];
@@ -544,7 +547,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
         // 5. Collect flex items into flex lines:
         //     * If the flex container is single-line, collect all the flex items into a single flex line.
         if (!node->wrap) {
-            if (lines[linesCount - 1].itemsCount > 0) lines[linesCount - 1].itemsSize += spacing;
+            if (lines[linesCount - 1].itemsCount > 0) lines[linesCount - 1].itemsSize += mainGap;
             lines[linesCount - 1].itemsSize += outerItemHypotheticalMainSize;
             lines[linesCount - 1].itemsCount++;
         }
@@ -554,7 +557,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
         //       Repeat until all flex items have been collected into flex lines.
         //       > Note that the "collect as many" line will collect zero-sized flex items onto the end of the previous line even if the last non-zero item exactly "filled up" the line.
         else {
-            if (lines[linesCount - 1].itemsCount > 0) outerItemHypotheticalMainSize += spacing;
+            if (lines[linesCount - 1].itemsCount > 0) outerItemHypotheticalMainSize += mainGap;
             // line break
             if ((node->itemsPerLine > 0 && lines[linesCount - 1].itemsCount >= node->itemsPerLine) ||
                 lines[linesCount - 1].itemsSize + outerItemHypotheticalMainSize > FlexTreatNanAsInf(availableSize.size[mainAxis]) + 0.001) {
@@ -574,7 +577,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
                     lines[linesCount - 1].itemsSize = outerItemHypotheticalMainSize;
                 }
                 else {
-                    if (lines[linesCount - 1].itemsCount > 0) outerItemHypotheticalMainSize -= spacing;
+                    if (lines[linesCount - 1].itemsCount > 0) outerItemHypotheticalMainSize -= mainGap;
                     lines[linesCount].itemsCount = 1;
                     lines[linesCount].itemsSize = outerItemHypotheticalMainSize;
                     linesCount++;
@@ -629,7 +632,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             FlexNodeRef item = items[j];
             lineMainSize += item->result.size[mainAxis] + flex_inset(item->resolvedMargin, mainAxis);
         }
-        float itemsSpacing = (count - 1) * spacing;
+        float itemsSpacing = (count - 1) * mainGap;
         lineMainSize += itemsSpacing;
         bool usingFlexGrowFactor = lineMainSize < FlexTreatNanAsInf(availableSize.size[mainAxis]);
         float initialFreeSpace = innerMainSize - itemsSpacing;
@@ -845,7 +848,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             if (!node->wrap) {
                 usedCrossSize = flex_clamp(usedCrossSize, resolvedMinCrossSize, resolvedMaxCrossSize);
             }
-            if (i > 0) itemsCrossSize += lineSpacing;
+            if (i > 0) itemsCrossSize += crossGap;
             itemsCrossSize += usedCrossSize;
             lines[i].itemsSize = usedCrossSize;
             
@@ -913,7 +916,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             FlexNodeRef item = items[j];
             lineMainSize += item->result.size[mainAxis] + flex_inset(item->resolvedMargin, mainAxis);
         }
-        lineMainSize += (lines[i].itemsCount - 1) * spacing;
+        lineMainSize += (lines[i].itemsCount - 1) * mainGap;
         
         float remainMainSize = innerMainSize - lineMainSize;
         //       1. If the remaining free space is positive and at least one main-axis margin on this line is auto, distribute the free space equally among these margins.
@@ -970,7 +973,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             FlexNodeRef item = items[j];
             offsetStart += item->result.margin[flex_start[node->direction]];
             item->result.position[flex_start[mainAxis]] = isReverse ? node->result.size[mainAxis] - offsetStart - item->result.size[mainAxis] : offsetStart;
-            offsetStart += item->result.size[mainAxis] + item->result.margin[flex_end[node->direction]] + offsetStep + spacing;
+            offsetStart += item->result.size[mainAxis] + item->result.margin[flex_end[node->direction]] + offsetStep + mainGap;
         }
         
         lineStart = lineEnd;
@@ -1087,7 +1090,7 @@ void flex_layoutInternal(FlexNodeRef node, FlexLayoutContext *context, FlexSize 
             FlexNodeRef item = items[j];
             item->result.position[flex_start[crossAxis]] += isWrapReverse ? node->result.size[crossAxis] - lines[i].itemsSize - lineCrossPositionStart : lineCrossPositionStart;
         }
-        lineCrossPositionStart += offsetStep + lines[i].itemsSize + lineSpacing;
+        lineCrossPositionStart += offsetStep + lines[i].itemsSize + crossGap;
         lineStart = lineEnd;
     }
     
@@ -1440,8 +1443,8 @@ void flex_printNode(FlexNodeRef node, FlexPrintOptions options, int indent) {
         FLEX_PRINT_INSET(FlexLength, "padding", padding);
         FLEX_PRINT_INSET(float, "border", border);
         FLEX_PRINT(bool, "fixed", fixed);
-        FLEX_PRINT(FlexLength, "spacing", spacing);
-        FLEX_PRINT(FlexLength, "line-spacing", lineSpacing);
+        FLEX_PRINT(FlexLength, "column-gap", columnGap);
+        FLEX_PRINT(FlexLength, "row-gap", rowGap);
         FLEX_PRINT(int, "lines", lines);
         FLEX_PRINT(int, "items-per-line", itemsPerLine);
         FLEX_PRINT(bool, "has-measure-func", measure);

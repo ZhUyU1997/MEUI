@@ -159,8 +159,8 @@ typedef FlexSize    (*CustomLayoutFunc)(FlexNodeRef node, float constrainedWidth
 
 #define FLEX_EXT_PROPERTYES() \
     FLEX_PROPERTY                       ( bool,             Fixed,          fixed                       ); \
-    FLEX_LENGTH_PROPERTY                (                   Spacing,        spacing                     ); \
-    FLEX_LENGTH_PROPERTY                (                   LineSpacing,    lineSpacing                 ); \
+    FLEX_LENGTH_PROPERTY                (                   ColumnGap,      columnGap                   ); \
+    FLEX_LENGTH_PROPERTY                (                   RowGap,         rowGap                      ); \
     FLEX_PROPERTY                       ( unsigned int,     Lines,          lines                       ); \
     FLEX_PROPERTY                       ( unsigned int,     ItemsPerLine,   itemsPerLine                ); \
 

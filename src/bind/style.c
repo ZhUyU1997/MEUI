@@ -389,6 +389,8 @@ static JSValue js_box_style_justifyContent(JSContext *ctx, box_t node, box_style
     JS_FLOAT_PROPERTY_RW(borderTopRightRadius)    \
     JS_FLOAT_PROPERTY_RW(borderBottomRightRadius) \
     JS_FLOAT_PROPERTY_RW(borderBottomLeftRadius)  \
+    JS_FLEX_LENGTH_PROPERTY(columnGap)            \
+    JS_FLEX_LENGTH_PROPERTY(rowGap)               \
     JS_FLEX_LENGTH_PROPERTY(left)                 \
     JS_FLEX_LENGTH_PROPERTY(right)                \
     JS_FLEX_LENGTH_PROPERTY(top)                  \

@@ -32,6 +32,8 @@ typedef struct box_style_t
 	FlexLength paddingRight;
 	FlexLength paddingStart;
 	FlexLength paddingEnd;
+	FlexLength rowGap;
+	FlexLength columnGap;
 	float borderLeft;
 	float borderTop;
 	float borderBottom;
@@ -88,32 +90,34 @@ typedef uint64_t box_style_flag_t;
 #define BOX_STYLE_paddingRight (UINT64_C(1) << 24)
 #define BOX_STYLE_paddingStart (UINT64_C(1) << 25)
 #define BOX_STYLE_paddingEnd (UINT64_C(1) << 26)
-#define BOX_STYLE_borderLeft (UINT64_C(1) << 27)
-#define BOX_STYLE_borderTop (UINT64_C(1) << 28)
-#define BOX_STYLE_borderBottom (UINT64_C(1) << 29)
-#define BOX_STYLE_borderRight (UINT64_C(1) << 30)
-#define BOX_STYLE_borderStart (UINT64_C(1) << 31)
-#define BOX_STYLE_borderEnd (UINT64_C(1) << 32)
-#define BOX_STYLE_borderTopLeftRadius (UINT64_C(1) << 33)
-#define BOX_STYLE_borderTopRightRadius (UINT64_C(1) << 34)
-#define BOX_STYLE_borderBottomRightRadius (UINT64_C(1) << 35)
-#define BOX_STYLE_borderBottomLeftRadius (UINT64_C(1) << 36)
-#define BOX_STYLE_borderColor (UINT64_C(1) << 37)
-#define BOX_STYLE_backgroundColor (UINT64_C(1) << 38)
-#define BOX_STYLE_fontColor (UINT64_C(1) << 39)
-#define BOX_STYLE_textAlign (UINT64_C(1) << 40)
-#define BOX_STYLE_fontSize (UINT64_C(1) << 41)
-#define BOX_STYLE_backgroundImage (UINT64_C(1) << 42)
-#define BOX_STYLE_contentImage (UINT64_C(1) << 43)
-#define BOX_STYLE_transform (UINT64_C(1) << 44)
-#define BOX_STYLE_transformOrigin (UINT64_C(1) << 45)
-#define BOX_STYLE_fontFamily (UINT64_C(1) << 46)
-#define BOX_STYLE_overflow (UINT64_C(1) << 47)
-#define BOX_STYLE_left (UINT64_C(1) << 48)
-#define BOX_STYLE_right (UINT64_C(1) << 49)
-#define BOX_STYLE_top (UINT64_C(1) << 50)
-#define BOX_STYLE_bottom (UINT64_C(1) << 51)
-#define BOX_STYLE_zIndex (UINT64_C(1) << 52)
+#define BOX_STYLE_rowGap (UINT64_C(1) << 27)
+#define BOX_STYLE_columnGap (UINT64_C(1) << 28)
+#define BOX_STYLE_borderLeft (UINT64_C(1) << 29)
+#define BOX_STYLE_borderTop (UINT64_C(1) << 30)
+#define BOX_STYLE_borderBottom (UINT64_C(1) << 31)
+#define BOX_STYLE_borderRight (UINT64_C(1) << 32)
+#define BOX_STYLE_borderStart (UINT64_C(1) << 33)
+#define BOX_STYLE_borderEnd (UINT64_C(1) << 34)
+#define BOX_STYLE_borderTopLeftRadius (UINT64_C(1) << 35)
+#define BOX_STYLE_borderTopRightRadius (UINT64_C(1) << 36)
+#define BOX_STYLE_borderBottomRightRadius (UINT64_C(1) << 37)
+#define BOX_STYLE_borderBottomLeftRadius (UINT64_C(1) << 38)
+#define BOX_STYLE_borderColor (UINT64_C(1) << 39)
+#define BOX_STYLE_backgroundColor (UINT64_C(1) << 40)
+#define BOX_STYLE_fontColor (UINT64_C(1) << 41)
+#define BOX_STYLE_textAlign (UINT64_C(1) << 42)
+#define BOX_STYLE_fontSize (UINT64_C(1) << 43)
+#define BOX_STYLE_backgroundImage (UINT64_C(1) << 44)
+#define BOX_STYLE_contentImage (UINT64_C(1) << 45)
+#define BOX_STYLE_transform (UINT64_C(1) << 46)
+#define BOX_STYLE_transformOrigin (UINT64_C(1) << 47)
+#define BOX_STYLE_fontFamily (UINT64_C(1) << 48)
+#define BOX_STYLE_overflow (UINT64_C(1) << 49)
+#define BOX_STYLE_left (UINT64_C(1) << 50)
+#define BOX_STYLE_right (UINT64_C(1) << 51)
+#define BOX_STYLE_top (UINT64_C(1) << 52)
+#define BOX_STYLE_bottom (UINT64_C(1) << 53)
+#define BOX_STYLE_zIndex (UINT64_C(1) << 54)
 
 void box_style_wrap(box_style_t *style, FlexWrapMode wrap);
 void box_style_direction(box_style_t *style, FlexDirection direction);
@@ -130,11 +134,9 @@ void box_style_flexShrink(box_style_t *style, float flexShrink);
 void box_style_width(box_style_t *style, float width);
 void box_style_widthPercent(box_style_t *style, float width);
 void box_style_widthAuto(box_style_t *style);
-void box_style_widthContent(box_style_t *style);
 void box_style_height(box_style_t *style, float height);
 void box_style_heightPercent(box_style_t *style, float height);
 void box_style_heightAuto(box_style_t *style);
-void box_style_heightContent(box_style_t *style);
 void box_style_minWidth(box_style_t *style, float minWidth);
 void box_style_minWidthPercent(box_style_t *style, float minWidth);
 void box_style_minHeight(box_style_t *style, float minHeight);
@@ -146,27 +148,21 @@ void box_style_maxHeightPercent(box_style_t *style, float maxHeight);
 void box_style_marginLeft(box_style_t *style, float marginLeft);
 void box_style_marginLeftPercent(box_style_t *style, float marginLeft);
 void box_style_marginLeftAuto(box_style_t *style);
-void box_style_marginLeftContent(box_style_t *style);
 void box_style_marginTop(box_style_t *style, float marginTop);
 void box_style_marginTopPercent(box_style_t *style, float marginTop);
 void box_style_marginTopAuto(box_style_t *style);
-void box_style_marginTopContent(box_style_t *style);
 void box_style_marginBottom(box_style_t *style, float marginBottom);
 void box_style_marginBottomPercent(box_style_t *style, float marginBottom);
 void box_style_marginBottomAuto(box_style_t *style);
-void box_style_marginBottomContent(box_style_t *style);
 void box_style_marginRight(box_style_t *style, float marginRight);
 void box_style_marginRightPercent(box_style_t *style, float marginRight);
 void box_style_marginRightAuto(box_style_t *style);
-void box_style_marginRightContent(box_style_t *style);
 void box_style_marginStart(box_style_t *style, float marginStart);
 void box_style_marginStartPercent(box_style_t *style, float marginStart);
 void box_style_marginStartAuto(box_style_t *style);
-void box_style_marginStartContent(box_style_t *style);
 void box_style_marginEnd(box_style_t *style, float marginEnd);
 void box_style_marginEndPercent(box_style_t *style, float marginEnd);
 void box_style_marginEndAuto(box_style_t *style);
-void box_style_marginEndContent(box_style_t *style);
 void box_style_paddingLeft(box_style_t *style, float paddingLeft);
 void box_style_paddingLeftPercent(box_style_t *style, float paddingLeft);
 void box_style_paddingTop(box_style_t *style, float paddingTop);
@@ -179,6 +175,10 @@ void box_style_paddingStart(box_style_t *style, float paddingStart);
 void box_style_paddingStartPercent(box_style_t *style, float paddingStart);
 void box_style_paddingEnd(box_style_t *style, float paddingEnd);
 void box_style_paddingEndPercent(box_style_t *style, float paddingEnd);
+void box_style_rowGap(box_style_t *style, float rowGap);
+void box_style_rowGapPercent(box_style_t *style, float rowGap);
+void box_style_columnGap(box_style_t *style, float columnGap);
+void box_style_columnGapPercent(box_style_t *style, float columnGap);
 void box_style_borderLeft(box_style_t *style, float borderLeft);
 void box_style_borderTop(box_style_t *style, float borderTop);
 void box_style_borderBottom(box_style_t *style, float borderBottom);
@@ -210,7 +210,7 @@ void box_style_topPercent(box_style_t *style, float top);
 void box_style_bottom(box_style_t *style, float bottom);
 void box_style_bottomPercent(box_style_t *style, float bottom);
 void box_style_zIndex(box_style_t *style, int zIndex);
-// 53 53
+// 55 55
 box_style_t *box_style_new();
 void box_style_clear(box_style_t *style);
 void box_style_free(box_style_t *style);
