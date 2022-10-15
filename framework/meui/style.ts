@@ -80,6 +80,8 @@ export interface MeuiStyle {
     marginRight?: Length
     marginStart?: Length
     marginEnd?: Length
+    rowGap?: Length
+    columnGap?: Length
     paddingLeft?: Length
     paddingTop?: Length
     paddingBottom?: Length
