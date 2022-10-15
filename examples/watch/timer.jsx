@@ -23,6 +23,8 @@ function App() {
                 clearInterval(id)
             }
         }
+
+        if (status === "init") setTime(0)
     }, [status])
     return (
         <Root>
