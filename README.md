@@ -41,7 +41,7 @@ function App() {
     })
 
     return (
-        <animated.Div
+        <animated.View
             style={{
                 width: 120,
                 height: 120,
@@ -52,7 +52,7 @@ function App() {
             }}
         >
             Hello MEUI!
-        </animated.Div>
+        </animated.View>
     )
 }
 
