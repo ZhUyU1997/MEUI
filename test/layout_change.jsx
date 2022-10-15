@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, Stack } from "@/meui"
+import { View, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"
@@ -22,20 +22,20 @@ function App() {
                 setDirection(direction ? undefined : "column")
             }}
         >
-            <Div
+            <View
                 style={{
                     width: 100,
                     height: 100,
                     backgroundColor: "red",
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 100,
                     height: 100,
                     backgroundColor: "green",
                 }}
-            ></Div>
+            ></View>
         </Root>
     )
 }

@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root, Button } from "@/components"
@@ -42,7 +42,7 @@ function App() {
                 flexDirection: "column",
             }}
         >
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 100,
@@ -52,7 +52,7 @@ function App() {
                     flexDirection: "column",
                 }}
             >
-                <Div
+                <View
                     style={{
                         width: 200,
                         height: 200,
@@ -62,8 +62,8 @@ function App() {
                     }}
                 >
                     AAAAAAAAAABBBBBBBBBBBBBBB
-                </Div>
-            </Div>
+                </View>
+            </View>
 
             <Button
                 style={{

@@ -5,12 +5,12 @@
  */
 
 import React from "react"
-import { Div } from "@/meui"
+import { View } from "@/meui"
 
 function Flex_Test() {
     function TestItem() {
         return (
-            <Div
+            <View
                 style={{
                     backgroundColor: [
                         Math.random(),
@@ -58,17 +58,17 @@ function Flex_Test() {
                     transform: "rotate(0.25rad)",
                     transformOrigin: ["center", "center"],
                 }}
-            ></Div>
+            ></View>
         )
     }
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: "100%",
             }}
         >
-            <Div
+            <View
                 style={{
                     flexWrap: "wrap",
                     justifyContent: "center",
@@ -86,7 +86,7 @@ function Flex_Test() {
                 <TestItem />
                 <TestItem />
                 <TestItem />
-                <Div
+                <View
                     style={{
                         width: 340,
                         height: 240,
@@ -99,7 +99,7 @@ function Flex_Test() {
                         transform: "rotate(0.25rad)",
                     }}
                 >
-                    <Div
+                    <View
                         style={{
                             backgroundColor: [
                                 Math.random(),
@@ -111,8 +111,8 @@ function Flex_Test() {
                             height: 100,
                             transform: "rotate(0.25rad)",
                         }}
-                    ></Div>
-                    <Div
+                    ></View>
+                    <View
                         style={{
                             backgroundColor: [
                                 Math.random(),
@@ -124,10 +124,10 @@ function Flex_Test() {
                             height: 100,
                             transform: "rotate(0.25rad)",
                         }}
-                    ></Div>
-                </Div>
-            </Div>
-        </Div>
+                    ></View>
+                </View>
+            </View>
+        </View>
     )
 }
 
@@ -186,14 +186,14 @@ function Flex_Test_State() {
     ]
 
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: "100%",
                 backgroundColor: [1, 1, 1, 1],
             }}
         >
-            <Div
+            <View
                 style={{
                     flexWrap: "wrap",
                     flexDirection: "column",
@@ -206,7 +206,7 @@ function Flex_Test_State() {
             >
                 {style_color.map((list, i) => {
                     return (
-                        <Div
+                        <View
                             key={i}
                             style={{
                                 width: 340,
@@ -232,17 +232,17 @@ function Flex_Test_State() {
                                     text: "Box State: Active",
                                 },
                             }}
-                        ></Div>
+                        ></View>
                     )
                 })}
-            </Div>
-        </Div>
+            </View>
+        </View>
     )
 }
 
 function Flex_Test_Align() {
     return (
-        <Div
+        <View
             style={{
                 flexWrap: "wrap",
                 flexDirection: "column",
@@ -266,7 +266,7 @@ function Flex_Test_Align() {
                 "bottom-center",
             ].map((align) => {
                 return (
-                    <Div
+                    <View
                         key={align}
                         style={{
                             width: 340,
@@ -286,13 +286,13 @@ function Flex_Test_Align() {
                     />
                 )
             })}
-        </Div>
+        </View>
     )
 }
 
 function Circle({ color }) {
     return (
-        <Div
+        <View
             style={{
                 width: 20,
                 height: 20,
@@ -300,13 +300,13 @@ function Circle({ color }) {
                 backgroundColor: color,
                 borderRadius: [10, 10, 10, 10],
             }}
-        ></Div>
+        ></View>
     )
 }
 
 function Head() {
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: 60,
@@ -317,20 +317,20 @@ function Head() {
             <Circle color="#DF491AFF" />
             <Circle color="#FFCC0EFF" />
             <Circle color="#19DF74FF" />
-        </Div>
+        </View>
     )
 }
 
 function Bar() {
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 alignItems: "center",
                 height: 60,
             }}
         >
-            <Div
+            <View
                 style={{
                     width: 50,
                     height: 50,
@@ -339,16 +339,16 @@ function Bar() {
                     backgroundColor: "#555A64FF",
                     borderRadius: [7, 7, 7, 7],
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 50,
                     height: 50,
                     padding: [12.5, 12.5, 12.5, 12.5],
                     contentImage: "examples/right.svg",
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 50,
                     height: 50,
@@ -358,8 +358,8 @@ function Bar() {
                     borderRadius: [7, 0, 0, 7],
                     contentImage: "examples/small-icon-normal.svg",
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 50,
                     height: 50,
@@ -367,8 +367,8 @@ function Bar() {
                     backgroundColor: "#FFFFFFFF",
                     contentImage: "examples/list-select.svg",
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 50,
                     height: 50,
@@ -377,8 +377,8 @@ function Bar() {
                     borderRadius: [0, 7, 7, 0],
                     contentImage: "examples/card-normal.svg",
                 }}
-            ></Div>
-            <Div
+            ></View>
+            <View
                 style={{
                     width: 225,
                     height: 50,
@@ -387,7 +387,7 @@ function Bar() {
                     borderRadius: [25, 25, 25, 25],
                 }}
             >
-                <Div
+                <View
                     style={{
                         flexDirection: "row",
                         width: 50,
@@ -398,15 +398,15 @@ function Bar() {
                         paddingBottom: 12.5,
                         contentImage: "examples/search.svg",
                     }}
-                ></Div>
-            </Div>
-        </Div>
+                ></View>
+            </View>
+        </View>
     )
 }
 
 function Body() {
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: 360,
@@ -415,7 +415,7 @@ function Body() {
                 flexDirection: "row",
             }}
         >
-            <Div
+            <View
                 style={{
                     width: 212,
                     height: "100%",
@@ -425,7 +425,7 @@ function Body() {
                 {["Desktop", "Dribbble", "Images", "Downloads"].map(
                     (text, index) => {
                         return (
-                            <Div
+                            <View
                                 key={text}
                                 style={{
                                     width: 200,
@@ -439,14 +439,14 @@ function Body() {
                                     console.log("onMouseDown:" + index)
                                 }}
                             >
-                                <Div
+                                <View
                                     style={{
                                         width: 38,
                                         height: 38,
                                         contentImage: "examples/file.svg",
                                     }}
-                                ></Div>
-                                <Div
+                                ></View>
+                                <View
                                     style={{
                                         width: 145,
                                         height: 38,
@@ -455,13 +455,13 @@ function Body() {
                                         fontColor: "#ABAFB7FF",
                                         fontSize: 24,
                                     }}
-                                ></Div>
-                            </Div>
+                                ></View>
+                            </View>
                         )
                     }
                 )}
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     width: 422,
                     height: "100%",
@@ -477,7 +477,7 @@ function Body() {
                     ["kl.png", "2d", "2MB"],
                 ].map((text) => {
                     return (
-                        <Div
+                        <View
                             key={text}
                             style={{
                                 width: "100%",
@@ -494,7 +494,7 @@ function Body() {
                                 },
                             }}
                         >
-                            <Div
+                            <View
                                 style={{
                                     width: 38,
                                     height: 38,
@@ -505,8 +505,8 @@ function Body() {
                                         1.0,
                                     ],
                                 }}
-                            ></Div>
-                            <Div
+                            ></View>
+                            <View
                                 style={{
                                     width: 180,
                                     height: 38,
@@ -518,8 +518,8 @@ function Body() {
                                         fontColor: "#FFFFFFFF",
                                     },
                                 }}
-                            ></Div>
-                            <Div
+                            ></View>
+                            <View
                                 style={{
                                     width: 50,
                                     height: 38,
@@ -531,8 +531,8 @@ function Body() {
                                         fontColor: "#FFFFFFFF",
                                     },
                                 }}
-                            ></Div>
-                            <Div
+                            ></View>
+                            <View
                                 style={{
                                     width: 110,
                                     height: 38,
@@ -544,18 +544,18 @@ function Body() {
                                         fontColor: "#FFFFFFFF",
                                     },
                                 }}
-                            ></Div>
-                        </Div>
+                            ></View>
+                        </View>
                     )
                 })}
-            </Div>
-        </Div>
+            </View>
+        </View>
     )
 }
 
 function Window({ children, ...props }) {
     return (
-        <Div
+        <View
             style={{
                 flexWrap: "wrap",
                 flexDirection: "column",
@@ -571,13 +571,13 @@ function Window({ children, ...props }) {
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
 function Root({ children, ...props }) {
     return (
-        <Div
+        <View
             style={{
                 backgroundColor: "#0D0F12FF",
                 justifyContent: "center",
@@ -588,7 +588,7 @@ function Root({ children, ...props }) {
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 

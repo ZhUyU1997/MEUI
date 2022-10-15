@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Root } from "@/components"
 
@@ -26,7 +26,7 @@ function App() {
     }, [status])
     return (
         <Root>
-            <Div
+            <View
                 style={{
                     backgroundColor: "black",
                     borderRadius: 40,
@@ -35,7 +35,7 @@ function App() {
                     padding: 20,
                 }}
             >
-                <Div
+                <View
                     style={{
                         fontColor: "white",
                         fontSize: 100,
@@ -45,15 +45,15 @@ function App() {
                 >
                     {(time / 1000).toFixed(0).padStart(2, "0")}:
                     {(time % 1000).toString().padStart(3, "0").slice(0, 2)}
-                </Div>
-                <Div
+                </View>
+                <View
                     style={{
                         width: "100%",
                         padding: 12,
                         columnGap: 6,
                     }}
                 >
-                    <Div
+                    <View
                         style={{
                             width: 168,
                             height: 88,
@@ -69,8 +69,8 @@ function App() {
                         }}
                     >
                         Cancel
-                    </Div>
-                    <Div
+                    </View>
+                    <View
                         style={{
                             width: 168,
                             height: 88,
@@ -86,9 +86,9 @@ function App() {
                         }}
                     >
                         {status == "running" ? "Pause" : "Start"}
-                    </Div>
-                </Div>
-            </Div>
+                    </View>
+                </View>
+            </View>
         </Root>
     )
 }

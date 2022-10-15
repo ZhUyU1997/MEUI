@@ -5,14 +5,14 @@
  */
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function DropDownList({ option = [], style }) {
     return (
-        <Div
+        <View
             style={{
                 width: 163,
                 backgroundColor: "white",
@@ -35,7 +35,7 @@ function DropDownList({ option = [], style }) {
                             marginBottom: 4,
                         }}
                     >
-                        <Div
+                        <View
                             style={{
                                 fontColor: "#000000",
                                 fontSize: 16,
@@ -43,12 +43,12 @@ function DropDownList({ option = [], style }) {
                             }}
                         >
                             {text}
-                        </Div>
-                        <Div style={{ marginLeft: 8, width: 18 }}></Div>
+                        </View>
+                        <View style={{ marginLeft: 8, width: 18 }}></View>
                     </Center>
                 )
             })}
-        </Div>
+        </View>
     )
 }
 function DropDown({ option = [], style }) {
@@ -73,7 +73,7 @@ function DropDown({ option = [], style }) {
                     setOpen((prev) => !prev)
                 }}
             >
-                <Div
+                <View
                     style={{
                         fontColor: "#5533FF",
                         fontSize: 16,
@@ -81,7 +81,7 @@ function DropDown({ option = [], style }) {
                     }}
                 >
                     Pick an option
-                </Div>
+                </View>
                 <MaterialDesignIcon
                     width={18}
                     height={18}

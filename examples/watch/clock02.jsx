@@ -5,13 +5,13 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Column, Root, Row } from "@/components"
 
 function Digital({ fixedOffset, left, top, style, children }) {
     return (
-        <Div
+        <View
             style={{
                 width: 50,
                 height: 50,
@@ -25,7 +25,7 @@ function Digital({ fixedOffset, left, top, style, children }) {
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
@@ -117,7 +117,7 @@ function App() {
                         }}
                     ></Row>
 
-                    <Div
+                    <View
                         style={{
                             width: 24,
                             height: 24,
@@ -127,7 +127,7 @@ function App() {
                             left: stackSize / 2 - 12,
                             top: stackSize / 2 - 12,
                         }}
-                    ></Div>
+                    ></View>
                     <Digital fixedOffset={stackSize / 2} left={0} top={-160}>
                         12
                     </Digital>

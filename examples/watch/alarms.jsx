@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Root } from "@/components"
 
@@ -16,7 +16,7 @@ function List() {}
 
 function ListItem({ style, ...props }) {
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 backgroundColor: "#242424",
@@ -30,7 +30,7 @@ function ListItem({ style, ...props }) {
                 ...style,
             }}
             {...props}
-        ></Div>
+        ></View>
     )
 }
 
@@ -46,13 +46,13 @@ function AlarmsItem({ mainText, subText, initStatus }) {
                 setIsOn((prev) => !prev)
             }}
         >
-            <Div
+            <View
                 style={{
                     width: 124 * 2,
                     flexDirection: "column",
                 }}
             >
-                <Div
+                <View
                     style={{
                         height: 24 * 2,
                         fontSize: 20 * 2,
@@ -60,8 +60,8 @@ function AlarmsItem({ mainText, subText, initStatus }) {
                     }}
                 >
                     {mainText}
-                </Div>
-                <Div
+                </View>
+                <View
                     style={{
                         height: 20 * 2,
                         fontSize: 15 * 2,
@@ -69,9 +69,9 @@ function AlarmsItem({ mainText, subText, initStatus }) {
                     }}
                 >
                     {subText}
-                </Div>
-            </Div>
-            <Div
+                </View>
+            </View>
+            <View
                 style={{
                     width: 72,
                     height: 44,
@@ -81,7 +81,7 @@ function AlarmsItem({ mainText, subText, initStatus }) {
                     justifyContent: isOn ? "flex-end" : "flex-start",
                 }}
             >
-                <Div
+                <View
                     style={{
                         width: 40,
                         height: 40,
@@ -89,15 +89,15 @@ function AlarmsItem({ mainText, subText, initStatus }) {
                         backgroundColor: "white",
                         padding: 2,
                     }}
-                ></Div>
-            </Div>
+                ></View>
+            </View>
         </ListItem>
     )
 }
 function App() {
     return (
         <Root>
-            <Div
+            <View
                 style={{
                     backgroundColor: "black",
                     borderRadius: 40,
@@ -133,7 +133,7 @@ function App() {
                     subText="Alarm"
                     initStatus={false}
                 ></AlarmsItem>
-            </Div>
+            </View>
         </Root>
     )
 }

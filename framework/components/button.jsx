@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { Div } from "@/meui"
+import { View } from "@/meui"
 
 const style_name = [
     "primary",
@@ -69,7 +69,7 @@ export default function Button({
     const index = style_name.indexOf(type)
     const list = style_color[index]
     return (
-        <Div
+        <View
             style={{
                 marginBottom: 10,
                 border: [1, 1, 1, 1],
@@ -93,6 +93,6 @@ export default function Button({
             {...props}
         >
             {children}
-        </Div>
+        </View>
     )
 }

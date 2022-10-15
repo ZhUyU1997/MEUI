@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef, useState } from "react"
-import { Canvas, Div, MEUI } from "@/meui"
+import { Canvas, View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root, Button } from "@/components"
@@ -106,7 +106,7 @@ function App() {
     }, [testName])
     return (
         <Root style={{ backgroundColor: "white" }}>
-            <Div
+            <View
                 style={{
                     width: 600,
                     height: "100%",
@@ -131,7 +131,7 @@ function App() {
                         {key}
                     </Button>
                 ))}
-            </Div>
+            </View>
             <Canvas
                 ref={ref}
                 style={{

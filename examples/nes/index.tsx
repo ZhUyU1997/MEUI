@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef } from "react"
-import { Canvas, Div } from "@/meui"
+import { Canvas, View } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"

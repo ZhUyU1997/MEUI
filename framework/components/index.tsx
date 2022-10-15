@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { Div, DivElement, MeuiElementAttribule, MeuiStyle } from "@/meui"
+import { View, DivElement, MeuiElementAttribule, MeuiStyle } from "@/meui"
 import { getIconHex, IconsKey } from "./icons"
 
 interface RootProps extends MeuiElementAttribule {
@@ -14,7 +14,7 @@ interface RootProps extends MeuiElementAttribule {
 
 export const Root: React.FC<RootProps> = ({ children, style, ...props }) => {
     return (
-        <Div
+        <View
             style={{
                 backgroundColor: "#FFFFFFFF",
                 width: "100%",
@@ -24,7 +24,7 @@ export const Root: React.FC<RootProps> = ({ children, style, ...props }) => {
             {...props}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
@@ -36,7 +36,7 @@ interface CenterProps extends MeuiElementAttribule {
 export const Center = React.forwardRef<DivElement, CenterProps>(
     ({ children, style, ...props }, ref) => {
         return (
-            <Div
+            <View
                 ref={ref}
                 style={{
                     justifyContent: "center",
@@ -47,7 +47,7 @@ export const Center = React.forwardRef<DivElement, CenterProps>(
                 {...props}
             >
                 {children}
-            </Div>
+            </View>
         )
     }
 )
@@ -61,7 +61,7 @@ interface RowProps extends MeuiElementAttribule {
 
 export const Row: React.FC<RowProps> = ({ children, style, ...props }) => {
     return (
-        <Div
+        <View
             style={{
                 justifyContent: "center",
                 alignItems: "center",
@@ -72,7 +72,7 @@ export const Row: React.FC<RowProps> = ({ children, style, ...props }) => {
             {...props}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
@@ -86,7 +86,7 @@ export const Column: React.FC<ColumnProps> = ({
     ...props
 }) => {
     return (
-        <Div
+        <View
             style={{
                 justifyContent: "center",
                 alignItems: "center",
@@ -97,7 +97,7 @@ export const Column: React.FC<ColumnProps> = ({
             {...props}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 

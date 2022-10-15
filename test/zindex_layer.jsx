@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { MEUI, Div } from "@/meui"
+import { MEUI, View } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { animated, useSpring, config } from "@/react-sping-meui"
@@ -41,7 +41,7 @@ function App() {
         >
             {new Array(56).fill(0).map((item, index) => {
                 return (
-                    <animated.Div
+                    <animated.View
                         key={index}
                         style={
                             index == 12
@@ -64,7 +64,7 @@ function App() {
                         }
                     >
                         {index == 12 ? (
-                            <Div
+                            <View
                                 style={{
                                     width: 20,
                                     height: 20,
@@ -73,9 +73,9 @@ function App() {
                                     textAlign: "center",
                                     zIndex: 1,
                                 }}
-                            ></Div>
+                            ></View>
                         ) : null}
-                    </animated.Div>
+                    </animated.View>
                 )
             })}
         </Root>

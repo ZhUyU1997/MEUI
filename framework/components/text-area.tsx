@@ -10,7 +10,7 @@ import React, {
     useRef,
     useState,
 } from "react"
-import { Div, Stack, Canvas, MeuiElementAttribule } from "@/meui"
+import { View, Stack, Canvas, MeuiElementAttribule } from "@/meui"
 import { CanvasElement, CanvasRenderingContext2D, TextMetrics } from "@/meui"
 
 import { MeuiKeyboardEvent, MeuiMouseEvent } from "@/meui"
@@ -790,7 +790,7 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
                 editorRef.current?.setFocused(false)
             }}
         >
-            <Div
+            <View
                 style={{
                     fontColor: "grey",
                     fontFamily,
@@ -798,7 +798,7 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
                 }}
             >
                 {placeholderText}
-            </Div>
+            </View>
             <Canvas
                 fit={true}
                 ref={canvasRef}

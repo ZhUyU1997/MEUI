@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div } from "@/meui"
+import { View } from "@/meui"
 import { Root, Button } from "@/components"
 export function Test() {
     const [dollar, setDollar] = useState(0)
@@ -17,7 +17,7 @@ export function Test() {
 
     return (
         <Root>
-            <Div
+            <View
                 style={{
                     justifyContent: "center",
                     alignItems: "center",
@@ -29,7 +29,7 @@ export function Test() {
                 }}
             >
                 {dollar}美元 = {rmb}人民币
-            </Div>
+            </View>
             <Button
                 type="primary"
                 style={{ width: 200, height: 70 }}

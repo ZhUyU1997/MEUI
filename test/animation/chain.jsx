@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import Button from "@/components/button"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import {
@@ -133,7 +133,7 @@ function App() {
     ])
 
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: "100%",
@@ -143,7 +143,7 @@ function App() {
                 justifyContent: "center",
             }}
         >
-            <animated.Div
+            <animated.View
                 style={{
                     backgroundColor: "white",
                     ...rest,
@@ -156,7 +156,7 @@ function App() {
                 onClick={() => set((open) => !open)}
             >
                 {transition((style, item) => (
-                    <animated.Div
+                    <animated.View
                         style={{
                             width: 190,
                             height: 43,
@@ -168,8 +168,8 @@ function App() {
                         }}
                     />
                 ))}
-            </animated.Div>
-        </Div>
+            </animated.View>
+        </View>
     )
 }
 

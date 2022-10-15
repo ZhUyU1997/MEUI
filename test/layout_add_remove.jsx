@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, Stack } from "@/meui"
+import { View, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"
@@ -26,7 +26,7 @@ function App() {
             {items.map(({ show, key }, index) => {
                 return show ? (
                     index == 20 ? (
-                        <Div
+                        <View
                             key={key}
                             style={{
                                 margin: 5,
@@ -38,9 +38,9 @@ function App() {
                             }}
                         >
                             {key}
-                        </Div>
+                        </View>
                     ) : (
-                        <Div
+                        <View
                             key={key}
                             style={{
                                 margin: 5,
@@ -55,7 +55,7 @@ function App() {
                             }}
                         >
                             {key}
-                        </Div>
+                        </View>
                     )
                 ) : null
             })}

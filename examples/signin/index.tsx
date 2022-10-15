@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
@@ -55,8 +55,8 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 padding: [25, 25, 25, 25],
             }}
         >
-            <Div style={{ fontSize: 15 }}>Welcome Back</Div>
-            <Div style={{ fontSize: 25, marginBottom: 10 }}>Sign In</Div>
+            <View style={{ fontSize: 15 }}>Welcome Back</View>
+            <View style={{ fontSize: 25, marginBottom: 10 }}>Sign In</View>
             <Input
                 placeholder="email"
                 style={{
@@ -71,7 +71,7 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                     marginTop: 10,
                 }}
             ></Input>
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 25,
@@ -81,8 +81,8 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 {"forgot password?"}
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     borderRadius: 12.5,
                     fontColor: "white",
@@ -97,9 +97,9 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 Continue
-            </Div>
+            </View>
 
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 50,
@@ -109,7 +109,7 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 or continue with
-            </Div>
+            </View>
             <Row style={{ width: "100%" }}>
                 <Center
                     style={{
@@ -143,7 +143,7 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                     ></MaterialDesignIcon>
                 </Center>
             </Row>
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 50,
@@ -153,8 +153,8 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 {"don't have an account?"}
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     borderRadius: 12.5,
                     fontColor: "white",
@@ -169,7 +169,7 @@ function SignIn({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 Sign Up
-            </Div>
+            </View>
         </Column>
     )
 }
@@ -187,8 +187,8 @@ function SignUp({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 padding: [25, 25, 25, 25],
             }}
         >
-            <Div style={{ fontSize: 15 }}>Hello There</Div>
-            <Div style={{ fontSize: 25, marginBottom: 10 }}>Sign Up</Div>
+            <View style={{ fontSize: 15 }}>Hello There</View>
+            <View style={{ fontSize: 25, marginBottom: 10 }}>Sign Up</View>
 
             <Row style={{ width: "100%" }}>
                 <Input
@@ -222,7 +222,7 @@ function SignUp({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                     marginTop: 10,
                 }}
             ></Input>
-            <Div
+            <View
                 style={{
                     borderRadius: 12.5,
                     fontColor: "white",
@@ -237,9 +237,9 @@ function SignUp({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 Continue
-            </Div>
+            </View>
 
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 50,
@@ -249,8 +249,8 @@ function SignUp({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 have an account?
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     borderRadius: 12.5,
                     fontColor: "white",
@@ -265,7 +265,7 @@ function SignUp({ onClickBtn }: { onClickBtn: (btn: string) => void }) {
                 }}
             >
                 Sign In
-            </Div>
+            </View>
         </Column>
     )
 }

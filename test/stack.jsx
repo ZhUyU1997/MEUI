@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { Div, Stack } from "@/meui"
+import { View, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"
@@ -20,14 +20,14 @@ function App() {
                     height: 844,
                 }}
             >
-                <Div
+                <View
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                     }}
-                ></Div>
-                <Div
+                ></View>
+                <View
                     style={{
                         width: 100,
                         height: 100,
@@ -35,8 +35,8 @@ function App() {
                         top: 10,
                         left: 10,
                     }}
-                ></Div>
-                <Div
+                ></View>
+                <View
                     style={{
                         width: 100,
                         height: 100,
@@ -44,8 +44,8 @@ function App() {
                         top: 20,
                         left: 20,
                     }}
-                ></Div>
-                <Div
+                ></View>
+                <View
                     style={{
                         width: 100,
                         height: 100,
@@ -53,8 +53,8 @@ function App() {
                         top: 30,
                         left: 30,
                     }}
-                ></Div>
-                <Div
+                ></View>
+                <View
                     style={{
                         width: 100,
                         height: 100,
@@ -62,24 +62,24 @@ function App() {
                         top: 40,
                         left: 40,
                     }}
-                ></Div>
-                <Div
+                ></View>
+                <View
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                         right: 10,
                     }}
-                ></Div>
+                ></View>
 
-                <Div
+                <View
                     style={{
                         width: 100,
                         height: 100,
                         backgroundColor: "red",
                         bottom: 10,
                     }}
-                ></Div>
+                ></View>
             </Stack>
         </Root>
     )

@@ -243,7 +243,7 @@ export class Element extends Node {
         return null
     }
 
-    constructor(type = "Div", style?: MeuiStyle) {
+    constructor(type = "View", style?: MeuiStyle) {
         super()
 
         this.nativeBox = new NativeBox(type)

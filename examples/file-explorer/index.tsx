@@ -9,7 +9,7 @@ import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
 import * as std from "std"
 
-import { Div, Stack, MEUI } from "@/meui"
+import { View, Stack, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import path from "@/path"
@@ -316,7 +316,7 @@ function IconView({
     setCurPath: (newPath: string) => void
 }) {
     return (
-        <Div
+        <View
             style={{
                 alignItems: "flex-start",
                 alignContent: "flex-start",
@@ -332,7 +332,7 @@ function IconView({
         >
             {dirent.map(({ name, attribute, isDir }) => {
                 return (
-                    <Div
+                    <View
                         key={path.join(curPath, name)}
                         style={{
                             justifyContent: "center",
@@ -359,7 +359,7 @@ function IconView({
                             }
                         }}
                     >
-                        <Div
+                        <View
                             style={{
                                 width: 70,
                                 height: 70,
@@ -379,10 +379,10 @@ function IconView({
                         >
                             {name}
                         </Center>
-                    </Div>
+                    </View>
                 )
             })}
-        </Div>
+        </View>
     )
 }
 
@@ -408,7 +408,7 @@ function ItemView({
     setCurPath: (newPath: string) => void
 }) {
     return (
-        <Div
+        <View
             style={{
                 alignItems: "flex-start",
                 alignContent: "flex-start",
@@ -425,7 +425,7 @@ function ItemView({
         >
             {dirent.map(({ name, attribute, isDir }) => {
                 return (
-                    <Div
+                    <View
                         key={path.join(curPath, name)}
                         style={{
                             justifyContent: "flex-start",
@@ -453,7 +453,7 @@ function ItemView({
                             }
                         }}
                     >
-                        <Div
+                        <View
                             style={{
                                 width: 30,
                                 height: 30,
@@ -515,15 +515,17 @@ function ItemView({
                         >
                             {isDir ? "目录" : "文档"}
                         </Center>
-                    </Div>
+                    </View>
                 )
             })}
-        </Div>
+        </View>
     )
 }
 
 function FileExplorer() {
-    const [curPath, setCurPath] = useState(() => process.cwd())
+    // const [curPath, setCurPath] = useState(() => process.cwd())
+    const [curPath, setCurPath] = useState(() => "/bin")
+
     const [dirent, setDirent] = useState<DirentEntry[]>([])
     const [viewMode, setViewMode] = useState<string>("icon")
     const [showSetting, setShowSetting] = useState<boolean>(false)

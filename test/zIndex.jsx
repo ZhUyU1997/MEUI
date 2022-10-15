@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { Div } from "@/meui"
+import { View } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { MEUI } from "@/meui"
@@ -14,7 +14,7 @@ import { Root } from "@/components"
 function App() {
     return (
         <Root style={{ justifyContent: "center", alignItems: "center" }}>
-            <Div
+            <View
                 style={{
                     width: 100,
                     height: 100,
@@ -29,8 +29,8 @@ function App() {
                 }}
             >
                 zindex: default
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     width: 100,
                     height: 100,
@@ -45,8 +45,8 @@ function App() {
                 }}
             >
                 zindex: 2
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     width: 100,
                     height: 100,
@@ -61,7 +61,7 @@ function App() {
                 }}
             >
                 zindex: 1
-            </Div>
+            </View>
         </Root>
     )
 }

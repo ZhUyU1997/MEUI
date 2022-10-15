@@ -18,7 +18,7 @@ function App() {
     })
 
     return (
-        <animated.Div
+        <animated.View
             style={{
                 width: 80,
                 height: 80,

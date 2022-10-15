@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Root } from "@/components"
 
@@ -344,7 +344,7 @@ function App() {
     const [touching, setTouching] = useState(false)
     return (
         <Root>
-            <Div
+            <View
                 style={{
                     backgroundColor: "black",
                     borderRadius: 40,
@@ -382,7 +382,7 @@ function App() {
                         const scale = (size * 2) / ICON_SIZE
 
                         return scale <= 0 ? null : (
-                            <Div
+                            <View
                                 key={`${item.row} ${item.col}`}
                                 style={{
                                     width: ICON_SIZE,
@@ -397,11 +397,11 @@ function App() {
                                 }}
                             >
                                 {index}
-                            </Div>
+                            </View>
                         )
                     })}
                 </Stack>
-            </Div>
+            </View>
         </Root>
     )
 }

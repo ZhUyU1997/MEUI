@@ -20,7 +20,7 @@ function App() {
     const [text, setText] = useState("Hello MEUI!")
 
     return (
-        <animated.Div
+        <animated.View
             style={{
                 width: 120,
                 height: 120,
@@ -34,7 +34,7 @@ function App() {
             }}
         >
             {text}
-        </animated.Div>
+        </animated.View>
     )
 }
 

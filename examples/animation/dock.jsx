@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { animated, useSpring, config } from "@/react-sping-meui"
@@ -47,13 +47,13 @@ function App() {
                 flexDirection: "column",
             }}
         >
-            <Div
+            <View
                 style={{
                     width: "100%",
                     flexGrow: 1,
                 }}
             >
-                <animated.Div
+                <animated.View
                     style={{
                         width: "100%",
                         flexGrow: 1,
@@ -62,9 +62,9 @@ function App() {
                         zIndex: 0,
                         ...styles,
                     }}
-                ></animated.Div>
-            </Div>
-            <Div
+                ></animated.View>
+            </View>
+            <View
                 style={{
                     width: "content",
                     height: 150,
@@ -73,7 +73,7 @@ function App() {
                     padding: 10,
                 }}
             >
-                <Div
+                <View
                     style={{
                         width: 120,
                         height: 120,
@@ -97,8 +97,8 @@ function App() {
                     onClick={() => {
                         setOpen((prev) => !prev)
                     }}
-                ></Div>
-            </Div>
+                ></View>
+            </View>
         </Root>
     )
 }

@@ -5,14 +5,14 @@
  */
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Root, Column, Center, MaterialDesignIcon } from "@/components"
 
 function Circle({ radius, style, children }) {
     return (
-        <Div
+        <View
             style={{
                 width: radius * 2,
                 height: radius * 2,
@@ -25,13 +25,13 @@ function Circle({ radius, style, children }) {
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
 function Message({ isSelf, text, time }) {
     const dot = (
-        <Div
+        <View
             style={{
                 alignItems: "flex-end",
             }}
@@ -44,11 +44,11 @@ function Message({ isSelf, text, time }) {
                         : "rgb(210,210,210)",
                 }}
             ></Circle>
-        </Div>
+        </View>
     )
 
     const timehint = (
-        <Div
+        <View
             style={{
                 flexShrink: 0,
                 margin: [4, 15, 0, 15],
@@ -57,10 +57,10 @@ function Message({ isSelf, text, time }) {
             }}
         >
             {time}
-        </Div>
+        </View>
     )
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 flexDirection: "column",
@@ -69,7 +69,7 @@ function Message({ isSelf, text, time }) {
                 flexShrink: 0,
             }}
         >
-            <Div
+            <View
                 style={{
                     width: "100%",
                     flexShrink: 0,
@@ -77,7 +77,7 @@ function Message({ isSelf, text, time }) {
                 }}
             >
                 {isSelf ? null : dot}
-                <Div
+                <View
                     style={{
                         // minWidth: 50,
                         minHeight: 40,
@@ -93,11 +93,11 @@ function Message({ isSelf, text, time }) {
                     }}
                 >
                     {text}
-                </Div>
+                </View>
                 {!isSelf ? null : dot}
-            </Div>
+            </View>
             {time ? timehint : null}
-        </Div>
+        </View>
     )
 }
 
@@ -178,7 +178,7 @@ function Whatsapp() {
                     }}
                 ></Circle>
                 <Column style={{ flexGrow: 1 }}>
-                    <Div
+                    <View
                         style={{
                             width: "100%",
                             textAlign: "center-left",
@@ -187,8 +187,8 @@ function Whatsapp() {
                         }}
                     >
                         Anil
-                    </Div>
-                    <Div
+                    </View>
+                    <View
                         style={{
                             width: "100%",
                             textAlign: "center-left",
@@ -197,7 +197,7 @@ function Whatsapp() {
                         }}
                     >
                         Online - Last seen, 2.02pm
-                    </Div>
+                    </View>
                 </Column>
                 <MaterialDesignIcon
                     width={30}
@@ -279,7 +279,7 @@ function Whatsapp() {
                         color="#333333"
                         style={{ marginRight: 8 }}
                     ></MaterialDesignIcon>
-                    <Div
+                    <View
                         style={{
                             flexGrow: 1,
                             fontColor: "#303030",
@@ -287,7 +287,7 @@ function Whatsapp() {
                         }}
                     >
                         Type your message here
-                    </Div>
+                    </View>
                     <MaterialDesignIcon
                         width={24}
                         height={24}
@@ -324,13 +324,13 @@ function Whatsapp() {
                     flexShrink: 0,
                 }}
             >
-                <Div
+                <View
                     style={{
                         width: 179,
                         height: 4,
                         backgroundColor: "rgba(169,169,169,87%)",
                     }}
-                ></Div>
+                ></View>
             </Center>
         </Root>
     )

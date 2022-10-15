@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
@@ -26,7 +26,7 @@ function Screen({ log, style }: { log: string; style?: MeuiStyle }) {
                 ...style,
             }}
         >
-            <Div
+            <View
                 style={{
                     width: "100%",
                     height: 75,
@@ -35,15 +35,15 @@ function Screen({ log, style }: { log: string; style?: MeuiStyle }) {
                 }}
             >
                 {log}
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     width: "100%",
                     height: 75,
                     fontSize: 40,
                     textAlign: "center-right",
                 }}
-            ></Div>
+            ></View>
         </Center>
     )
 }
@@ -60,7 +60,7 @@ function Key({
     math?: string
 }) {
     return (
-        <Div
+        <View
             style={{
                 borderRadius: 12.5,
                 fontColor: "white",
@@ -77,7 +77,7 @@ function Key({
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
@@ -95,7 +95,7 @@ function BigKey({
     style?: MeuiStyle
 }) {
     return (
-        <Div
+        <View
             style={{
                 borderRadius: [10, 10, 18, 18],
                 fontColor: "white",
@@ -113,7 +113,7 @@ function BigKey({
             }}
         >
             {children}
-        </Div>
+        </View>
     )
 }
 
@@ -272,12 +272,12 @@ function App() {
                     padding: 21,
                 }}
             >
-                <Div style={{ fontSize: 30, height: 45, fontColor: "white" }}>
+                <View style={{ fontSize: 30, height: 45, fontColor: "white" }}>
                     Pasio
-                </Div>
-                <Div style={{ fontSize: 30, height: 70, fontColor: "white" }}>
+                </View>
+                <View style={{ fontSize: 30, height: 70, fontColor: "white" }}>
                     unleash the mathematician within
-                </Div>
+                </View>
                 <Screen log={log}></Screen>
                 <KeyBoard keyClick={keyClick}></KeyBoard>
             </Column>

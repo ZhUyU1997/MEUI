@@ -5,7 +5,7 @@
  */
 
 import React, { useRef, useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Center, Column, Root, Row } from "@/components"
 import { createGame, Direction, Tile } from "2048-engine"
@@ -54,7 +54,7 @@ function getColor(val: number) {
 
 function Tile({ value }: { value: Tile | null }) {
     return (
-        <Div
+        <View
             focusable={true}
             style={{
                 width: 90,
@@ -67,7 +67,7 @@ function Tile({ value }: { value: Tile | null }) {
             }}
         >
             {value === null ? "" : value.value}
-        </Div>
+        </View>
     )
 }
 

@@ -6,12 +6,12 @@
  */
 
 import React, { useState } from "react"
-import { MEUI, Div } from "@/meui"
+import { MEUI, View } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 function App() {
     return (
-        <Div
+        <View
             style={{
                 width: "100%",
                 height: "100%",
@@ -159,7 +159,7 @@ function App() {
             declining sinks into a heavy mist; It's a long way between southern
             rivers and eastern seas. How many can go home by moonlight who are
             missed? The sinking moon sheds yearning o'er riverside trees.
-        </Div>
+        </View>
     )
 }
 

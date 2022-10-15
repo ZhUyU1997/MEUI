@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, MEUI, Stack } from "@/meui"
+import { View, MEUI, Stack } from "@/meui"
 import ReactMEUI from "@/react-meui"
 import { Column, Root, Row } from "@/components"
 
@@ -39,7 +39,7 @@ function App() {
                                 alignItems: "center",
                             }}
                         >
-                            <Div
+                            <View
                                 style={{
                                     fontColor: "#00D1FF",
                                     fontSize: 100,
@@ -49,9 +49,9 @@ function App() {
                                 }}
                             >
                                 0933
-                            </Div>
+                            </View>
                         </Column>
-                        <Div
+                        <View
                             style={{
                                 fontColor: "white",
                                 fontSize: 20,
@@ -60,7 +60,7 @@ function App() {
                             }}
                         >
                             Am
-                        </Div>
+                        </View>
                     </Stack>
                 </Row>
                 <Row style={{ fontColor: "white", fontSize: 20 }}>

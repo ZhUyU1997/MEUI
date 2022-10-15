@@ -23,12 +23,12 @@ import type { MeuiStyle } from "./style"
 
 const FPS = 60
 
-export const Div = "Div"
+export const View = "View"
 export const Stack = "Stack"
 export const Canvas = "Canvas"
 
-export function createElement(type = "Div", style: MeuiStyle = {}): Element {
-    if (type === "Div") return new DivElement(style)
+export function createElement(type = "View", style: MeuiStyle = {}): Element {
+    if (type === "View") return new DivElement(style)
     else if (type === "Stack") return new StackElement(style)
     else if (type === "Canvas") return new CanvasElement(style)
     return new DivElement(style)
@@ -50,7 +50,7 @@ export class MEUI {
         this.width = width
         this.height = height
 
-        this.root = createElement("Div", {
+        this.root = createElement("View", {
             justifyContent: "center",
             alignItems: "center",
             alignContent: "center",

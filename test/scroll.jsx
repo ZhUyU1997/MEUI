@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef } from "react"
-import { Div } from "@/meui"
+import { View } from "@/meui"
 
 function Test() {
     const ref = useRef()
@@ -14,7 +14,7 @@ function Test() {
         console.log("ref", ref.current)
     }, [])
     return (
-        <Div
+        <View
             ref={ref}
             style={{
                 backgroundColor: "#FFFFFFFF",
@@ -35,7 +35,7 @@ function Test() {
                 .fill(0)
                 .map((index) => {
                     return (
-                        <Div
+                        <View
                             key={index}
                             style={{
                                 textAlign: "center",
@@ -48,9 +48,9 @@ function Test() {
                                     Math.random() * 255
                                 )}, ${Math.round(Math.random() * 255)}, 1)`,
                             }}
-                        ></Div>
+                        ></View>
                     )
                 })}
-        </Div>
+        </View>
     )
 }

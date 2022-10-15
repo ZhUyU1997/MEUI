@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react"
-import { Div, MEUI } from "@/meui"
+import { View, MEUI } from "@/meui"
 import ReactMEUI from "@/react-meui"
 
 import { animated, useSpring } from "@/react-sping-meui"
@@ -14,8 +14,8 @@ import TextArea from "@/components/text-area"
 
 function EditableItem({ name, children, onChange }) {
     return (
-        <Div style={{ width: "100%", height: 50, margin: 10 }}>
-            <Div
+        <View style={{ width: "100%", height: 50, margin: 10 }}>
+            <View
                 style={{
                     fontColor: "#8C92A4",
                     fontSize: 20,
@@ -23,8 +23,8 @@ function EditableItem({ name, children, onChange }) {
                 }}
             >
                 {name}
-            </Div>
-            <Div
+            </View>
+            <View
                 style={{
                     flexGrow: 1,
                     height: 50,
@@ -47,13 +47,13 @@ function EditableItem({ name, children, onChange }) {
                 >
                     {children}
                 </TextArea>
-            </Div>
-        </Div>
+            </View>
+        </View>
     )
 }
 function Editor({ option, setOption }) {
     return (
-        <Div
+        <View
             style={{
                 backgroundColor: "#181C20",
                 width: 300,
@@ -86,7 +86,7 @@ function Editor({ option, setOption }) {
                     {v.toString()}
                 </EditableItem>
             ))}
-        </Div>
+        </View>
     )
 }
 
@@ -104,7 +104,7 @@ function App() {
 
     return (
         <Root>
-            <Div
+            <View
                 style={{
                     // width: "100%",
                     flexGrow: 1,
@@ -114,7 +114,7 @@ function App() {
                     alignItems: "center",
                 }}
             >
-                <animated.Div
+                <animated.View
                     style={{
                         width: 120,
                         height: 120,
@@ -136,8 +136,8 @@ function App() {
                             config: option,
                         })
                     }}
-                ></animated.Div>
-            </Div>
+                ></animated.View>
+            </View>
             <Editor option={option} setOption={setOption}></Editor>
         </Root>
     )

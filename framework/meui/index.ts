@@ -51,7 +51,7 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
         interface IntrinsicElements {
-            Div: MeuiElementAttribule & RefAttributes<DivElement>
+            View: MeuiElementAttribule & RefAttributes<DivElement>
             Canvas: MeuiCanvasElementAttribule & RefAttributes<CanvasElement>
             Stack: MeuiElementAttribule & RefAttributes<StackElement>
         }
@@ -59,7 +59,7 @@ declare global {
 }
 
 export interface MeuiElements {
-    Div: JSX.IntrinsicElements["Div"]
+    View: JSX.IntrinsicElements["View"]
     Stack: JSX.IntrinsicElements["Stack"]
     Canvas: JSX.IntrinsicElements["Canvas"]
 }
