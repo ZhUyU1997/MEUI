@@ -1,11 +1,14 @@
 {
   "scripts": {
     "dev": "rm -f dist/* && make -j16 && cross-env NODE_ENV=development node ./esbuild.mjs",
+    "build:esbuild": "cross-env NODE_ENV=production node ./esbuild.mjs",
     "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/hello/index.jsx",
     "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "node ./style-gen.mjs",
-    "format": "prettier --write framework test examples"
+    "format": "prettier --write framework test examples",
+    "dev:vite": "vite --host",
+    "build:vite": "vite build"
   },
   "dependencies": {
     "@react-spring/core": "^9.4.4",
@@ -18,6 +21,7 @@
     "react-reconciler": "^0.26.0"
   },
   "devDependencies": {
+    "2048-engine": "^0.1.1",
     "@babel/core": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@rollup/plugin-alias": "^3.1.9",
@@ -30,7 +34,6 @@
     "@types/react-reconciler": "^0.26.6",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
-    "2048-engine": "^0.1.1",
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.39",
     "eslint": "^8.10.0",
@@ -48,7 +51,9 @@
     "rollup-plugin-visualizer": "^5.8.1",
     "tree-kill": "^1.2.2",
     "tslib": "^2.3.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "vite": "^3.1.8",
+    "vite-plugin-pwa": "^0.13.1"
   },
   "author": "Yu Zhu",
   "license": "MIT"

@@ -9,12 +9,16 @@ import { spawn } from 'child_process'
 import kill from "tree-kill"
 import path from "path"
 
+const isDev = process.env.NODE_ENV === 'development'
+
 let childProcess = null
 
 export function execute(command, args) {
     return {
         name: 'execute',
         setup(build) {
+            if(!isDev)
+                return
             build.onEnd(result => {
                 console.log(`build ended with ${result.errors.length} errors`)
                 if (childProcess) {
@@ -56,19 +60,19 @@ function preactCompatPlugin() {
 build({
     entryPoints: [process.argv[2] ?? 'examples/hello/index.jsx'],
     // minify: true,
-    minify: process.env.NODE_ENV === 'production',
+    minify: !isDev,
     // bundle: false,
     bundle: true,
     external: ['NativeMEUI', 'os', 'std'],
     target: "es2020",
-    outfile: 'dist/index.js',
+    outfile: process.argv[3] ?? 'dist/index.js',
     format: "esm",
     inject: ["framework/polyfill.js"],
-    watch: {
+    watch: isDev ? {
         onRebuild(error, result) {
             if (error) console.error('watch build failed:')
             else console.log('watch build succeeded:')
         },
-    },
+    } : false,
     plugins: [preactCompatPlugin(), execute(path.resolve("./meui"), [path.resolve("./dist/index.js")])]
 })
