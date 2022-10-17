@@ -61,16 +61,16 @@ jobs:
         run: emcc -v
       - run: pnpm install
       - run: pnpm run gen
-      - run: pnpm run build:esbuild examples/watch/home browser/test.js
+      - run: pnpm run build:esbuild examples/watch/home browser/gen/test.js
       - run: make -j16 -f wasm.mk
-      - run: pnpm run build:vite
+      - run: pnpm -F @meui/live build
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: './dist'
+          path: './browser/dist'
   # Deployment job
   deploy:
     environment:

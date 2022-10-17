@@ -6,9 +6,7 @@
     "profile": "rm -rf dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "node ./style-gen.mjs",
-    "format": "prettier --write framework test examples",
-    "dev:vite": "vite --host",
-    "build:vite": "vite build"
+    "format": "prettier --write framework test examples"
   },
   "dependencies": {
     "@react-spring/animated": "^9.5.5",
@@ -55,9 +53,7 @@
     "rollup-plugin-visualizer": "^5.8.1",
     "tree-kill": "^1.2.2",
     "tslib": "^2.3.1",
-    "typescript": "^4.6.3",
-    "vite": "^3.1.8",
-    "vite-plugin-pwa": "^0.13.1"
+    "typescript": "^4.6.3"
   },
   "author": "Yu Zhu",
   "license": "MIT"

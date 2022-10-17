@@ -12,3 +12,4 @@ fixdep*
 /.vscode
 /node_modules
 /dist
+/stats.html

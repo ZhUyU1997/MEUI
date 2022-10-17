@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [
         VitePWA({
             workbox: {
-                globPatterns: ['**/*.{js,css,html,wasm,ttf}'],
+                globPatterns: ['**/*.{js,css,html,wasm,ttf,data}'],
                 maximumFileSizeToCacheInBytes: 10000000,
             },
             registerType: 'autoUpdate',
