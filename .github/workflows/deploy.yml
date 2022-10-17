@@ -37,11 +37,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
       - name: Install Packages
         run: |
           sudo apt install make
@@ -56,11 +59,11 @@ jobs:
           actions-cache-folder: 'emsdk-cache'
       - name: Verify
         run: emcc -v
-      - run: npm ci
-      - run: npm run gen
-      - run: npm run build:esbuild examples/watch/home browser/test.js
+      - run: pnpm install
+      - run: pnpm run gen
+      - run: pnpm run build:esbuild examples/watch/home browser/test.js
       - run: make -j16 -f wasm.mk
-      - run: npm run build:vite
+      - run: pnpm run build:vite
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact

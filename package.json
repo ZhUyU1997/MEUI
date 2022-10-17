@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "dev": "rm -f dist/* && make -j16 && cross-env NODE_ENV=development node ./esbuild.mjs",
+    "dev": "rm -rf dist/* && make -j16 && cross-env NODE_ENV=development node ./esbuild.mjs",
     "build:esbuild": "cross-env NODE_ENV=production node ./esbuild.mjs",
-    "build": "rm -f dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/hello/index.jsx",
-    "profile": "rm -f dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
+    "build": "rm -rf dist/* && make -j16 && cross-env NODE_ENV=production rollup -c --input examples/hello/index.jsx",
+    "profile": "rm -rf dist/* && make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
     "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
     "gen": "node ./style-gen.mjs",
     "format": "prettier --write framework test examples",
@@ -11,11 +11,13 @@
     "build:vite": "vite build"
   },
   "dependencies": {
+    "@react-spring/animated": "^9.5.5",
     "@react-spring/core": "^9.4.4",
+    "@react-spring/shared": "^9.5.5",
     "@rollup/plugin-replace": "^4.0.0",
     "color-string": "^1.9.0",
     "cssfontparser": "^1.2.1",
-    "jsnes": "git+https://gitee.com/891085309/jsnes.git#master",
+    "jsnes": "git+ssh://git@github.com:ZhUyU1997/jsnes.git#master",
     "preact": "^10.10.0",
     "react": "^17.0.2",
     "react-reconciler": "^0.26.0"
@@ -24,6 +26,7 @@
     "2048-engine": "^0.1.1",
     "@babel/core": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
+    "@react-spring/types": "^9.5.5",
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^21.0.2",
@@ -35,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "cross-env": "^7.0.3",
+    "csstype": "^3.1.1",
     "esbuild": "^0.14.39",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
