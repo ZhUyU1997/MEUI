@@ -95,8 +95,11 @@ importers:
 
   browser:
     specifiers:
+      dayjs: ^1.11.5
       vite: ^3.1.8
       vite-plugin-pwa: ^0.13.1
+    dependencies:
+      dayjs: 1.11.5
     devDependencies:
       vite: 3.1.8
       vite-plugin-pwa: 0.13.1_vite@3.1.8
@@ -2098,6 +2101,10 @@ packages:
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
     dev: true
+
+  /dayjs/1.11.5:
+    resolution: {integrity: sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==}
+    dev: false
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}

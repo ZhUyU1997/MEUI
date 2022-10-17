@@ -13,5 +13,8 @@
   "devDependencies": {
     "vite": "^3.1.8",
     "vite-plugin-pwa": "^0.13.1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.5"
   }
 }

@@ -2,6 +2,7 @@ import createModule from "/gen/meui.js";
 import input from '/gen//test.js?raw'
 import Wasm from '/gen/meui.wasm?url'
 import Data from '/gen/meui.data?url'
+import { getTime, getVersion } from "./util";
 
 async function FetchFile(path) {
     const response = await fetch(path)
@@ -31,3 +32,6 @@ async function Main() {
     callMain(['index.js'])
 }
 Main()
+
+
+console.log(getVersion(), getTime())
