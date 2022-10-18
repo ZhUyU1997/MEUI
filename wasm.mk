@@ -61,7 +61,10 @@ CFLAGS	= $(X_CPPFLAGS) -DCONFIG_VERSION=\"1.0.0\" \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s MODULARIZE=1 \
 	-s EXPORTED_RUNTIME_METHODS="['FS', 'callMain']" \
-	--preload-file res/font \
 	-DEMSCRIPTEN -lm -Oz -Wall --llvm-lto 1 -fno-exceptions -s USE_SDL=2
 all:
+	mkdir -p browser/gen
+	mkdir -p browser/public
 	emcc $(CFLAGS) -o browser/gen/meui.js $(X_SOURCE)
+	rm -rf browser/public/*
+	cp res browser/public -r
