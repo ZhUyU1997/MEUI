@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useRef } from "react"
-import { Canvas, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { useEffect, useRef } from "preact/compat"
+import { createRoot, Canvas } from "@meui/preact"
 
-import { Root } from "@/components"
-import { CanvasElement } from "@/meui"
+import { Root } from "@meui/components"
+import { CanvasElement } from "@meui/core"
 
 const ROWS = 100
 const COLS = 300
@@ -123,5 +122,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
-ReactMEUI.render(<App />, meui)
+createRoot(SCREEN_WIDTH, SCREEN_HEIGHT).render(<App />)

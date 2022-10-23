@@ -1,0 +1,31 @@
+{
+    "name": "@meui/preact",
+    "version": "0.0.1",
+    "description": "",
+    "keywords": [],
+    "author": "Yu Zhu",
+    "license": "MIT",
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs"
+        },
+        "./jsx-runtime": {
+            "types": "./jsx-runtime/index.d.ts",
+            "import": "./jsx-runtime/index.js"
+        }
+    },
+    "scripts": {
+        "dev": "rimraf dist && rollup -c -w",
+        "build": "rimraf dist && rollup -c"
+    },
+    "dependencies": {
+        "@meui/core": "workspace:*",
+        "preact": "^10.10.0"
+    }
+}

@@ -1,20 +1,20 @@
 {
-  "name": "@meui/live",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vite --host",
-    "build": "vite build"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "vite": "^3.1.8",
-    "vite-plugin-pwa": "^0.13.1"
-  },
-  "dependencies": {
-    "dayjs": "^1.11.5"
-  }
+    "name": "@meui/live",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "vite --host",
+        "build": "vite build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "vite": "^3.1.8",
+        "vite-plugin-pwa": "^0.13.1"
+    },
+    "dependencies": {
+        "dayjs": "^1.11.5"
+    }
 }

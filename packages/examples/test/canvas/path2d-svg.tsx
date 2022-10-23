@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CanvasRenderingContext2D, Path2D } from "@/meui"
+import { CanvasRenderingContext2D, Path2D } from "@meui/core"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     // https://developer.mozilla.org/zh-CN/docs/Web/API/Path2D/Path2D

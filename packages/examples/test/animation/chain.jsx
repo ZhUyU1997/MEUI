@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import Button from "@/components/button"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { useState } from "preact/compat"
+import { Button } from "@meui/components"
+import { View } from "@meui/preact"
+import { createRoot } from "@meui/preact"
 
 import {
     useTransition,
@@ -16,7 +16,7 @@ import {
     config,
     animated,
     useSpringRef,
-} from "@/react-sping-meui"
+} from "@meui/spring"
 
 const data = [
     {
@@ -173,5 +173,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1060, 340)
-ReactMEUI.render(<App />, meui)
+createRoot(1060, 340).render(<App />)

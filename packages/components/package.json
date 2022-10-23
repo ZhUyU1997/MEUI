@@ -1,0 +1,29 @@
+{
+    "name": "@meui/components",
+    "version": "0.0.1",
+    "description": "",
+    "keywords": [],
+    "author": "Yu Zhu",
+    "license": "MIT",
+    "scripts": {
+        "dev": "rimraf dist && rollup -c -w",
+        "build": "rimraf dist && rollup -c"
+    },
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs"
+        }
+    },
+    "dependencies": {
+        "@meui/core": "workspace:*",
+        "@meui/preact": "workspace:*",
+        "esbuild": "^0.15.11",
+        "preact": "^10.10.0"
+    }
+}

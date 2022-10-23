@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { Node, NodeType } from "./node"
-export * from "./element"
-export { Text } from "./text"
-export { DivElement } from "./div"
-export { StackElement } from "./stack"
+export * from "./node"
+export * from "./text"
+export * from "./div"
+export * from "./stack"
 export * from "./canvas"
+export * from "./element"

@@ -1,0 +1,29 @@
+{
+    "name": "@meui/examples",
+    "version": "0.0.1",
+    "description": "",
+    "main": "",
+    "keywords": [],
+    "author": "Yu Zhu",
+    "license": "MIT",
+    "scripts": {
+        "dev": "rimraf dist && cross-env NODE_ENV=development node ./esbuild.mjs",
+        "build": "rimraf dist && cross-env NODE_ENV=production node ./esbuild.mjs"
+    },
+    "dependencies": {
+        "2048-engine": "^0.1.1",
+        "@meui/components": "workspace:*",
+        "@meui/core": "workspace:*",
+        "@meui/path": "workspace:*",
+        "@meui/preact": "workspace:*",
+        "@meui/spring": "workspace:*",
+        "@types/os": "workspace:*",
+        "@types/std": "workspace:*",
+        "mathjs": "^11.0.1",
+        "preact": "^10.10.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.15.11",
+        "fs-extra": "^10.1.0"
+    }
+}

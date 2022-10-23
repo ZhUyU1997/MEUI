@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useRef } from "react"
-import { View } from "@/meui"
+import React, { useEffect, useRef } from "preact/compat"
+import { View } from "@meui/preact"
 
 function Test() {
     const ref = useRef()

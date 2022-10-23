@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Column, Root, Row } from "@/components"
-import { Stack } from "@/meui"
-import { MeuiStyle } from "@/meui"
-import React, { useState } from "react"
+import { Column, Root, Row } from "@meui/components"
+import { Stack } from "@meui/preact"
+import { MeuiStyle } from "@meui/core"
+import { ComponentChildren } from "preact"
+import { useState } from "preact/compat"
 import { Icon } from "./icon"
 
 function Title({ children }: { children: string }) {
@@ -46,7 +47,7 @@ function MenuItem({
     isSelect,
     onClick,
 }: {
-    children: React.ReactNode
+    children: ComponentChildren
     isSelect: boolean
     onClick: () => void
 }) {

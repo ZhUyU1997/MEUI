@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Path2D as NativePath2D } from "NativeMEUI"
+import { Path2D as NativePath2D } from "meui-native"
 import { Matrix2D } from "../../style"
 
 export interface CanvasPath {

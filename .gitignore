@@ -10,6 +10,6 @@
 fixdep*
 /meui*
 /.vscode
-/node_modules
-/dist
-/stats.html
+node_modules
+dist
+stats.html

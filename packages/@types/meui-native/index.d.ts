@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-declare module "NativeMEUI" {
+declare module "meui-native" {
     export interface MeuiKeyboardRawEvent {
         type: "keydown" | "keyup"
         keyCode: number

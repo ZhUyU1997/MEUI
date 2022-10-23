@@ -11,8 +11,6 @@
   <img src="https://img.shields.io/github/package-json/dependency-version/ZhUyU1997/MEUI/@react-spring/core">
 </p>
 
-
-
 `MEUI` is a modern ui library for embedded platform based on `quickjs` and `React.js`
 
 <p align="center">
@@ -27,11 +25,10 @@
 
 ## [Example](examples/hello/index.jsx)
 
-```tsx
-import React from "react"
-import { MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-import { animated, useSpring } from "@/react-sping-meui"
+```jsx
+import { createRoot } from "@meui/preact"
+import { useState } from "preact/compat"
+import { animated, useSpring } from "@meui/spring"
 
 function App() {
     const styles = useSpring({
@@ -39,6 +36,8 @@ function App() {
         from: { rotateZ: 0 },
         to: { rotateZ: 360 },
     })
+
+    const [text, setText] = useState("Hello MEUI!")
 
     return (
         <animated.View
@@ -50,79 +49,82 @@ function App() {
                 textAlign: "center",
                 ...styles,
             }}
+            onClick={() => {
+                setText("Hello MEUI!\nHello React!")
+            }}
         >
-            Hello MEUI!
+            {text}
         </animated.View>
     )
 }
 
-const meui = new MEUI(300, 300)
-ReactMEUI.render(<App />, meui)
+createRoot(300, 300).render(<App />)
 ```
-
-
 
 ## Features
 
-- Support `React.js` to build UI
-- Support `flex` layout
-- Support partical `css` style
-- Support `Material Design Icons`
-- Support `React Spring` to build animation
-- Support `ES2020`
-- Support `canvas` api
+-   Support `React.js` to build UI
+-   Support `flex` layout
+-   Support partical `css` style
+-   Support `Material Design Icons`
+-   Support `React Spring` to build animation
+-   Support `ES2020`
+-   Support `canvas` api
 
 ## Getting Started
+
 ### Windows
-- #### Download and Install below packages
 
-  [Nodejs 16.x](https://nodejs.org/en/)
+-   #### Download and Install below packages
 
-  [MinGW-w64 x86_64-posix-seh-rt](https://github.com/niXman/mingw-builds-binaries/releases)
+    [Nodejs 16.x](https://nodejs.org/en/)
 
-  [SDL2-devel-mingw](https://github.com/libsdl-org/SDL/releases/)
+    [MinGW-w64 x86_64-posix-seh-rt](https://github.com/niXman/mingw-builds-binaries/releases)
 
-- #### Add `MinGW` into Environment Variables
+    [SDL2-devel-mingw](https://github.com/libsdl-org/SDL/releases/)
 
-- #### Copy the `SDL2` files to `MinGW`
+-   #### Add `MinGW` into Environment Variables
 
-  ```
-  [path to SDL2]\x86_64-w64-mingw32 => [path to MinGW]\x86_64-w64-mingw32
-  ```
+-   #### Copy the `SDL2` files to `MinGW`
 
-- #### Build & Run MEUI
+    ```
+    [path to SDL2]\x86_64-w64-mingw32 => [path to MinGW]\x86_64-w64-mingw32
+    ```
 
-  ```shell
-  npm install
-  npm run dev
-  # Or specified entry
-  npm run dev examples/signin/index.tsx
-  ```
+-   #### Build & Run MEUI
+
+    ```shell
+    npm install
+    npm run dev
+    # Or specified entry
+    npm run dev examples/signin/index.tsx
+    ```
 
 ### Ubuntu/WSLg
-- #### Install `Node.js` & `NPM`
 
-  ```sh
-  cd ~
-  curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
-  sudo apt -y install nodejs
-  node -v
-  ```
+-   #### Install `Node.js` & `NPM`
 
-- #### Install `GCC` & `Make`
+    ```sh
+    cd ~
+    curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+    sudo apt -y install nodejs
+    node -v
+    ```
 
-  ```sh
-  sudo apt install gcc make
-  ```
+-   #### Install `GCC` & `Make`
 
-- #### Build & Run MEUI
+    ```sh
+    sudo apt install gcc make
+    ```
 
-  ```sh
-  npm install
-  npm run dev
-  # Or specified entry
-  npm run dev examples/signin/index.tsx
-  ```
+-   #### Build & Run MEUI
+
+    ```sh
+    npm install
+    npm run dev
+    # Or specified entry
+    npm run dev examples/signin/index.tsx
+    ```
 
 ## API References
 
@@ -226,45 +228,44 @@ export interface MeuiStyle {
 }
 ```
 
-
-
 ## Canvas API
 
 `arc` `arcTo` `beiginPath` `bezierCurveTo` `createRadialGradient` `createLinearGradient` `clearRect` `clip` `closePath` `ellipse` `fill` `fillRect` `fillText` `font` `getImageData` `getTransform` `lineCap` `lineDashOffset` `lineJoin` `lineWidth` `measureText` `Path2D` `putImageData` `quadraticCurveTo` `resetTransform` `rotate` `save` `scale` `setLineDash` `setTransform` `strokeRect` `strokeText` `textAlign` `textBaseline` `transform` `translate`
 
 ## Discussion Group
+
 Tencent QQ Group: [765228998](https://jq.qq.com/?_wv=1027&k=LjX7RmEe)
 
 ## References
 
-- QuickJS Javascript Engine. Available at:
+-   QuickJS Javascript Engine. Available at:
 
-   https://bellard.org/quickjs/
+    https://bellard.org/quickjs/
 
-- PlutoVG is a standalone 2D vector graphics library in C. Available at:
+-   PlutoVG is a standalone 2D vector graphics library in C. Available at:
 
-   https://github.com/sammycage/plutovg
+    https://github.com/sammycage/plutovg
 
-- React: A JavaScript library for building user interfaces. Available at:
+-   React: A JavaScript library for building user interfaces. Available at:
 
-  https://reactjs.org/
+    https://reactjs.org/
 
-- react-spring: A spring-physics first animation library. Available at:
+-   react-spring: A spring-physics first animation library. Available at:
 
-  https://react-spring.io/
+    https://react-spring.io/
 
-- `FlexLayout` is an `C` implementation of `Flexible Box` layout. Available at:
+-   `FlexLayout` is an `C` implementation of `Flexible Box` layout. Available at:
 
-   https://github.com/Sleen/FlexLayout
+    https://github.com/Sleen/FlexLayout
 
-- single-file public domain (or MIT licensed) libraries for C/C++. Available at:
+-   single-file public domain (or MIT licensed) libraries for C/C++. Available at:
 
-   https://github.com/nothings/stb
+    https://github.com/nothings/stb
 
-- Templated type-safe hashmap implementation in C. Available at:
+-   Templated type-safe hashmap implementation in C. Available at:
 
-   https://github.com/DavidLeeds/hashmap
+    https://github.com/DavidLeeds/hashmap
 
-- `libpqueue` is a generic priority queue (heap) implementation. Available at:
+-   `libpqueue` is a generic priority queue (heap) implementation. Available at:
 
-  https://github.com/vy/libpqueue
+    https://github.com/vy/libpqueue

@@ -4,13 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { useState } from "preact/compat"
+import { createRoot, View } from "@meui/preact"
 
-import { animated, useSpring } from "@/react-sping-meui"
-import { Root } from "@/components"
-import TextArea from "@/components/text-area"
+import { animated, useSpring } from "@meui/spring"
+import { Root, TextArea } from "@meui/components"
 
 function EditableItem({ name, children, onChange }) {
     return (
@@ -143,5 +141,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1000, 500)
-ReactMEUI.render(<App />, meui)
+createRoot(1000, 500).render(<App />)

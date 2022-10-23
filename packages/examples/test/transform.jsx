@@ -4,13 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { Root, Button } from "@/components"
-
-import { parseTransform } from "@/meui"
+import React, { useState } from "preact/compat"
+import { View } from "@meui/preact"
+import { createRoot } from "@meui/preact"
+import { Root, Button } from "@meui/components"
+import { parseTransform } from "@meui/core"
 
 console.log(parseTransform(" scale( 1.2 ,1.2)  scale(1.3)  scale(1.4)  "))
 console.log(
@@ -81,5 +79,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(390, 844)
-ReactMEUI.render(<App />, meui)
+createRoot(390, 844).render(<App />)

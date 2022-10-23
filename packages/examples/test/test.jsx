@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react"
-import { View } from "@/meui"
+import React from "preact/compat"
+import { View } from "@meui/preact"
 
 function Flex_Test() {
     function TestItem() {

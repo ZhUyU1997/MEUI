@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useState } from "react"
-import { View, MEUI, Stack } from "@/meui"
-import ReactMEUI from "@/react-meui"
-import { Column, Root, Row } from "@/components"
+import { useState, useEffect } from "preact/hooks"
+import { createRoot, View, Stack } from "@meui/preact"
+import { Column, Root, Row } from "@meui/components"
 
 function Digital({ fixedOffset, left, top, style, children }) {
     return (
@@ -204,5 +203,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(312, 390)
-ReactMEUI.render(<App />, meui)
+createRoot(312, 390).render(<App />)

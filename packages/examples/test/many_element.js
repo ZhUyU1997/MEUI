@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { MEUI, DivElement } from "@/meui"
+import { MEUI, DivElement } from "@meui/core"
 
 const meui = new MEUI(1000, 1000)
 

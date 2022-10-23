@@ -9,11 +9,16 @@ import React, {
     useLayoutEffect,
     useRef,
     useState,
-} from "react"
-import { View, Stack, Canvas, MeuiElementAttribule } from "@/meui"
-import { CanvasElement, CanvasRenderingContext2D, TextMetrics } from "@/meui"
+} from "preact/compat"
 
-import { MeuiKeyboardEvent, MeuiMouseEvent } from "@/meui"
+import { View, Stack, Canvas, MeuiElementProps } from "@meui/preact"
+import {
+    CanvasElement,
+    CanvasRenderingContext2D,
+    TextMetrics,
+    MeuiKeyboardEvent,
+    MeuiMouseEvent,
+} from "@meui/core"
 
 interface TextRenderInfo {
     content: string
@@ -703,7 +708,7 @@ export interface TextAreaHandle {
     value: string
 }
 
-export interface Props extends Omit<MeuiElementAttribule, "children"> {
+export interface Props extends Omit<MeuiElementProps, "children"> {
     type?: "text" | "password"
     multiline?: boolean
     placeholder?: string
@@ -776,7 +781,7 @@ export default React.forwardRef<TextAreaHandle, Props>(function TextArea(
                 ...style,
             }}
             {...props}
-            onKeyDown={(e) => {
+            onKeyDown={(e: MeuiKeyboardEvent) => {
                 editorRef.current?.onKeyDown(e)
                 const value = editorRef.current?.value
                 const isEmpty = (value ?? "") === ""

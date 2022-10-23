@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react"
-
-import { MaterialDesignIcon } from "@/components"
-import { IconsKey } from "@/components/icons"
-import { MeuiStyle } from "@/meui"
+import { MaterialDesignIcon } from "@meui/components"
+import { IconsKey } from "@meui/components"
+import { MeuiStyle } from "@meui/core"
 
 export function Icon({
     icon,

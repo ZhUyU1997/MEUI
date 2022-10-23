@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Canvas as NativeCanvas, Path2D as NativePath2D } from "NativeMEUI"
+import { Canvas as NativeCanvas, Path2D as NativePath2D } from "meui-native"
 import { Element } from "../element"
 import { Matrix2D } from "../../style"
 
@@ -21,7 +21,7 @@ export enum COLOR_FORMAT {
     COLOR_BGR = 3,
 }
 
-export type { TextMetrics } from "NativeMEUI"
+export type { TextMetrics } from "meui-native"
 
 /** The dimensions of a piece of text in the canvas, as created by the CanvasRenderingContext2D.measureText() method. */
 interface TextMetrics {
@@ -497,7 +497,7 @@ export class CanvasRenderingContext2D
         y: number,
         maxWidth?: number | undefined
     ) => void
-    private _measureText: (text: string) => import("NativeMEUI").TextMetrics
+    private _measureText: (text: string) => import("meui-native").TextMetrics
 
     private _save: () => void
     private _restore: () => void
@@ -505,11 +505,11 @@ export class CanvasRenderingContext2D
     private stateStack: CanvasSavedState[]
     _setStrokeStyle: {
         (r: number, g: number, b: number, a: number): void
-        (strokeStyle: import("NativeMEUI").CanvasGradient): void
+        (strokeStyle: import("meui-native").CanvasGradient): void
     }
     _setFillStyle: {
         (r: number, g: number, b: number, a: number): void
-        (strokeStyle: import("NativeMEUI").CanvasGradient): void
+        (strokeStyle: import("meui-native").CanvasGradient): void
     }
     constructor(
         canvas: CanvasElement,

@@ -1,2 +1,4 @@
 packages:
-  - 'browser/'
+    - "browser/"
+    - "packages/@types/*"
+    - "packages/*"

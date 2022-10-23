@@ -4,12 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useRef, useState } from "react"
-import { Canvas, View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { Root, Button } from "@/components"
-import { CanvasElement } from "@/meui"
+import { useEffect, useRef, useState } from "preact/compat"
+import { createRoot, Canvas, View } from "@meui/preact"
+import { Root, Button } from "@meui/components"
+import { CanvasElement } from "@meui/core"
 
 const Test: any = {
     arc: () => import("./arc"),
@@ -144,5 +142,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1100, 500)
-ReactMEUI.render(<App />, meui)
+createRoot(1100, 500).render(<App />)

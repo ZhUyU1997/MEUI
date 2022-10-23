@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { View, Stack } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import React, { useState } from "preact/compat"
+import { View, Stack } from "@meui/preact"
+import { createRoot } from "@meui/preact"
 
-import { MEUI } from "@/meui"
-import { Root } from "@/components"
+import { MEUI } from "@meui/core"
+import { Root } from "@meui/components"
 
 function App() {
     const [direction, setDirection] = useState(undefined)
@@ -40,5 +40,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(390, 844)
-ReactMEUI.render(<App />, meui)
+createRoot(390, 844).render(<App />)

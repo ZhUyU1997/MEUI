@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createElement } from "@/meui"
+import { createElement } from "../"
 import { Text } from "./text"
 
 globalThis.document = {

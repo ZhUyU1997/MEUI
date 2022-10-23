@@ -8,34 +8,34 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [ "**" ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: ["**"]
+    pull_request:
+        branches: [master]
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [16.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2.2.4
-      with:
-        version: 7
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
-    - name: Install Packages
-      run: |
-        sudo apt install gcc make libxkbcommon-dev
-    - run: pnpm install
-    - run: pnpm run gen
-    - run: pnpm run build --if-present
+        steps:
+            - uses: actions/checkout@v3
+            - uses: pnpm/action-setup@v2.2.4
+              with:
+                  version: 7
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+            - name: Install Packages
+              run: |
+                  sudo apt install gcc make libxkbcommon-dev
+            - run: pnpm install
+            - run: pnpm gen
+            - run: pnpm run build-native
+            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components -F @meui/examples run build

@@ -5,7 +5,7 @@
  */
 
 import { Property } from "csstype"
-import { BOX_STATE } from "NativeMEUI"
+import { BOX_STATE } from "meui-native"
 import valueParser from "postcss-value-parser"
 
 // @ts-ignore

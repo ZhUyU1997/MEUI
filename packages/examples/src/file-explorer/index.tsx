@@ -4,26 +4,25 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { readdir, stat, S_IFMT, S_IFDIR } from "os"
 import * as os from "os"
 import * as std from "std"
+import { readdir, stat, S_IFMT, S_IFDIR } from "os"
+import path from "@meui/path"
 
-import { View, Stack, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { useState, useLayoutEffect } from "preact/compat"
+import { createRoot, View, Stack } from "@meui/preact"
 
-import path from "@/path"
-
-import { Center, Row, Column, Root, MaterialDesignIcon } from "@/components"
-import { MeuiStyle } from "@/meui"
+import { Center, Row, Column, Root, MaterialDesignIcon } from "@meui/components"
+import { MeuiStyle } from "@meui/core"
 import { Setting } from "./setting"
 import { Icon } from "./icon"
+import { ComponentChildren } from "preact"
 
 function MenuItem({
     children,
     onClick,
 }: {
-    children: React.ReactNode
+    children: ComponentChildren
     onClick?: () => void
 }) {
     return (
@@ -624,5 +623,4 @@ function FileExplorer() {
     )
 }
 
-const meui = new MEUI(1920, 1080)
-ReactMEUI.render(<FileExplorer />, meui)
+createRoot(1920, 1080).render(<FileExplorer />)

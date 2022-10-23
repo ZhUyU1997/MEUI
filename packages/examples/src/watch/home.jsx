@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useState } from "react"
-import { View, MEUI, Stack } from "@/meui"
-import ReactMEUI from "@/react-meui"
-import { Root } from "@/components"
+import { useState } from "preact/compat"
+import { View, Stack } from "@meui/preact"
+import { createRoot } from "@meui/preact"
+import { Root } from "@meui/components"
 
 const SCREEN_WIDTH = 396
 const SCREEN_HEIGHT = 484
@@ -406,5 +406,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(396, 484)
-ReactMEUI.render(<App />, meui)
+createRoot(396, 484).render(<App />)

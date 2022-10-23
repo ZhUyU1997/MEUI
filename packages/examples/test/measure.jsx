@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect } from "react"
-import { Root } from "@/components"
-import { View } from "@/meui"
+import React, { useEffect } from "preact/compat"
+import { Root } from "@meui/components"
+import { View } from "@meui/preact"
 
 export function Test() {
     return (

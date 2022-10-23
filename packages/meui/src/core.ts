@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { NativeMEUI, BOX_STATE, MeuiMouseRawEvent } from "NativeMEUI"
+import { NativeMEUI, BOX_STATE, MeuiMouseRawEvent } from "meui-native"
 import * as os from "os"
 import * as std from "std"
 import { KeyMap } from "./keymap"
@@ -18,14 +18,10 @@ import {
     MeuiWheelEvent,
 } from "./node"
 
-import { CanvasElement, DivElement, StackElement } from "./node"
+import { CanvasElement, DivElement, StackElement, Text } from "./node"
 import type { MeuiStyle } from "./style"
 
 const FPS = 60
-
-export const View = "View"
-export const Stack = "Stack"
-export const Canvas = "Canvas"
 
 export function createElement(type = "View", style: MeuiStyle = {}): Element {
     if (type === "View") return new DivElement(style)
@@ -297,7 +293,7 @@ export class MEUI {
         }
     }
     onFrameTick() {
-        window.triggerAnimationFrame()
+        ;(window as any).triggerAnimationFrame()
         this.update()
     }
 

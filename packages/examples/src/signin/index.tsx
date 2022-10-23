@@ -4,13 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
-import TextArea from "@/components/text-area"
-import { MeuiStyle } from "@/meui"
+import { useState } from "preact/compat"
+import { createRoot, View } from "@meui/preact"
+import {
+    Center,
+    Column,
+    MaterialDesignIcon,
+    Root,
+    Row,
+    TextArea,
+} from "@meui/components"
+import { MeuiStyle } from "@meui/core"
 
 function Input({
     placeholder,
@@ -294,5 +298,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(600, 600)
-ReactMEUI.render(<App />, meui)
+createRoot(600, 600).render(<App />)

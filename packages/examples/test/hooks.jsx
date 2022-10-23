@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useState } from "react"
-import { View } from "@/meui"
-import { Root, Button } from "@/components"
+import React, { useEffect, useState } from "preact/compat"
+import { View } from "@meui/preact"
+import { Root, Button } from "@meui/components"
 export function Test() {
     const [dollar, setDollar] = useState(0)
     const [rmb, setRMB] = useState(0)

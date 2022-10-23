@@ -4,14 +4,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { Center, Column, MaterialDesignIcon, Root, Row } from "@/components"
-import TextArea from "@/components/text-area"
-import { MeuiStyle } from "@/meui"
+import { useState } from "preact/compat"
+import { createRoot, View } from "@meui/preact"
+import { Center, Column, Root, Row } from "@meui/components"
+import { MeuiStyle } from "@meui/core"
 import { evaluate } from "mathjs"
+import { ComponentChildren } from "preact"
 
 function Screen({ log, style }: { log: string; style?: MeuiStyle }) {
     return (
@@ -54,7 +52,7 @@ function Key({
     keyLog,
     math,
 }: {
-    children: React.ReactNode
+    children?: ComponentChildren
     keyClick?: (keyLog: string, math: string) => void
     keyLog?: string
     math?: string
@@ -285,5 +283,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(463 + 21 * 2, 743 + 21 * 2)
-ReactMEUI.render(<App />, meui)
+createRoot(463 + 21 * 2, 743 + 21 * 2).render(<App />)

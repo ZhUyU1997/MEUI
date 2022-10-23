@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useRef } from "react"
-import { Canvas, View } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { MEUI } from "@/meui"
-import { Root } from "@/components"
+// Need add below into package.json
+//  "jsnes": "git+ssh://git@github.com:ZhUyU1997/jsnes.git#master",
+import { useEffect, useRef } from "preact/compat"
+import { createRoot, Canvas, View } from "@meui/preact"
+import { Root } from "@meui/components"
 
 // @ts-ignore
 import jsnes from "jsnes"
-import path from "@/path"
+import path from "@meui/path"
 import * as std from "std"
-import { CanvasElement, COLOR_FORMAT, ImageData } from "@/meui"
+import { CanvasElement, COLOR_FORMAT, ImageData } from "@meui/core"
 
 const SCREEN_WIDTH = 256
 const SCREEN_HEIGHT = 240
@@ -85,5 +84,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(SCREEN_WIDTH, SCREEN_HEIGHT)
-ReactMEUI.render(<App />, meui)
+createRoot(SCREEN_WIDTH, SCREEN_HEIGHT).render(<App />)

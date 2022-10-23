@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { View, MEUI, Stack } from "@/meui"
-import ReactMEUI from "@/react-meui"
-
-import { Root, Column, Center, MaterialDesignIcon } from "@/components"
+import { useState } from "preact/compat"
+import { createRoot, View, Stack } from "@meui/preact"
+import { Root, Center, MaterialDesignIcon } from "@meui/components"
 
 function DropDownList({ option = [], style }) {
     return (
@@ -135,5 +133,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(248, 360)
-ReactMEUI.render(<App />, meui)
+createRoot(248, 360).render(<App />)

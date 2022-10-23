@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useRef, useState } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
-import { Center, Column, Root, Row } from "@/components"
+import { useState } from "preact/compat"
+import { createRoot, View } from "@meui/preact"
+import { Column, Root, Row } from "@meui/components"
 import { createGame, Direction, Tile } from "2048-engine"
+import { MeuiKeyboardEvent } from "@meui/core"
 
 function getColor(val: number) {
     let color = "#ffffff"
@@ -83,7 +83,7 @@ function App() {
                 backgroundColor: "#f0f0f0",
             }}
             focusable={true}
-            onKeyDown={(e) => {
+            onKeyDown={(e: MeuiKeyboardEvent) => {
                 if (e.key == "ArrowUp") {
                     // up arrow
                     game.move(Direction.UP)
@@ -138,5 +138,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(400, 400)
-ReactMEUI.render(<App />, meui)
+createRoot(400, 400).render(<App />)

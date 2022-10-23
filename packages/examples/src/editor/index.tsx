@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useRef } from "react"
-import { MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import React, { useEffect, useRef } from "preact/compat"
+import { MEUI } from "@meui/core"
+import { createRoot } from "@meui/preact"
 
-import { Root } from "@/components"
-import TextArea, { TextAreaHandle } from "@/components/text-area"
+import { Root } from "@meui/components"
+import { TextArea } from "@meui/components"
+import type { TextAreaHandle } from "@meui/components"
 
 function App() {
     const ref = useRef<TextAreaHandle>(null)
@@ -75,5 +76,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1920, 1080)
-ReactMEUI.render(<App />, meui)
+createRoot(1920, 1080).render(<App />)

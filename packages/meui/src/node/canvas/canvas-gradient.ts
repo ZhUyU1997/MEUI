@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CanvasGradient as NativeCanvasGradient } from "NativeMEUI"
+import { CanvasGradient as NativeCanvasGradient } from "meui-native"
 import * as colorString from "color-string"
 
 /** An opaque object describing a gradient. It is returned by the methods CanvasRenderingContext2D.createLinearGradient() or CanvasRenderingContext2D.createRadialGradient(). */

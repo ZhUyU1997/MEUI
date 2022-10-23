@@ -1,0 +1,10 @@
+{
+    "name": "@types/meui-native",
+    "version": "0.0.1",
+    "description": "",
+    "main": "",
+    "types": "index.d.ts",
+    "keywords": [],
+    "author": "Yu Zhu",
+    "license": "MIT"
+}

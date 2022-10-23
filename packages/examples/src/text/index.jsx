@@ -5,9 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { MEUI, View } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { createRoot, View } from "@meui/preact"
 
 function App() {
     return (
@@ -163,5 +161,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1200, 1000)
-ReactMEUI.render(<App />, meui)
+createRoot(1200, 1000).render(<App />)

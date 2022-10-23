@@ -5,7 +5,7 @@
  */
 
 /* eslint-disable no-unreachable */
-import { BOX_STATE, Box as NativeBox, UI_STATE } from "NativeMEUI"
+import { BOX_STATE, Box as NativeBox, UI_STATE } from "meui-native"
 import * as colorString from "color-string"
 import { MeuiStyle, parseLength, parseTransform } from "../style"
 import { Node, NodeType } from "./node"

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react"
-import { MEUI, View } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import React, { useState } from "preact/compat"
+import { View } from "@meui/preact"
+import { createRoot } from "@meui/preact"
 
-import { animated, useSpring, config } from "@/react-sping-meui"
-import { Root } from "@/components"
+import { animated, useSpring, config } from "@meui/spring"
+import { Root } from "@meui/components"
 
 function App() {
     const styles = useSpring({
@@ -82,5 +82,4 @@ function App() {
     )
 }
 
-const meui = new MEUI(1000, 1000)
-ReactMEUI.render(<App />, meui)
+createRoot(1000, 1000).render(<App />)

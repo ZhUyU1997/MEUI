@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CanvasRenderingContext2D, ImageData } from "@/meui"
+import { CanvasRenderingContext2D, ImageData } from "@meui/core"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     function ColorRect(color: number, width: number, height: number) {

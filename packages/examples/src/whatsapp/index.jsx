@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
-import { View, MEUI } from "@/meui"
-import ReactMEUI from "@/react-meui"
+import { useState, useEffect, useRef } from "preact/compat"
+import { createRoot, View } from "@meui/preact"
 
-import { Root, Column, Center, MaterialDesignIcon } from "@/components"
+import { Root, Column, Center, MaterialDesignIcon } from "@meui/components"
 
 function Circle({ radius, style, children }) {
     return (
@@ -336,5 +335,4 @@ function Whatsapp() {
     )
 }
 
-const meui = new MEUI(390, 844)
-ReactMEUI.render(<Whatsapp />, meui)
+createRoot(390, 844).render(<Whatsapp />)

@@ -3,8 +3,8 @@
         "target": "ESNext",
         "useDefineForClassFields": true,
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        "allowJs": true,
-        "skipLibCheck": false,
+        "allowJs": false,
+        "skipLibCheck": true,
         "esModuleInterop": false,
         "allowSyntheticDefaultImports": true,
         "strict": true,
@@ -14,14 +14,8 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "react",
-        "typeRoots": ["@types", "node_modules/@types"],
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["framework/*"],
-            "react": ["preact/compat"],
-            "react-dom": ["preact/compat"]
-        }
+        "jsx": "react-jsx",
+        "jsxImportSource": "@meui/preact"
     },
-    "include": ["framework", "test", "examples"]
+    "include": ["src", "test"]
 }

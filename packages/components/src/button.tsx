@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react"
-import { View } from "@/meui"
+import React from "preact/compat"
+import { MeuiElementProps, View } from "@meui/preact"
 
 const style_name = [
     "primary",
@@ -16,7 +16,7 @@ const style_name = [
     "danger",
     "light",
     "dark",
-]
+] as const
 const style_color = [
     [
         ["#536de6ff", "#ffffffff", "#00000000"],
@@ -60,12 +60,18 @@ const style_color = [
     ],
 ]
 
+type TupleToUnion<T extends readonly unknown[]> = T[any]
+type ButtonStyleName = TupleToUnion<typeof style_name>
+
+interface Props extends MeuiElementProps {
+    type: ButtonStyleName
+}
 export default function Button({
     type = "primary",
     children,
     style,
     ...props
-}) {
+}: Props) {
     const index = style_name.indexOf(type)
     const list = style_color[index]
     return (
