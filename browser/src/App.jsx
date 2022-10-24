@@ -298,7 +298,7 @@ export default function App() {
             <div
                 style={{
                     width: "100%",
-                    height: isPortrait ? "90vh" : "70vh",
+                    height: isPortrait ? "90%" : "70%",
                     borderRadius: 4,
                     overflow: "hidden",
                     backgroundColor: "white",

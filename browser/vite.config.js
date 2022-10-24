@@ -6,7 +6,7 @@ import react from "@vitejs/plugin-react"
 export default defineConfig({
     base: "/MEUI/",
     define: {
-        __APP_VERSION__: JSON.stringify("v0.0.1"),
+        __APP_VERSION__: JSON.stringify("v0.0.2"),
         __APP_BUILD_TIME__: Date.now(),
     },
     plugins: [
