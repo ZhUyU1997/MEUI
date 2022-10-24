@@ -8,10 +8,13 @@ const old = window.addEventListener
 
 window.addEventListener = (...args) => {
     if (args[0].startsWith("key")) {
-        if (args[1].name === "jsEventHandler") {
-            console.log("filter out jsEventHandler")
-            return
-        }
+        // if (args[1].name === "jsEventHandler") {
+        //     console.log("filter out jsEventHandler")
+        //     return
+        // }
+
+        // disable keyboard event due to emscripten issues
+        return
     }
 
     return old.apply(window, args)
