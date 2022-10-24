@@ -1,10 +1,8 @@
 import createModule from "/gen/meui.js"
-import input from "/gen//test.js?raw"
 import Wasm from "/gen/meui.wasm?url"
 // import Data from '/gen/meui.data?url'
 import Droid from "/res/font/Droid-Sans-Fallback.ttf?url"
 import MaterialDesignIconsDesktop from "/res/font/MaterialDesignIconsDesktop.ttf?url"
-import { getTime, getVersion } from "./util"
 
 async function FetchFile(path) {
     const response = await fetch(path)
@@ -12,17 +10,20 @@ async function FetchFile(path) {
     return new Uint8Array(buffer)
 }
 
-async function Main() {
+export async function createMEUI({ canvas, input }) {
+    if (!canvas) throw new Error("canvas == null")
+    if (input == null) throw new Error("input == null")
     const Module = await createModule({
-        canvas: document.getElementById("canvas"),
+        canvas: canvas,
         locateFile: (path) => {
             if (path === "meui.wasm") return Wasm
             // if (path === "meui.data")
             //     return Data
             return null
         },
+        keyboardListeningElement: canvas,
     })
-    const { FS, callMain } = Module
+    const { FS, callMain, abort } = Module
 
     FS.writeFile("index.js", input)
     FS.mkdir("/res")
@@ -33,8 +34,10 @@ async function Main() {
         await FetchFile(MaterialDesignIconsDesktop)
     )
 
+    const js_cancel_main_loop = Module.cwrap("js_cancel_main_loop")
     callMain(["index.js"])
-}
-Main()
 
-console.log(getVersion(), getTime())
+    return () => {
+        js_cancel_main_loop()
+    }
+}

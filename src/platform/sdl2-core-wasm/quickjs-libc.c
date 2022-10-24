@@ -556,10 +556,13 @@ void __js_std_loop(void *data)
     int err;
 
     /* execute the pending jobs */
-    for(;;) {
+    for (;;)
+    {
         err = JS_ExecutePendingJob(JS_GetRuntime(ctx), &ctx1);
-        if (err <= 0) {
-            if (err < 0) {
+        if (err <= 0)
+        {
+            if (err < 0)
+            {
                 js_std_dump_error(ctx1);
             }
             break;
@@ -567,7 +570,12 @@ void __js_std_loop(void *data)
     }
 
     if (!os_poll_func || os_poll_func(ctx))
-        return;
+        emscripten_cancel_main_loop();
+}
+
+void js_cancel_main_loop()
+{
+    emscripten_cancel_main_loop();
 }
 
 /* main loop which calls the user JS callbacks */

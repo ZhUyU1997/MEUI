@@ -13,9 +13,13 @@ const entries = {
 
 const external = [
     ...builtinModules,
-    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.dependencies || {}).filter(
+        (name) =>
+            !["color-string", "cssfontparser", "postcss-value-parser"].includes(
+                name
+            )
+    ),
     ...Object.keys(pkg.peerDependencies || {}),
-    /node_modules/,
     "meui-native",
     "os",
     "std",

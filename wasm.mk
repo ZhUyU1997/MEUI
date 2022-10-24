@@ -60,7 +60,9 @@ CFLAGS	= $(X_CPPFLAGS) -DCONFIG_VERSION=\"1.0.0\" \
 	-s ASSERTIONS \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s MODULARIZE=1 \
-	-s EXPORTED_RUNTIME_METHODS="['FS', 'callMain']" \
+	-s EXIT_RUNTIME=0 \
+	-s EXPORTED_FUNCTIONS="['_js_cancel_main_loop', '_main']" \
+	-s EXPORTED_RUNTIME_METHODS="['FS', 'callMain', 'abort', 'ccall', 'cwrap']" \
 	-DEMSCRIPTEN -lm -Oz -Wall --llvm-lto 1 -fno-exceptions -s USE_SDL=2
 all:
 	mkdir -p browser/gen
@@ -68,3 +70,4 @@ all:
 	emcc $(CFLAGS) -o browser/gen/meui.js $(X_SOURCE)
 	rm -rf browser/public/*
 	cp res browser/public -r
+	cp framework/polyfill.js browser/gen -r

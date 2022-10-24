@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
 import { VitePWA } from "vite-plugin-pwa"
+import react from "@vitejs/plugin-react"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,10 +10,11 @@ export default defineConfig({
         __APP_BUILD_TIME__: Date.now(),
     },
     plugins: [
+        react(),
         VitePWA({
             workbox: {
-                globPatterns: ["**/*.{js,css,html,wasm,ttf,data}"],
-                maximumFileSizeToCacheInBytes: 10000000,
+                globPatterns: ["**/*.{js,mjs,css,html,wasm,ttf,data}"],
+                maximumFileSizeToCacheInBytes: 20000000,
             },
             registerType: "autoUpdate",
         }),

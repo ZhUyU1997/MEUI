@@ -21,14 +21,15 @@
         "build": "rimraf dist && rollup -c"
     },
     "dependencies": {
-        "@types/meui-native": "workspace:*",
-        "@types/os": "workspace:*",
-        "@types/react": "^18.0.21",
-        "@types/std": "workspace:*",
         "color-string": "^1.9.1",
         "cssfontparser": "^1.2.1",
-        "csstype": "^3.1.1",
         "postcss-value-parser": "^4.2.0",
         "preact": "^10.10.0"
+    },
+    "devDependencies": {
+        "@types/meui-native": "workspace:*",
+        "@types/os": "workspace:*",
+        "@types/std": "workspace:*",
+        "csstype": "^3.1.1"
     }
 }
