@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { getTime, getVersion } from "./util"
 import Editor from "@monaco-editor/react"
 import { build, initialize } from "esbuild-wasm"
@@ -225,7 +225,7 @@ function Alert({ status, style }) {
                 paddingBottom: 6,
                 borderStyle: "solid",
                 borderWidth: 1,
-                fontSize: "20pt",
+                fontSize: "15pt",
                 ...colorMap[status],
                 ...style,
             }}
@@ -270,6 +270,7 @@ export default function App() {
     const [state, execute] = useESBuild()
     const { width, height } = useWindowSize()
     const isPortrait = width < height
+    console.log(width, height)
 
     useEffect(() => {
         execute(codeRaw)
@@ -279,80 +280,96 @@ export default function App() {
         <div
             style={{
                 display: "flex",
-                width: "100vw",
-                height: "100vh",
+                width: "100%",
+                height: "100%",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#F3F6F9",
-                padding: 100,
+                paddingLeft: isPortrait ? 20 : "10%",
+                paddingRight: isPortrait ? 20 : "10%",
+                paddingTop: 20,
                 boxSizing: "border-box",
             }}
         >
-            <Alert
-                status={state.status}
-                style={{
-                    alignSelf: "flex-start",
-                }}
-            ></Alert>
             <div
                 style={{
-                    width: "100%",
-                    height: isPortrait ? "90%" : "70%",
-                    borderRadius: 4,
-                    overflow: "hidden",
-                    backgroundColor: "white",
-                    boxSizing: "border-box",
+                    width: "min(100%, 1500px)",
                     display: "flex",
-                    flexDirection: isPortrait ? "column" : "row",
-                    padding: 10,
-                    boxShadow:
-                        "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexGrow: 1,
                 }}
             >
-                <Editor
-                    language="javascript"
-                    value={codeRaw}
-                    loading={
-                        <Loading
-                            style={{
-                                backgroundColor: "#c0c0c0",
-                            }}
-                        ></Loading>
-                    }
-                    onChange={(value) => {
-                        execute(value)
+                <Alert
+                    status={state.status}
+                    style={{
+                        alignSelf: "flex-start",
                     }}
-                    {...{
-                        height: isPortrait ? "50%" : "100%",
-                        width: isPortrait ? "100%" : "50%",
-                        options: {
-                            lineNumbers: "on",
-                            scrollBeyondLastLine: false,
-                            minimap: { enabled: false },
-                            fontSize: "19rem",
-                        },
-                    }}
-                ></Editor>
+                ></Alert>
                 <div
                     style={{
-                        height: isPortrait ? "50%" : "100%",
-                        width: isPortrait ? "100%" : "50%",
+                        width: "100%",
+                        flexGrow: 1,
+                        borderRadius: 4,
+                        overflow: "hidden",
+                        backgroundColor: "white",
+                        boxSizing: "border-box",
                         display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#606060",
+                        flexDirection: isPortrait ? "column" : "row",
+                        padding: 10,
+                        boxShadow:
+                            "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
                     }}
                 >
-                    <MEUI input={state.result}></MEUI>
+                    <Editor
+                        language="javascript"
+                        value={codeRaw}
+                        loading={
+                            <Loading
+                                style={{
+                                    backgroundColor: "#c0c0c0",
+                                }}
+                            ></Loading>
+                        }
+                        onChange={(value) => {
+                            execute(value)
+                        }}
+                        {...{
+                            height: isPortrait ? "50%" : "100%",
+                            width: isPortrait ? "100%" : "50%",
+                            options: {
+                                lineNumbers: isPortrait ? "off" : "on",
+                                scrollBeyondLastLine: false,
+                                minimap: { enabled: false },
+                                fontSize: isPortrait ? "10pt" : "20pt",
+                                contextmenu: false,
+                                automaticLayout: true,
+                            },
+                        }}
+                    ></Editor>
+                    <div
+                        style={{
+                            height: isPortrait ? "50%" : "100%",
+                            width: isPortrait ? "100%" : "50%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#606060",
+                        }}
+                    >
+                        <MEUI input={state.result}></MEUI>
+                    </div>
                 </div>
             </div>
 
             <div
                 style={{
-                    position: "absolute",
-                    bottom: 30,
+                    marginTop: 10,
+                    marginBottom: 10,
                     fontSize: "14pt",
+                    height: "30pt",
                     color: "#3E5060",
                 }}
             >

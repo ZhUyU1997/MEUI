@@ -22,11 +22,12 @@ export const UpdatePopup = NiceModal.create(() => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    flexDirection: "row",
+                    flexDirection: "column",
                     lineHeight: 1.5,
                     backgroundColor: "white",
                     color: "rgba(0,0,0,0.87)",
                     fontSize: "1.25rem",
+                    margin: 20,
                     padding: 16,
                     paddingLeft: 23,
                     paddingRight: 23,
@@ -40,15 +41,16 @@ export const UpdatePopup = NiceModal.create(() => {
                 }}
             >
                 A new version is available!{" "}
-                <span
+                <div
                     style={{
                         color: "rgb(25, 118, 210)",
                         fontWeight: 700,
-                        paddingLeft: 20,
+                        paddingTop: 20,
+                        alignSelf: "flex-end",
                     }}
                 >
                     RELOAD
-                </span>
+                </div>
             </div>
         </div>
     )
