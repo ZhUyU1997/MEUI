@@ -16,7 +16,6 @@ export default defineConfig({
                 globPatterns: ["**/*.{js,mjs,css,html,wasm,ttf,data}"],
                 maximumFileSizeToCacheInBytes: 20000000,
             },
-            registerType: "autoUpdate",
         }),
     ],
 })

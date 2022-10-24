@@ -72,6 +72,7 @@ importers:
 
   browser:
     specifiers:
+      '@ebay/nice-modal-react': ^1.2.8
       '@meui/core': workspace:*
       '@meui/preact': workspace:*
       '@monaco-editor/react': ^4.4.6
@@ -89,6 +90,7 @@ importers:
       vite: ^3.1.8
       vite-plugin-pwa: ^0.13.1
     dependencies:
+      '@ebay/nice-modal-react': 1.2.8_biqbaboplfbrettd7655fr4n2y
       '@monaco-editor/react': 4.4.6_6vrjaj6ridxbohi43n7zt4gn7q
       '@react-hookz/web': 16.0.1_biqbaboplfbrettd7655fr4n2y
       dayjs: 1.11.5
@@ -1430,6 +1432,16 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
     dev: true
+
+  /@ebay/nice-modal-react/1.2.8_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-5C+9/zWsaYeDMI3HLVIg2clQzVmhepxOGeVdAWOyww2GZJ4Cl3NgzPHyO70SIkG0a4aXvUruyDnPM+jx7DzSJg==}
+    peerDependencies:
+      react: '>16.8.0'
+      react-dom: '>16.8.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /@esbuild/android-arm/0.15.11:
     resolution: {integrity: sha512-PzMcQLazLBkwDEkrNPi9AbjFt6+3I7HKbiYF2XtWQ7wItrHvEOeO3T8Am434zAozWtVP7lrTue1bEfc2nYWeCA==}

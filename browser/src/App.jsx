@@ -236,7 +236,37 @@ function Alert({ status, style }) {
 }
 
 import { useWindowSize } from "@react-hookz/web"
+import NiceModal from "@ebay/nice-modal-react"
+import { useRegisterSW } from "virtual:pwa-register/react"
+import { UpdatePopup } from "./Popup"
+
+function useUpdatePrompt() {
+    /// https://vite-plugin-pwa.netlify.app/frameworks/react.html#prompt-for-update
+    const {
+        offlineReady: [offlineReady, setOfflineReady],
+        needRefresh: [needRefresh, setNeedRefresh],
+        updateServiceWorker,
+    } = useRegisterSW({
+        onRegistered(r) {
+            // eslint-disable-next-line prefer-template
+            console.log("SW Registered: " + r)
+        },
+        onRegisterError(error) {
+            console.log("SW registration error", error)
+        },
+    })
+
+    useEffect(() => {
+        if (needRefresh) {
+            NiceModal.show(UpdatePopup).then(() => {
+                updateServiceWorker(true)
+            })
+        }
+    }, [needRefresh, updateServiceWorker])
+}
+
 export default function App() {
+    useUpdatePrompt()
     const [state, execute] = useESBuild()
     const { width, height } = useWindowSize()
     const isPortrait = width < height
