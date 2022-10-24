@@ -225,7 +225,7 @@ function Alert({ status, style }) {
                 paddingBottom: 6,
                 borderStyle: "solid",
                 borderWidth: 1,
-                fontSize: "1.3rem",
+                fontSize: "20pt",
                 ...colorMap[status],
                 ...style,
             }}
@@ -352,7 +352,7 @@ export default function App() {
                 style={{
                     position: "absolute",
                     bottom: 30,
-                    fontSize: "0.5rem",
+                    fontSize: "14pt",
                     color: "#3E5060",
                 }}
             >
