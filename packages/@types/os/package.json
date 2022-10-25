@@ -1,6 +1,6 @@
 {
     "name": "@types/os",
-    "version": "0.0.1",
+    "version": "0.0.1-alpha.0",
     "types": "index.d.ts",
     "keywords": [
         "quickjs",
