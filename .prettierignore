@@ -11,3 +11,4 @@ pnpm-lock.yaml
 src/platform/x11/dom_ley_data.inc
 tools/keysym_to_unicode.mjs
 docs/MaterialDesign-Font
+packages/@types/std/index.d.ts
