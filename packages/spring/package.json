@@ -1,12 +1,19 @@
 {
     "name": "@meui/spring",
     "version": "0.0.1",
-    "description": "",
-    "keywords": [],
+    "keywords": [
+        "meui",
+        "react-spring",
+        "spring",
+        "animation",
+        "motion"
+    ],
     "author": "Yu Zhu",
     "license": "MIT",
     "files": [
-        "dist"
+        "dist/*",
+        "README.md",
+        "LICENSE"
     ],
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -17,8 +24,20 @@
         }
     },
     "scripts": {
-        "dev": "rimraf dist && node ./esbuild.mjs",
+        "dev": "rimraf dist && rollup -c -w",
         "build": "rimraf dist && rollup -c"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZhUyU1997/MEUI.git",
+        "directory": "packages/spring"
+    },
+    "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
+    "bugs": {
+        "url": "https://github.com/ZhUyU1997/MEUI/issues"
     },
     "dependencies": {
         "@meui/core": "workspace:*",
@@ -27,9 +46,7 @@
         "@react-spring/core": "^9.4.4",
         "@react-spring/shared": "^9.5.5",
         "csstype": "^3.1.1",
-        "react": "^17.0.2"
-    },
-    "devDependencies": {
+        "react": "^17.0.2",
         "@types/react": "^17.0.2"
     }
 }

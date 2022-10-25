@@ -1,8 +1,10 @@
 {
     "name": "@meui/components",
     "version": "0.0.1",
-    "description": "",
-    "keywords": [],
+    "keywords": [
+        "meui",
+        "components"
+    ],
     "author": "Yu Zhu",
     "license": "MIT",
     "scripts": {
@@ -10,7 +12,9 @@
         "build": "rimraf dist && rollup -c"
     },
     "files": [
-        "dist"
+        "dist/*",
+        "README.md",
+        "LICENSE"
     ],
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -20,10 +24,21 @@
             "import": "./dist/index.mjs"
         }
     },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZhUyU1997/MEUI.git",
+        "directory": "packages/components"
+    },
+    "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
+    "bugs": {
+        "url": "https://github.com/ZhUyU1997/MEUI/issues"
+    },
     "dependencies": {
         "@meui/core": "workspace:*",
         "@meui/preact": "workspace:*",
-        "esbuild": "^0.15.11",
         "preact": "^10.10.0"
     }
 }

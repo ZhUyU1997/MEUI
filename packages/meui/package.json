@@ -1,11 +1,18 @@
 {
     "name": "@meui/core",
     "version": "0.0.1",
-    "description": "",
+    "keywords": [
+        "meui",
+        "core",
+        "gui",
+        "embedded"
+    ],
     "author": "Yu Zhu",
     "license": "MIT",
     "files": [
-        "dist"
+        "dist/*",
+        "README.md",
+        "LICENSE"
     ],
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -15,21 +22,30 @@
             "import": "./dist/index.mjs"
         }
     },
-    "keywords": [],
     "scripts": {
         "dev": "rimraf dist && rollup -c -w",
         "build": "rimraf dist && rollup -c"
     },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZhUyU1997/MEUI.git",
+        "directory": "packages/meui"
+    },
+    "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
+    "bugs": {
+        "url": "https://github.com/ZhUyU1997/MEUI/issues"
+    },
     "dependencies": {
+        "@types/meui-native": "workspace:*",
+        "@types/os": "workspace:*",
+        "@types/std": "workspace:*",
+        "csstype": "^3.1.1",
         "color-string": "^1.9.1",
         "cssfontparser": "^1.2.1",
         "postcss-value-parser": "^4.2.0",
         "preact": "^10.10.0"
-    },
-    "devDependencies": {
-        "@types/meui-native": "workspace:*",
-        "@types/os": "workspace:*",
-        "@types/std": "workspace:*",
-        "csstype": "^3.1.1"
     }
 }

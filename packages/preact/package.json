@@ -1,12 +1,17 @@
 {
     "name": "@meui/preact",
     "version": "0.0.1",
-    "description": "",
-    "keywords": [],
+    "keywords": [
+        "meui",
+        "preact"
+    ],
     "author": "Yu Zhu",
     "license": "MIT",
     "files": [
-        "dist"
+        "dist/*",
+        "jsx-runtime/*",
+        "README.md",
+        "LICENSE"
     ],
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -23,6 +28,18 @@
     "scripts": {
         "dev": "rimraf dist && rollup -c -w",
         "build": "rimraf dist && rollup -c"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZhUyU1997/MEUI.git",
+        "directory": "packages/preact"
+    },
+    "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
+    "bugs": {
+        "url": "https://github.com/ZhUyU1997/MEUI/issues"
     },
     "dependencies": {
         "@meui/core": "workspace:*",
