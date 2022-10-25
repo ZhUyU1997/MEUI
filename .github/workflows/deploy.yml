@@ -52,7 +52,7 @@ jobs:
             - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
 
             - run: export OLD_PATH=$PATH
-
+            - run: echo $OLD_PATH
             - name: Setup emsdk
               uses: mymindstorm/setup-emsdk@v11
               with:
@@ -66,7 +66,9 @@ jobs:
               run: emcc -v
             - run: make -j16 -f wasm.mk
 
-            - run: export OLD_PATH=$OLD_PATH
+            - run: export PATH=$OLD_PATH
+            - run: echo $PATH
+
             - run: node -v
 
             - run: pnpm -F @meui/live build
