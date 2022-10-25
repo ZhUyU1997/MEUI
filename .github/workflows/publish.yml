@@ -6,7 +6,7 @@ name: Publish Package
 
 on:
     push:
-        tag:
+        tags:
             - "@meui/core@*"
             - "@meui/preact@*"
             - "@meui/spring@*"
