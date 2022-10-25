@@ -7,18 +7,19 @@ name: Publish Package
 on:
     push:
         tag:
-            - "v*"
+            - "@meui/core@*"
+            - "@meui/preact@*"
+            - "@meui/spring@*"
+            - "@meui/components@*"
+            - "@types/meui-native@*"
+            - "@types/os@*"
+            - "@types/std@*"
 
 jobs:
     publish:
         # prevents this action from running on forks
         if: github.repository == 'ZhUyU1997/MEUI'
         runs-on: ubuntu-latest
-
-        strategy:
-            matrix:
-                node-version: [16.x]
-
         steps:
             - uses: actions/checkout@v3
             - uses: pnpm/action-setup@v2.2.4
@@ -27,7 +28,7 @@ jobs:
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 16.x
                   registry-url: https://registry.npmjs.org/
                   cache: "pnpm"
             - name: Install Packages
