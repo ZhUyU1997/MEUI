@@ -2,25 +2,22 @@
 #
 # SPDX-License-Identifier: MIT
 
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
+name: Publish Package
 
 on:
     push:
-        branches: ["**"]
-    pull_request:
-        branches: [master]
+        tag:
+            - "v*"
 
 jobs:
-    build:
+    publish:
+        # prevents this action from running on forks
+        if: github.repository == 'ZhUyU1997/MEUI'
         runs-on: ubuntu-latest
 
         strategy:
             matrix:
                 node-version: [16.x]
-                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
         steps:
             - uses: actions/checkout@v3
@@ -31,12 +28,14 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
+                  registry-url: https://registry.npmjs.org/
                   cache: "pnpm"
             - name: Install Packages
               run: |
                   sudo apt install gcc make libxkbcommon-dev
             - run: pnpm install
-            - run: pnpm gen
-            - run: pnpm run build-native
-            - run: pnpm check
-            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components -F @meui/examples run build
+            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
+            - name: Publish package
+              run: pnpm run ci-publish ${{ github.ref_name }}
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
