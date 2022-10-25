@@ -51,10 +51,8 @@ jobs:
             - run: pnpm run gen
             - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
 
-            - run: export OLD_PATH=$PATH
-            - run: echo $OLD_PATH
             - name: Setup emsdk
-              uses: mymindstorm/setup-emsdk@v11
+              uses: ZhUyU1997/setup-emsdk@v11
               with:
                   # Make sure to set a version number!
                   version: 3.1.24
@@ -62,15 +60,12 @@ jobs:
                   # The cache folder will be placed in the build directory,
                   #  so make sure it doesn't conflict with anything!
                   actions-cache-folder: "emsdk-cache"
+            - run: echo "${EMSDK}/upstream/emscripten" >> $GITHUB_PATH
             - name: Verify
-              run: emcc -v
-            - run: make -j16 -f wasm.mk
-
-            - run: export PATH=$OLD_PATH
-            - run: echo $PATH
-
-            - run: node -v
-
+              run: |
+                  emcc -v
+                  node -v
+            - run: pnpm run build-wasm
             - run: pnpm -F @meui/live build
             - name: Setup Pages
               uses: actions/configure-pages@v2
