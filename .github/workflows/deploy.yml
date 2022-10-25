@@ -47,6 +47,12 @@ jobs:
             - name: Install Packages
               run: |
                   sudo apt install make
+            - run: pnpm install
+            - run: pnpm run gen
+            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
+
+            - run: export OLD_PATH=$PATH
+
             - name: Setup emsdk
               uses: mymindstorm/setup-emsdk@v11
               with:
@@ -58,11 +64,11 @@ jobs:
                   actions-cache-folder: "emsdk-cache"
             - name: Verify
               run: emcc -v
-            - run: pnpm install
-            - run: pnpm run gen
-            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
-            - run: pnpm -F @meui/examples run build ./src/watch/home.jsx ../../browser/gen/test.js
-            - run: pnpm run build-wasm
+            - run: make -j16 -f wasm.mk
+
+            - run: export OLD_PATH=$OLD_PATH
+            - run: node -v
+
             - run: pnpm -F @meui/live build
             - name: Setup Pages
               uses: actions/configure-pages@v2
