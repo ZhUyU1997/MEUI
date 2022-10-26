@@ -14,7 +14,8 @@ on:
             - "@meui-js/native@*"
             - "@meui-js/os@*"
             - "@meui-js/std@*"
-
+            - "create-meui@*"
+            - "meui-js@*"
 jobs:
     publish:
         # prevents this action from running on forks
