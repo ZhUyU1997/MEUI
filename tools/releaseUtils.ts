@@ -25,6 +25,8 @@ export const packagesPath = {
     "@meui-js/native": "packages/@types/native",
     "@meui-js/os": "packages/@types/os",
     "@meui-js/std": "packages/@types/std",
+    "create-meui": "packages/create-meui",
+    "meui-js": "packages/meui-js",
 } as const
 
 export function parseTag(tag: string) {

@@ -12,7 +12,13 @@ import path from "@meui-js/path"
 import { useState, useLayoutEffect } from "preact/compat"
 import { createRoot, View, Stack } from "@meui-js/preact"
 
-import { Center, Row, Column, Root, MaterialDesignIcon } from "@meui-js/components"
+import {
+    Center,
+    Row,
+    Column,
+    Root,
+    MaterialDesignIcon,
+} from "@meui-js/components"
 import { MeuiStyle } from "@meui-js/core"
 import { Setting } from "./setting"
 import { Icon } from "./icon"

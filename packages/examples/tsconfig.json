@@ -17,7 +17,6 @@
         "jsx": "react-jsx",
         "jsxImportSource": "@meui-js/preact",
         "typeRoots": ["node_modules/@meui-js"]
-        
     },
     "include": ["src", "test"]
 }
