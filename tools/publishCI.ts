@@ -25,7 +25,7 @@ async function main() {
         )
 
     const activeVersion =
-        currentVersion === "0.0.1-alpha.0"
+        currentVersion === "0.0.1-alpha.1"
             ? currentVersion
             : await getActiveVersion(pkgName)
 
