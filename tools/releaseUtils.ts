@@ -22,7 +22,7 @@ export const packagesPath = {
     "@meui-js/preact": "packages/preact",
     "@meui-js/spring": "packages/spring",
     "@meui-js/components": "packages/components",
-    "@meui-js/native": "packages/@types/meui-native",
+    "@meui-js/native": "packages/@types/native",
     "@meui-js/os": "packages/@types/os",
     "@meui-js/std": "packages/@types/std",
 } as const

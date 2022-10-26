@@ -122,7 +122,7 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       workbox-window: 6.5.4
     devDependencies:
-      '@meui-js/core': link:../packages/meui
+      '@meui-js/core': link:../packages/core
       '@meui-js/preact': link:../packages/preact
       '@types/react': 18.0.21
       '@types/react-dom': 18.0.6
@@ -131,7 +131,7 @@ importers:
       vite: 3.1.8
       vite-plugin-pwa: 0.13.1_a24bsgtcozgewh66gr7y47mcdm
 
-  packages/@types/meui-native:
+  packages/@types/native:
     specifiers: {}
 
   packages/@types/os:
@@ -146,8 +146,28 @@ importers:
       '@meui-js/preact': workspace:*
       preact: ^10.10.0
     dependencies:
-      '@meui-js/core': link:../meui
+      '@meui-js/core': link:../core
       '@meui-js/preact': link:../preact
+      preact: 10.11.2
+
+  packages/core:
+    specifiers:
+      '@meui-js/native': workspace:*
+      '@meui-js/os': workspace:*
+      '@meui-js/std': workspace:*
+      color-string: ^1.9.1
+      cssfontparser: ^1.2.1
+      csstype: ^3.1.1
+      postcss-value-parser: ^4.2.0
+      preact: ^10.10.0
+    dependencies:
+      '@meui-js/native': link:../@types/native
+      '@meui-js/os': link:../@types/os
+      '@meui-js/std': link:../@types/std
+      color-string: 1.9.1
+      cssfontparser: 1.2.1
+      csstype: 3.1.1
+      postcss-value-parser: 4.2.0
       preact: 10.11.2
 
   packages/examples:
@@ -167,7 +187,7 @@ importers:
     dependencies:
       2048-engine: 0.1.1
       '@meui-js/components': link:../components
-      '@meui-js/core': link:../meui
+      '@meui-js/core': link:../core
       '@meui-js/os': link:../@types/os
       '@meui-js/path': link:../path
       '@meui-js/preact': link:../preact
@@ -179,26 +199,6 @@ importers:
       esbuild: 0.15.11
       fs-extra: 10.1.0
 
-  packages/meui:
-    specifiers:
-      '@meui-js/native': workspace:*
-      '@meui-js/os': workspace:*
-      '@meui-js/std': workspace:*
-      color-string: ^1.9.1
-      cssfontparser: ^1.2.1
-      csstype: ^3.1.1
-      postcss-value-parser: ^4.2.0
-      preact: ^10.10.0
-    dependencies:
-      '@meui-js/native': link:../@types/meui-native
-      '@meui-js/os': link:../@types/os
-      '@meui-js/std': link:../@types/std
-      color-string: 1.9.1
-      cssfontparser: 1.2.1
-      csstype: 3.1.1
-      postcss-value-parser: 4.2.0
-      preact: 10.11.2
-
   packages/path:
     specifiers: {}
 
@@ -207,7 +207,7 @@ importers:
       '@meui-js/core': workspace:*
       preact: ^10.10.0
     dependencies:
-      '@meui-js/core': link:../meui
+      '@meui-js/core': link:../core
       preact: 10.11.2
 
   packages/spring:
@@ -221,7 +221,7 @@ importers:
       csstype: ^3.1.1
       react: ^17.0.2
     dependencies:
-      '@meui-js/core': link:../meui
+      '@meui-js/core': link:../core
       '@meui-js/preact': link:../preact
       '@react-spring/animated': 9.5.5_react@17.0.2
       '@react-spring/core': 9.5.2_react@17.0.2
