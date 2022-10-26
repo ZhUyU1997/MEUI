@@ -1,1 +1,1 @@
-# @meui/core
+# @meui-js/core

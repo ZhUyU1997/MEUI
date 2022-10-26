@@ -1,5 +1,5 @@
 {
-    "name": "@meui/core",
+    "name": "@meui-js/core",
     "version": "0.0.1-alpha.0",
     "keywords": [
         "meui",
@@ -39,9 +39,9 @@
         "url": "https://github.com/ZhUyU1997/MEUI/issues"
     },
     "dependencies": {
-        "@types/meui-native": "workspace:*",
-        "@types/os": "workspace:*",
-        "@types/std": "workspace:*",
+        "@meui-js/native": "workspace:*",
+        "@meui-js/os": "workspace:*",
+        "@meui-js/std": "workspace:*",
         "csstype": "^3.1.1",
         "color-string": "^1.9.1",
         "cssfontparser": "^1.2.1",

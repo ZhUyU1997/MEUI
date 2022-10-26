@@ -18,13 +18,13 @@ if (isDryRun) {
 }
 
 export const packagesPath = {
-    "@meui/core": "packages/meui",
-    "@meui/preact": "packages/preact",
-    "@meui/spring": "packages/spring",
-    "@meui/components": "packages/components",
-    "@types/meui-native": "packages/@types/meuinative",
-    "@types/os": "packages/@types/os",
-    "@types/std": "packages/@types/std",
+    "@meui-js/core": "packages/meui",
+    "@meui-js/preact": "packages/preact",
+    "@meui-js/spring": "packages/spring",
+    "@meui-js/components": "packages/components",
+    "@meui-js/native": "packages/@types/meui-native",
+    "@meui-js/os": "packages/@types/os",
+    "@meui-js/std": "packages/@types/std",
 } as const
 
 export function parseTag(tag: string) {

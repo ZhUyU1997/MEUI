@@ -1,5 +1,5 @@
 {
-    "name": "@meui/examples",
+    "name": "@meui-js/examples",
     "version": "0.0.1-alpha.0",
     "description": "",
     "main": "",
@@ -12,13 +12,13 @@
     },
     "dependencies": {
         "2048-engine": "^0.1.1",
-        "@meui/components": "workspace:*",
-        "@meui/core": "workspace:*",
-        "@meui/path": "workspace:*",
-        "@meui/preact": "workspace:*",
-        "@meui/spring": "workspace:*",
-        "@types/os": "workspace:*",
-        "@types/std": "workspace:*",
+        "@meui-js/components": "workspace:*",
+        "@meui-js/core": "workspace:*",
+        "@meui-js/path": "workspace:*",
+        "@meui-js/preact": "workspace:*",
+        "@meui-js/spring": "workspace:*",
+        "@meui-js/os": "workspace:*",
+        "@meui-js/std": "workspace:*",
         "mathjs": "^11.0.1",
         "preact": "^10.10.0"
     },

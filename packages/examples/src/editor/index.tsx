@@ -5,12 +5,12 @@
  */
 
 import React, { useEffect, useRef } from "preact/compat"
-import { MEUI } from "@meui/core"
-import { createRoot } from "@meui/preact"
+import { MEUI } from "@meui-js/core"
+import { createRoot } from "@meui-js/preact"
 
-import { Root } from "@meui/components"
-import { TextArea } from "@meui/components"
-import type { TextAreaHandle } from "@meui/components"
+import { Root } from "@meui-js/components"
+import { TextArea } from "@meui-js/components"
+import type { TextAreaHandle } from "@meui-js/components"
 
 function App() {
     const ref = useRef<TextAreaHandle>(null)

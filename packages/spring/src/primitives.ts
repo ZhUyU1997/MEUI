@@ -5,8 +5,8 @@
  */
 
 import { ElementType, PropsWithChildren, RefAttributes } from "react"
-import { CanvasElement, DivElement, StackElement } from "@meui/core"
-import { MeuiCanvasElementProps, MeuiElementProps } from "@meui/preact"
+import { CanvasElement, DivElement, StackElement } from "@meui-js/core"
+import { MeuiCanvasElementProps, MeuiElementProps } from "@meui-js/preact"
 
 export type MeuiElementAttribule = PropsWithChildren<MeuiElementProps>
 export type MeuiCanvasElementAttribule =

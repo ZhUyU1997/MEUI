@@ -1,1 +1,1 @@
-# @meui/preact
+# @meui-js/preact

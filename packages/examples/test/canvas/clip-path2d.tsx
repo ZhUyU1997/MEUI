@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CanvasRenderingContext2D, Path2D } from "@meui/core"
+import { CanvasRenderingContext2D, Path2D } from "@meui-js/core"
 
 export default function Test(ctx: CanvasRenderingContext2D) {
     const path = new Path2D()

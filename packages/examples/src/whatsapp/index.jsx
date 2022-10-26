@@ -5,9 +5,9 @@
  */
 
 import { useState, useEffect, useRef } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
+import { createRoot, View } from "@meui-js/preact"
 
-import { Root, Column, Center, MaterialDesignIcon } from "@meui/components"
+import { Root, Column, Center, MaterialDesignIcon } from "@meui-js/components"
 
 function Circle({ radius, style, children }) {
     return (

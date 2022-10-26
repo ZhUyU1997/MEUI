@@ -7,13 +7,13 @@ name: Publish Package
 on:
     push:
         tags:
-            - "@meui/core@*"
-            - "@meui/preact@*"
-            - "@meui/spring@*"
-            - "@meui/components@*"
-            - "@types/meui-native@*"
-            - "@types/os@*"
-            - "@types/std@*"
+            - "@meui-js/core@*"
+            - "@meui-js/preact@*"
+            - "@meui-js/spring@*"
+            - "@meui-js/components@*"
+            - "@meui-js/native@*"
+            - "@meui-js/os@*"
+            - "@meui-js/std@*"
 
 jobs:
     publish:
@@ -35,7 +35,7 @@ jobs:
               run: |
                   sudo apt install gcc make libxkbcommon-dev
             - run: pnpm install
-            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
+            - run: pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components run build
             - name: Publish package
               run: pnpm run ci-publish ${{ github.ref_name }}
               env:

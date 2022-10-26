@@ -7,13 +7,13 @@
 import * as os from "os"
 import * as std from "std"
 import { readdir, stat, S_IFMT, S_IFDIR } from "os"
-import path from "@meui/path"
+import path from "@meui-js/path"
 
 import { useState, useLayoutEffect } from "preact/compat"
-import { createRoot, View, Stack } from "@meui/preact"
+import { createRoot, View, Stack } from "@meui-js/preact"
 
-import { Center, Row, Column, Root, MaterialDesignIcon } from "@meui/components"
-import { MeuiStyle } from "@meui/core"
+import { Center, Row, Column, Root, MaterialDesignIcon } from "@meui-js/components"
+import { MeuiStyle } from "@meui-js/core"
 import { Setting } from "./setting"
 import { Icon } from "./icon"
 import { ComponentChildren } from "preact"

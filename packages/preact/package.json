@@ -1,5 +1,5 @@
 {
-    "name": "@meui/preact",
+    "name": "@meui-js/preact",
     "version": "0.0.1-alpha.0",
     "keywords": [
         "meui",
@@ -42,7 +42,7 @@
         "url": "https://github.com/ZhUyU1997/MEUI/issues"
     },
     "dependencies": {
-        "@meui/core": "workspace:*",
+        "@meui-js/core": "workspace:*",
         "preact": "^10.10.0"
     }
 }

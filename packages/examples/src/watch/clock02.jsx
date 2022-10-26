@@ -5,8 +5,8 @@
  */
 
 import { useState, useEffect } from "preact/hooks"
-import { createRoot, View, Stack } from "@meui/preact"
-import { Column, Root, Row } from "@meui/components"
+import { createRoot, View, Stack } from "@meui-js/preact"
+import { Column, Root, Row } from "@meui-js/components"
 
 function Digital({ fixedOffset, left, top, style, children }) {
     return (

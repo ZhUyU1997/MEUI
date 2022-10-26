@@ -7,14 +7,14 @@
 // Need add below into package.json
 //  "jsnes": "git+ssh://git@github.com:ZhUyU1997/jsnes.git#master",
 import { useEffect, useRef } from "preact/compat"
-import { createRoot, Canvas, View } from "@meui/preact"
-import { Root } from "@meui/components"
+import { createRoot, Canvas, View } from "@meui-js/preact"
+import { Root } from "@meui-js/components"
 
 // @ts-ignore
 import jsnes from "jsnes"
-import path from "@meui/path"
+import path from "@meui-js/path"
 import * as std from "std"
-import { CanvasElement, COLOR_FORMAT, ImageData } from "@meui/core"
+import { CanvasElement, COLOR_FORMAT, ImageData } from "@meui-js/core"
 
 const SCREEN_WIDTH = 256
 const SCREEN_HEIGHT = 240

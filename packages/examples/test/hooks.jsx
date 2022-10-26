@@ -5,8 +5,8 @@
  */
 
 import React, { useEffect, useState } from "preact/compat"
-import { View } from "@meui/preact"
-import { Root, Button } from "@meui/components"
+import { View } from "@meui-js/preact"
+import { Root, Button } from "@meui-js/components"
 export function Test() {
     const [dollar, setDollar] = useState(0)
     const [rmb, setRMB] = useState(0)

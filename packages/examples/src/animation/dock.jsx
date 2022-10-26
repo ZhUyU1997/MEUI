@@ -5,10 +5,10 @@
  */
 
 import { useEffect, useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
+import { createRoot, View } from "@meui-js/preact"
 
-import { animated, useSpring, config } from "@meui/spring"
-import { Root } from "@meui/components"
+import { animated, useSpring, config } from "@meui-js/spring"
+import { Root } from "@meui-js/components"
 
 function App() {
     const [open, setOpen] = useState(false)

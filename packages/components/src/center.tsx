@@ -5,8 +5,8 @@
  */
 
 import React from "preact/compat"
-import { View, MeuiElementProps } from "@meui/preact"
-import { DivElement } from "@meui/core"
+import { View, MeuiElementProps } from "@meui-js/preact"
+import { DivElement } from "@meui-js/core"
 
 const Center = React.forwardRef<DivElement, MeuiElementProps>(
     ({ children, style, ...props }, ref) => {

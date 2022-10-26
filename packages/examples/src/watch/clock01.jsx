@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createRoot, View, Stack } from "@meui/preact"
-import { Column, Root, Row } from "@meui/components"
+import { createRoot, View, Stack } from "@meui-js/preact"
+import { Column, Root, Row } from "@meui-js/components"
 
 function App() {
     return (

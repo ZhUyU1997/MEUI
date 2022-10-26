@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Column, Root, Row } from "@meui/components"
-import { Stack } from "@meui/preact"
-import { MeuiStyle } from "@meui/core"
+import { Column, Root, Row } from "@meui-js/components"
+import { Stack } from "@meui-js/preact"
+import { MeuiStyle } from "@meui-js/core"
 import { ComponentChildren } from "preact"
 import { useState } from "preact/compat"
 import { Icon } from "./icon"

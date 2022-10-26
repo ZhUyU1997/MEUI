@@ -3,8 +3,8 @@ import {
     MeuiKeyboardEvent,
     MeuiMouseEvent,
     MeuiWheelEvent,
-} from "@meui/core"
-import { MeuiStyle } from "@meui/core"
+} from "@meui-js/core"
+import { MeuiStyle } from "@meui-js/core"
 import { ComponentChild } from "preact"
 
 export interface MeuiElementProps {

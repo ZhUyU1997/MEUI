@@ -5,7 +5,7 @@
  */
 
 import React from "preact/compat"
-import { View } from "@meui/preact"
+import { View } from "@meui-js/preact"
 
 function Flex_Test() {
     function TestItem() {

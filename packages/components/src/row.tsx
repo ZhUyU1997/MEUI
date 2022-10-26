@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { View, MeuiElementProps } from "@meui/preact"
+import { View, MeuiElementProps } from "@meui-js/preact"
 
 export default function Row({ children, style, ...props }: MeuiElementProps) {
     return (

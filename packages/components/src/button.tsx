@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "preact/compat"
-import { MeuiElementProps, View } from "@meui/preact"
+import { MeuiElementProps, View } from "@meui-js/preact"
 
 const style_name = [
     "primary",

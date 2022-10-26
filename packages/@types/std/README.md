@@ -1,1 +1,1 @@
-# @types/std
+# @meui-js/std

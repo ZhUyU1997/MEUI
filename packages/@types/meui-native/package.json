@@ -1,5 +1,5 @@
 {
-    "name": "@types/meui-native",
+    "name": "@meui-js/native",
     "version": "0.0.1-alpha.0",
     "types": "index.d.ts",
     "keywords": [

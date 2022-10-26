@@ -31,7 +31,7 @@ const plugins = [
     commonjs(),
     esbuild({
         target: "es2020",
-        jsxImportSource: "@meui/preact",
+        jsxImportSource: "@meui-js/preact",
         jsx: "automatic",
     }),
 ]

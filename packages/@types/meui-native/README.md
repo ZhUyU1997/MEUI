@@ -1,1 +1,1 @@
-# @types/meui-native
+# @meui-js/native

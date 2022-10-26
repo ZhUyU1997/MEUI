@@ -5,10 +5,10 @@
  */
 
 import React, { useState } from "preact/compat"
-import { View } from "@meui/preact"
-import { createRoot } from "@meui/preact"
-import { Root, Button } from "@meui/components"
-import { parseTransform } from "@meui/core"
+import { View } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
+import { Root, Button } from "@meui-js/components"
+import { parseTransform } from "@meui-js/core"
 
 console.log(parseTransform(" scale( 1.2 ,1.2)  scale(1.3)  scale(1.4)  "))
 console.log(

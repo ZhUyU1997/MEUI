@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createRoot, View } from "@meui/preact"
+import { createRoot, View } from "@meui-js/preact"
 
 function App() {
     return (

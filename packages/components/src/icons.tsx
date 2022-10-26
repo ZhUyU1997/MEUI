@@ -1,5 +1,5 @@
-import { MeuiStyle } from "@meui/core"
-import { MeuiElementProps } from "@meui/preact"
+import { MeuiStyle } from "@meui-js/core"
+import { MeuiElementProps } from "@meui-js/preact"
 import { getIconHex, IconsKey } from "./icons-key"
 import Center from "./center"
 

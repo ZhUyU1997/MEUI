@@ -5,9 +5,9 @@
  */
 
 import { useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
-import { Center, Column, Root, Row } from "@meui/components"
-import { MeuiStyle } from "@meui/core"
+import { createRoot, View } from "@meui-js/preact"
+import { Center, Column, Root, Row } from "@meui-js/components"
+import { MeuiStyle } from "@meui-js/core"
 import { evaluate } from "mathjs"
 import { ComponentChildren } from "preact"
 

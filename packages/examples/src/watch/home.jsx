@@ -5,9 +5,9 @@
  */
 
 import { useState } from "preact/compat"
-import { View, Stack } from "@meui/preact"
-import { createRoot } from "@meui/preact"
-import { Root } from "@meui/components"
+import { View, Stack } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
+import { Root } from "@meui-js/components"
 
 const SCREEN_WIDTH = 396
 const SCREEN_HEIGHT = 484

@@ -5,10 +5,10 @@
  */
 
 import { useEffect, useRef } from "preact/compat"
-import { createRoot, Canvas } from "@meui/preact"
+import { createRoot, Canvas } from "@meui-js/preact"
 
-import { Root } from "@meui/components"
-import { CanvasElement } from "@meui/core"
+import { Root } from "@meui-js/components"
+import { CanvasElement } from "@meui-js/core"
 
 const ROWS = 100
 const COLS = 300

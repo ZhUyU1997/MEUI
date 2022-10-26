@@ -5,8 +5,8 @@
  */
 
 import React from "preact/compat"
-import { createRoot } from "@meui/preact"
-import { animated, useSpring } from "@meui/spring"
+import { createRoot } from "@meui-js/preact"
+import { animated, useSpring } from "@meui-js/spring"
 
 function App() {
     const styles = useSpring({

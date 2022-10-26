@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { MaterialDesignIcon } from "@meui/components"
-import { IconsKey } from "@meui/components"
-import { MeuiStyle } from "@meui/core"
+import { MaterialDesignIcon } from "@meui-js/components"
+import { IconsKey } from "@meui-js/components"
+import { MeuiStyle } from "@meui-js/core"
 
 export function Icon({
     icon,

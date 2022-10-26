@@ -1,7 +1,7 @@
 // Users who only use Preact for SSR might not specify "dom" in their lib in tsconfig.json
 /// <reference lib="dom" />
 
-import { CanvasElement, DivElement, StackElement } from "@meui/core"
+import { CanvasElement, DivElement, StackElement } from "@meui-js/core"
 import type { MeuiElementProps, MeuiCanvasElementProps } from "./props"
 
 import {

@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef } from "preact/compat"
-import { View } from "@meui/preact"
+import { View } from "@meui-js/preact"
 
 function Test() {
     const ref = useRef()

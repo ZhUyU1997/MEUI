@@ -5,8 +5,8 @@
  */
 
 import { useState } from "preact/compat"
-import { createRoot, View, Stack } from "@meui/preact"
-import { Root, Center, MaterialDesignIcon } from "@meui/components"
+import { createRoot, View, Stack } from "@meui-js/preact"
+import { Root, Center, MaterialDesignIcon } from "@meui-js/components"
 
 function DropDownList({ option = [], style }) {
     return (

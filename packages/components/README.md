@@ -1,1 +1,1 @@
-# @meui/components
+# @meui-js/components

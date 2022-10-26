@@ -5,9 +5,9 @@
  */
 
 import { useEffect, useRef, useState } from "preact/compat"
-import { createRoot, Canvas, View } from "@meui/preact"
-import { Root, Button } from "@meui/components"
-import { CanvasElement } from "@meui/core"
+import { createRoot, Canvas, View } from "@meui-js/preact"
+import { Root, Button } from "@meui-js/components"
+import { CanvasElement } from "@meui-js/core"
 
 const Test: any = {
     arc: () => import("./arc"),

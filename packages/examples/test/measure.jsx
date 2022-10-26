@@ -5,8 +5,8 @@
  */
 
 import React, { useEffect } from "preact/compat"
-import { Root } from "@meui/components"
-import { View } from "@meui/preact"
+import { Root } from "@meui-js/components"
+import { View } from "@meui-js/preact"
 
 export function Test() {
     return (

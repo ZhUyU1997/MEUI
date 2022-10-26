@@ -9,7 +9,7 @@ export const Stack = "Stack"
 export const Canvas = "Canvas"
 export type { MeuiCanvasElementProps, MeuiElementProps } from "./props"
 
-import { MEUI } from "@meui/core"
+import { MEUI } from "@meui-js/core"
 import { VNode } from "preact"
 import { render as _render } from "preact"
 

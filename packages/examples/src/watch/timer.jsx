@@ -5,8 +5,8 @@
  */
 
 import { useEffect, useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
-import { Root } from "@meui/components"
+import { createRoot, View } from "@meui-js/preact"
+import { Root } from "@meui-js/components"
 
 function App() {
     const [time, setTime] = useState(0)

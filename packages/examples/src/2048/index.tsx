@@ -5,10 +5,10 @@
  */
 
 import { useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
-import { Column, Root, Row } from "@meui/components"
+import { createRoot, View } from "@meui-js/preact"
+import { Column, Root, Row } from "@meui-js/components"
 import { createGame, Direction, Tile } from "2048-engine"
-import { MeuiKeyboardEvent } from "@meui/core"
+import { MeuiKeyboardEvent } from "@meui-js/core"
 
 function getColor(val: number) {
     let color = "#ffffff"

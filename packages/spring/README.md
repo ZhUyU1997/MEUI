@@ -1,1 +1,1 @@
-# @meui/spring
+# @meui-js/spring

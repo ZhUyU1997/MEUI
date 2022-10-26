@@ -11,14 +11,14 @@ import React, {
     useState,
 } from "preact/compat"
 
-import { View, Stack, Canvas, MeuiElementProps } from "@meui/preact"
+import { View, Stack, Canvas, MeuiElementProps } from "@meui-js/preact"
 import {
     CanvasElement,
     CanvasRenderingContext2D,
     TextMetrics,
     MeuiKeyboardEvent,
     MeuiMouseEvent,
-} from "@meui/core"
+} from "@meui-js/core"
 
 interface TextRenderInfo {
     content: string

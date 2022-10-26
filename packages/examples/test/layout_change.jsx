@@ -5,11 +5,11 @@
  */
 
 import React, { useState } from "preact/compat"
-import { View, Stack } from "@meui/preact"
-import { createRoot } from "@meui/preact"
+import { View, Stack } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
 
-import { MEUI } from "@meui/core"
-import { Root } from "@meui/components"
+import { MEUI } from "@meui-js/core"
+import { Root } from "@meui-js/components"
 
 function App() {
     const [direction, setDirection] = useState(undefined)

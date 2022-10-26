@@ -39,4 +39,4 @@ jobs:
             - run: pnpm gen
             - run: pnpm run build-native
             - run: pnpm check
-            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components -F @meui/examples run build
+            - run: pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components -F @meui-js/examples run build

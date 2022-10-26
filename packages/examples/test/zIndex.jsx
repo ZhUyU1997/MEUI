@@ -5,9 +5,9 @@
  */
 
 import React from "preact/compat"
-import { View } from "@meui/preact"
-import { createRoot } from "@meui/preact"
-import { Root } from "@meui/components"
+import { View } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
+import { Root } from "@meui-js/components"
 
 function App() {
     return (

@@ -5,10 +5,10 @@
  */
 
 import { useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
+import { createRoot, View } from "@meui-js/preact"
 
-import { animated, useSpring } from "@meui/spring"
-import { Root, TextArea } from "@meui/components"
+import { animated, useSpring } from "@meui-js/spring"
+import { Root, TextArea } from "@meui-js/components"
 
 function EditableItem({ name, children, onChange }) {
     return (

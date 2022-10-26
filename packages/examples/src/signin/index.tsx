@@ -5,7 +5,7 @@
  */
 
 import { useState } from "preact/compat"
-import { createRoot, View } from "@meui/preact"
+import { createRoot, View } from "@meui-js/preact"
 import {
     Center,
     Column,
@@ -13,8 +13,8 @@ import {
     Root,
     Row,
     TextArea,
-} from "@meui/components"
-import { MeuiStyle } from "@meui/core"
+} from "@meui-js/components"
+import { MeuiStyle } from "@meui-js/core"
 
 function Input({
     placeholder,

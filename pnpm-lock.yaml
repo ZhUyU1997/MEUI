@@ -93,8 +93,8 @@ importers:
   browser:
     specifiers:
       '@ebay/nice-modal-react': ^1.2.8
-      '@meui/core': workspace:*
-      '@meui/preact': workspace:*
+      '@meui-js/core': workspace:*
+      '@meui-js/preact': workspace:*
       '@monaco-editor/react': ^4.4.6
       '@react-hookz/web': ^16.0.1
       '@types/react': ^18.0.17
@@ -122,8 +122,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       workbox-window: 6.5.4
     devDependencies:
-      '@meui/core': link:../packages/meui
-      '@meui/preact': link:../packages/preact
+      '@meui-js/core': link:../packages/meui
+      '@meui-js/preact': link:../packages/preact
       '@types/react': 18.0.21
       '@types/react-dom': 18.0.6
       '@vitejs/plugin-react': 2.1.0_vite@3.1.8
@@ -142,37 +142,37 @@ importers:
 
   packages/components:
     specifiers:
-      '@meui/core': workspace:*
-      '@meui/preact': workspace:*
+      '@meui-js/core': workspace:*
+      '@meui-js/preact': workspace:*
       preact: ^10.10.0
     dependencies:
-      '@meui/core': link:../meui
-      '@meui/preact': link:../preact
+      '@meui-js/core': link:../meui
+      '@meui-js/preact': link:../preact
       preact: 10.11.2
 
   packages/examples:
     specifiers:
       2048-engine: ^0.1.1
-      '@meui/components': workspace:*
-      '@meui/core': workspace:*
-      '@meui/path': workspace:*
-      '@meui/preact': workspace:*
-      '@meui/spring': workspace:*
-      '@types/os': workspace:*
-      '@types/std': workspace:*
+      '@meui-js/components': workspace:*
+      '@meui-js/core': workspace:*
+      '@meui-js/os': workspace:*
+      '@meui-js/path': workspace:*
+      '@meui-js/preact': workspace:*
+      '@meui-js/spring': workspace:*
+      '@meui-js/std': workspace:*
       esbuild: ^0.15.11
       fs-extra: ^10.1.0
       mathjs: ^11.0.1
       preact: ^10.10.0
     dependencies:
       2048-engine: 0.1.1
-      '@meui/components': link:../components
-      '@meui/core': link:../meui
-      '@meui/path': link:../path
-      '@meui/preact': link:../preact
-      '@meui/spring': link:../spring
-      '@types/os': link:../@types/os
-      '@types/std': link:../@types/std
+      '@meui-js/components': link:../components
+      '@meui-js/core': link:../meui
+      '@meui-js/os': link:../@types/os
+      '@meui-js/path': link:../path
+      '@meui-js/preact': link:../preact
+      '@meui-js/spring': link:../spring
+      '@meui-js/std': link:../@types/std
       mathjs: 11.1.0
       preact: 10.11.2
     devDependencies:
@@ -181,18 +181,18 @@ importers:
 
   packages/meui:
     specifiers:
-      '@types/meui-native': workspace:*
-      '@types/os': workspace:*
-      '@types/std': workspace:*
+      '@meui-js/native': workspace:*
+      '@meui-js/os': workspace:*
+      '@meui-js/std': workspace:*
       color-string: ^1.9.1
       cssfontparser: ^1.2.1
       csstype: ^3.1.1
       postcss-value-parser: ^4.2.0
       preact: ^10.10.0
     dependencies:
-      '@types/meui-native': link:../@types/meui-native
-      '@types/os': link:../@types/os
-      '@types/std': link:../@types/std
+      '@meui-js/native': link:../@types/meui-native
+      '@meui-js/os': link:../@types/os
+      '@meui-js/std': link:../@types/std
       color-string: 1.9.1
       cssfontparser: 1.2.1
       csstype: 3.1.1
@@ -204,16 +204,16 @@ importers:
 
   packages/preact:
     specifiers:
-      '@meui/core': workspace:*
+      '@meui-js/core': workspace:*
       preact: ^10.10.0
     dependencies:
-      '@meui/core': link:../meui
+      '@meui-js/core': link:../meui
       preact: 10.11.2
 
   packages/spring:
     specifiers:
-      '@meui/core': workspace:*
-      '@meui/preact': workspace:*
+      '@meui-js/core': workspace:*
+      '@meui-js/preact': workspace:*
       '@react-spring/animated': ^9.5.5
       '@react-spring/core': ^9.4.4
       '@react-spring/shared': ^9.5.5
@@ -221,13 +221,14 @@ importers:
       csstype: ^3.1.1
       react: ^17.0.2
     dependencies:
-      '@meui/core': link:../meui
-      '@meui/preact': link:../preact
+      '@meui-js/core': link:../meui
+      '@meui-js/preact': link:../preact
       '@react-spring/animated': 9.5.5_react@17.0.2
       '@react-spring/core': 9.5.2_react@17.0.2
       '@react-spring/shared': 9.5.5_react@17.0.2
       '@types/react': 17.0.50
       csstype: 3.1.1
+    devDependencies:
       react: 17.0.2
 
 packages:
@@ -4263,7 +4264,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: false
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}

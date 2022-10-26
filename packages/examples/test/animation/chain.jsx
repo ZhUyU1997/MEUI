@@ -5,9 +5,9 @@
  */
 
 import { useState } from "preact/compat"
-import { Button } from "@meui/components"
-import { View } from "@meui/preact"
-import { createRoot } from "@meui/preact"
+import { Button } from "@meui-js/components"
+import { View } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
 
 import {
     useTransition,
@@ -16,7 +16,7 @@ import {
     config,
     animated,
     useSpringRef,
-} from "@meui/spring"
+} from "@meui-js/spring"
 
 const data = [
     {

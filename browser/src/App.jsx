@@ -8,28 +8,28 @@ import MEUI from "./MEUI"
 import Loading from "./Loading"
 
 import * as Path from "pathe"
-import MEUI_PREACT_RAW from "/node_modules/@meui/preact/dist/index.mjs?raw"
-import MEUI_CORE_RAW from "/node_modules/@meui/core/dist/index.mjs?raw"
+import MEUI_PREACT_RAW from "/node_modules/@meui-js/preact/dist/index.mjs?raw"
+import MEUI_CORE_RAW from "/node_modules/@meui-js/core/dist/index.mjs?raw"
 import PREACT_RAW from "/node_modules/preact/dist/preact.module.js?raw"
-import MEUI_PREACT_JSX_RAW from "/node_modules/@meui/preact/jsx-runtime/index.js?raw"
+import MEUI_PREACT_JSX_RAW from "/node_modules/@meui-js/preact/jsx-runtime/index.js?raw"
 import PREACT_JSX_RAW from "/node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js?raw"
 import POLYFILL_RAW from "/gen/polyfill.js?raw"
 
 const module2PathMap = {
-    "@meui/preact": {
-        path: "/node_modules/@meui/preact/dist/index.mjs",
+    "@meui-js/preact": {
+        path: "/node_modules/@meui-js/preact/dist/index.mjs",
         content: MEUI_PREACT_RAW,
     },
-    "@meui/core": {
-        path: "/node_modules/@meui/core/dist/index.mjs",
+    "@meui-js/core": {
+        path: "/node_modules/@meui-js/core/dist/index.mjs",
         content: MEUI_CORE_RAW,
     },
     preact: {
         path: "/node_modules/preact/dist/preact.module.js",
         content: PREACT_RAW,
     },
-    "@meui/preact/jsx-runtime": {
-        path: "/node_modules/@meui/preact/jsx-runtime/index.js",
+    "@meui-js/preact/jsx-runtime": {
+        path: "/node_modules/@meui-js/preact/jsx-runtime/index.js",
         content: MEUI_PREACT_JSX_RAW,
     },
     "preact/jsx-runtime": {
@@ -42,7 +42,7 @@ const module2PathMap = {
     },
 }
 
-const codeRaw = `import { createRoot, View } from "@meui/preact"
+const codeRaw = `import { createRoot, View } from "@meui-js/preact"
 
 function App() {
     return (
@@ -128,7 +128,7 @@ function useESBuild() {
             external: ["meui-native", "os", "std"],
             target: "es2020",
             format: "esm",
-            jsxImportSource: "@meui/preact",
+            jsxImportSource: "@meui-js/preact",
             jsx: "automatic",
             tsconfig: `{
                     "compilerOptions": {
@@ -147,7 +147,7 @@ function useESBuild() {
                         "isolatedModules": true,
                         "noEmit": true,
                         "jsx": "react-jsx",
-                        "jsxImportSource": "@meui/preact"
+                        "jsxImportSource": "@meui-js/preact"
                     },
                     "include": ["@meui", "./index.tsx"]
                 }`,

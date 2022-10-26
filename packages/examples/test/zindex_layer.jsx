@@ -5,11 +5,11 @@
  */
 
 import React, { useState } from "preact/compat"
-import { View } from "@meui/preact"
-import { createRoot } from "@meui/preact"
+import { View } from "@meui-js/preact"
+import { createRoot } from "@meui-js/preact"
 
-import { animated, useSpring, config } from "@meui/spring"
-import { Root } from "@meui/components"
+import { animated, useSpring, config } from "@meui-js/spring"
+import { Root } from "@meui-js/components"
 
 function App() {
     const styles = useSpring({

@@ -1,1 +1,1 @@
-# @types/os
+# @meui-js/os

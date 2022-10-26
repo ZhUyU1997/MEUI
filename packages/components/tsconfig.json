@@ -15,7 +15,8 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "@meui/preact"
+        "jsxImportSource": "@meui-js/preact",
+        "typeRoots": ["node_modules/@meui-js"]
     },
     "include": ["src"]
 }

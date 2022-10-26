@@ -49,7 +49,7 @@ jobs:
                   sudo apt install make
             - run: pnpm install
             - run: pnpm run gen
-            - run: pnpm -F @meui/core -F @meui/spring -F @meui/preact -F @meui/components run build
+            - run: pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components run build
 
             - name: Setup emsdk
               uses: ZhUyU1997/setup-emsdk@v11
@@ -66,7 +66,7 @@ jobs:
                   emcc -v
                   node -v
             - run: pnpm run build-wasm
-            - run: pnpm -F @meui/live build
+            - run: pnpm -F @meui-js/live build
             - name: Setup Pages
               uses: actions/configure-pages@v2
             - name: Upload artifact

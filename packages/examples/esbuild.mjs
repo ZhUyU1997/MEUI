@@ -72,7 +72,7 @@ build({
     format: "esm",
     inject: ["../../framework/polyfill.js"],
     watch: isDev,
-    jsxImportSource: "@meui/preact",
+    jsxImportSource: "@meui-js/preact",
     jsx: "transform",
     plugins: [preactCompatPlugin()],
 })

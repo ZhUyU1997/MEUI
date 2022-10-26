@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createRoot } from "@meui/preact"
+import { createRoot } from "@meui-js/preact"
 import { useState } from "preact/compat"
-import { animated, useSpring } from "@meui/spring"
+import { animated, useSpring } from "@meui-js/spring"
 
 function App() {
     const styles = useSpring({
