@@ -1,0 +1,17 @@
+{
+    "name": "meui-preact-starter",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "rimraf dist && cross-env NODE_ENV=development node ./build.mjs",
+        "build": "rimraf dist && cross-env NODE_ENV=production node ./build.mjs"
+    },
+    "dependencies": {
+        "@meui-js/preact": "^0.0.1-alpha.1"
+    },
+    "devDependencies": {
+        "esbuild": "^0.15.12",
+        "rimraf": "^3.0.2"
+    }
+}

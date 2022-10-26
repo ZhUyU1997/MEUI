@@ -170,6 +170,12 @@ importers:
       postcss-value-parser: 4.2.0
       preact: 10.11.2
 
+  packages/create-meui:
+    specifiers:
+      '@types/node': ^18.11.6
+    devDependencies:
+      '@types/node': 18.11.6
+
   packages/examples:
     specifiers:
       2048-engine: ^0.1.1
@@ -198,6 +204,9 @@ importers:
     devDependencies:
       esbuild: 0.15.11
       fs-extra: 10.1.0
+
+  packages/meui-js:
+    specifiers: {}
 
   packages/path:
     specifiers: {}
@@ -1888,6 +1897,10 @@ packages:
 
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
+    dev: true
+
+  /@types/node/18.11.6:
+    resolution: {integrity: sha512-j3CEDa2vd96K0AXF8Wur7UucACvnjkk8hYyQAHhUNciabZLDl9nfAEVUSwmh245OOZV15bRA3Y590Gi5jUcDJg==}
     dev: true
 
   /@types/node/18.7.14:

@@ -1,15 +1,22 @@
 {
     "name": "create-meui",
-    "version": "0.0.1-alpha.1",
+    "version": "0.0.1",
+    "type": "module",
     "keywords": [
-        "meui"
+        "meui",
+        "template"
     ],
     "author": "Yu Zhu",
     "license": "MIT",
+    "bin": {
+        "create-meui": "index.js"
+    },
     "files": [
-        "README.md",
-        "LICENSE"
+        "index.js",
+        "template-*",
+        "dist"
     ],
+    "main": "index.js",
     "engines": {
         "node": ">=16.0.0"
     },
@@ -21,5 +28,13 @@
     "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
     "bugs": {
         "url": "https://github.com/ZhUyU1997/MEUI/issues"
+    },
+    "scripts": {
+        "dev": "rollup -c -w",
+        "build": "rollup -c",
+        "prepublishOnly": "pnpm run build"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.6"
     }
 }
