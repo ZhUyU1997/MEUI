@@ -18,7 +18,7 @@ if (isDryRun) {
 }
 
 export const packagesPath = {
-    "@meui-js/core": "packages/meui",
+    "@meui-js/core": "packages/core",
     "@meui-js/preact": "packages/preact",
     "@meui-js/spring": "packages/spring",
     "@meui-js/components": "packages/components",

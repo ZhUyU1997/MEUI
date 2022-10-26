@@ -32,7 +32,7 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ZhUyU1997/MEUI.git",
-        "directory": "packages/meui"
+        "directory": "packages/core"
     },
     "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
     "bugs": {
