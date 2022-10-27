@@ -1,4 +1,6 @@
+import { useEffect } from "react"
 import NiceModal, { useModal } from "@ebay/nice-modal-react"
+import { useRegisterSW } from "virtual:pwa-register/react"
 
 export const UpdatePopup = NiceModal.create(() => {
     // Use a hook to manage the modal state
@@ -55,3 +57,28 @@ export const UpdatePopup = NiceModal.create(() => {
         </div>
     )
 })
+
+export function useUpdatePrompt() {
+    /// https://vite-plugin-pwa.netlify.app/frameworks/react.html#prompt-for-update
+    const {
+        offlineReady: [offlineReady, setOfflineReady],
+        needRefresh: [needRefresh, setNeedRefresh],
+        updateServiceWorker,
+    } = useRegisterSW({
+        onRegistered(r) {
+            // eslint-disable-next-line prefer-template
+            console.log("SW Registered: " + r)
+        },
+        onRegisterError(error) {
+            console.log("SW registration error", error)
+        },
+    })
+
+    useEffect(() => {
+        if (needRefresh) {
+            NiceModal.show(UpdatePopup).then(() => {
+                updateServiceWorker(true)
+            })
+        }
+    }, [needRefresh, updateServiceWorker])
+}

@@ -1,6 +1,6 @@
 import { createMEUI } from "./create"
 import { useEffect, useRef } from "react"
-export default function MEUI({ input }) {
+export default function MEUI({ input, style }) {
     const canvas = useRef(null)
     const destory = useRef(null)
 
@@ -20,17 +20,25 @@ export default function MEUI({ input }) {
         }
     }, [input])
     return (
-        <canvas
-            ref={canvas}
-            id="canvas"
-            onContextMenu={(e) => {
-                e.preventDefault()
-            }}
-            tabIndex={-1}
+        <div
             style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
+                position: "relative",
+                ...style,
             }}
-        ></canvas>
+        >
+            <canvas
+                ref={canvas}
+                id="canvas"
+                onContextMenu={(e) => {
+                    e.preventDefault()
+                }}
+                tabIndex={-1}
+                style={{
+                    position: "absolute",
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                }}
+            ></canvas>
+        </div>
     )
 }
