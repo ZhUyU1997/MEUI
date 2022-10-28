@@ -6,6 +6,7 @@
 <p align="center">
   <a href="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml"><img src="https://github.com/ZhUyU1997/MEUI/actions/workflows/node.js.yml/badge.svg" alt="build status"></a>
   <img src="https://img.shields.io/github/issues/ZhUyU1997/MEUI">
+  <img src="https://img.shields.io/github/license/ZhUyU1997/MEUI">
 </p>
 
 `MEUI` is a modern ui library for embedded platform based on `quickjs` and `React.js`
