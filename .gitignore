@@ -13,3 +13,5 @@ fixdep*
 node_modules
 dist
 stats.html
+/build
+.xmake
