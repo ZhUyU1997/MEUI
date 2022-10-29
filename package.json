@@ -2,8 +2,7 @@
     "name": "meui-monorepo",
     "version": "0.0.1-alpha.1",
     "scripts": {
-        "build-native": "make -j16",
-        "build-wasm": "make -j16 -f wasm.mk",
+        "build": "xmake",
         "profile": "make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
         "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
         "gen": "node ./style-gen.mjs",
