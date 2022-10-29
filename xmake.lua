@@ -80,6 +80,7 @@ target("meui")
     if get_config("backend") == "sdl2-core-wasm" then
         add_files("src/platform/sdl2-core-wasm/*.c")
         add_defines("EMSCRIPTEN")
+        add_cxflags("-s USE_SDL=2")
 	    add_ldflags("-s LLD_REPORT_UNDEFINED")
 	    add_ldflags("-s STRICT_JS=1")
 	    add_ldflags("-s SINGLE_FILE=0")

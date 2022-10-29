@@ -66,7 +66,20 @@ jobs:
               run: |
                   emcc -v
                   node -v
-            - run: pnpm run build-wasm
+            - uses: ZhUyU1997/github-action-setup-xmake@v1
+              with:
+                  xmake-version: "2.7.2"
+                  actions-cache-folder: ".xmake-cache"
+            - name: Build
+              run: |
+                  xmake f -p wasm --backend=sdl2-core-wasm
+                  xmake
+                  mkdir -p browser/gen
+                  mkdir -p browser/public
+                  cp build/wasm/wasm32/release/* browser/gen
+                  cp framework/polyfill.js browser/gen
+                  cp res browser/public -r
+
             - run: pnpm -F @meui-js/live build
             - name: Setup Pages
               uses: actions/configure-pages@v2
