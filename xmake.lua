@@ -1,8 +1,6 @@
 option("backend")
     set_default("x11")
-    if is_plat("windows", "macosx") then
-        set_default("sdl2-core")
-    end 
+    set_values("x11", "sdl2", "sdl2-core", "sdl2-core-wasm")
 
 target("meui")
     set_kind("binary")
@@ -10,7 +8,11 @@ target("meui")
 
     if is_mode("release") then
         set_symbols("hidden")
-        set_optimize("fastest")
+        if is_plat("wasm") then 
+            add_cxflags("-Oz")
+        else
+            add_cxflags("-O3")
+        end
         set_strip("all")
     end
 
@@ -54,25 +56,43 @@ target("meui")
     add_includedirs("lib/pqueue")
     add_files("lib/pqueue/*.c")
 
-    add_links("pthread", "m")
+    add_links("m")
 
     if get_config("backend") == "x11" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/x11/*.c")
-        add_links("dl", "X11", "Xext")
+        add_links("pthread", "dl", "X11", "Xext")
     end
     if get_config("backend") == "sdl2" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/sdl2/*.c")
-        add_links("dl", "lSDL2")
+        add_links("pthread", "dl", "SDL2")
     end
     if get_config("backend") == "test" then
+        add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/test/*.c")
-        add_links("dl")
+        add_links("pthread", "dl")
     end
     if get_config("backend") == "sdl2-core" then
         add_files("src/platform/sdl2-core/*.c")
-        add_links("lSDL2")
+        add_links("SDL2")
+    end
+    if get_config("backend") == "sdl2-core-wasm" then
+        add_files("src/platform/sdl2-core-wasm/*.c")
+        add_defines("EMSCRIPTEN")
+	    add_ldflags("-s LLD_REPORT_UNDEFINED")
+	    add_ldflags("-s STRICT_JS=1")
+	    add_ldflags("-s SINGLE_FILE=0")
+	    add_ldflags("-s EXPORT_ES6=1")
+	    add_ldflags("-s ASSERTIONS")
+	    add_ldflags("-s ALLOW_MEMORY_GROWTH=1")
+	    add_ldflags("-s MODULARIZE=1")
+	    add_ldflags("-s EXIT_RUNTIME=0")
+        add_ldflags("-s USE_SDL=2")
+	    add_ldflags("-s EXPORTED_FUNCTIONS=_js_cancel_main_loop,_main", { force = true})
+	    add_ldflags("-s EXPORTED_RUNTIME_METHODS=FS,callMain,abort,ccall,cwrap")
+        add_cxflags("-fno-exceptions")
+        set_extension(".js")
     end
 
     add_options("backend")
