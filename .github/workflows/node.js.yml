@@ -37,6 +37,13 @@ jobs:
                   sudo apt install gcc make libxkbcommon-dev
             - run: pnpm install
             - run: pnpm gen
+            - uses: ZhUyU1997/github-action-setup-xmake@v1
+              with:
+                  xmake-version: "2.7.2"
+                  actions-cache-folder: ".xmake-cache"
+            - name: xmake build
+              run: |
+                  xmake
             - run: pnpm run build-native
             - run: pnpm check
             - run: pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components -F @meui-js/examples run build
