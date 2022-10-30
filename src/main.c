@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include <time.h>
 
-
 #ifdef PROFILE
 #include <gperftools/profiler.h>
 #endif
@@ -103,6 +102,12 @@ int main(int argc, char **argv)
     ProfilerStart("test.prof");
     atexit(ProfilerStop);
 #endif
+
+    if (argc == 1)
+    {
+        printf("%s: error: no input javascript files\n", argv[0]);
+        return 1;
+    }
 
     JSRuntime *rt;
     JSContext *ctx;
