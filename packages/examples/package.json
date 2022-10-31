@@ -14,16 +14,17 @@
         "2048-engine": "^0.1.1",
         "@meui-js/components": "workspace:*",
         "@meui-js/core": "workspace:*",
+        "@meui-js/os": "workspace:*",
         "@meui-js/path": "workspace:*",
         "@meui-js/preact": "workspace:*",
         "@meui-js/spring": "workspace:*",
-        "@meui-js/os": "workspace:*",
         "@meui-js/std": "workspace:*",
         "mathjs": "^11.0.1",
         "preact": "^10.10.0"
     },
     "devDependencies": {
-        "esbuild": "^0.15.11",
+        "@meui-js/esbuild-plugin-meui": "workspace:*",
+        "esbuild": "^0.15.12",
         "fs-extra": "^10.1.0"
     }
 }

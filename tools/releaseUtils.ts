@@ -25,6 +25,7 @@ export const packagesPath = {
     "@meui-js/native": "packages/@types/native",
     "@meui-js/os": "packages/@types/os",
     "@meui-js/std": "packages/@types/std",
+    "@meui-js/esbuild-plugin-meui": "packages/esbuild-plugin-meui",
     "create-meui": "packages/create-meui",
     "meui-js": "packages/meui-js",
 } as const

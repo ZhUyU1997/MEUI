@@ -1,0 +1,47 @@
+{
+    "name": "@meui-js/esbuild-plugin-meui",
+    "version": "0.0.1-alpha.1",
+    "type": "module",
+    "keywords": [
+        "meui",
+        "esbuild",
+        "plugin"
+    ],
+    "author": "Yu Zhu",
+    "license": "MIT",
+    "files": [
+        "README.md",
+        "LICENSE",
+        "dist",
+        "polyfill"
+    ],
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs"
+        }
+    },
+    "scripts": {
+        "dev": "rollup -c -w",
+        "build": "rollup -c",
+        "prepublishOnly": "pnpm run build"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ZhUyU1997/MEUI.git",
+        "directory": "packages/esbuild-plugin-meui"
+    },
+    "homepage": "https://github.com/ZhUyU1997/MEUI#readme",
+    "bugs": {
+        "url": "https://github.com/ZhUyU1997/MEUI/issues"
+    },
+    "dependencies": {
+        "@types/node": "^18.11.6",
+        "esbuild": "^0.15.11"
+    }
+}

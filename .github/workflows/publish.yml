@@ -14,6 +14,7 @@ on:
             - "@meui-js/native@*"
             - "@meui-js/os@*"
             - "@meui-js/std@*"
+            - "@meui-js/esbuild-plugin-meui@*"
             - "create-meui@*"
             - "meui-js@*"
 jobs:

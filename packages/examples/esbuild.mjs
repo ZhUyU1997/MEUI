@@ -8,6 +8,7 @@ import { build } from "esbuild"
 import { spawn } from "child_process"
 import kill from "tree-kill"
 import path from "path"
+import meuiPlugin from "@meui-js/esbuild-plugin-meui"
 
 const isDev = process.env.NODE_ENV === "development"
 
@@ -60,19 +61,13 @@ function preactCompatPlugin() {
 
 build({
     entryPoints: [process.argv[2] ?? "./src/hello/index.jsx"],
-    // minify: true,
     minify: !isDev,
-    // bundle: false,
     bundle: true,
-    // resolveExtensions: ['.mjs', '.cjs'],
-    external: ["meui-native", "os", "std"],
-    // preserveSymlinks: true,
     target: "es2020",
     outfile: process.argv[3] ?? "dist/index.js",
     format: "esm",
-    inject: ["../../framework/polyfill.js"],
     watch: isDev,
     jsxImportSource: "@meui-js/preact",
     jsx: "transform",
-    plugins: [preactCompatPlugin()],
+    plugins: [meuiPlugin(), preactCompatPlugin()],
 })

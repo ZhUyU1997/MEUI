@@ -3,7 +3,7 @@
     "version": "0.0.1-alpha.1",
     "scripts": {
         "build": "xmake",
-        "build:base": "pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components run build",
+        "build:base": "pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components -F @meui-js/esbuild-plugin-meui run build",
         "build:examples": "pnpm -F @meui-js/examples run build",
         "run:examples": "xmake run meui packages/examples/dist/index.js",
         "profile": "make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
@@ -29,7 +29,7 @@
         "@typescript-eslint/eslint-plugin": "^5.18.0",
         "@typescript-eslint/parser": "^5.18.0",
         "cross-env": "^7.0.3",
-        "esbuild": "^0.14.54",
+        "esbuild": "^0.15.12",
         "eslint": "^8.10.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-react": "^7.29.4",
