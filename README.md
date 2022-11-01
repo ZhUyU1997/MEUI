@@ -59,6 +59,8 @@ function App() {
 createRoot(300, 300).render(<App />)
 ```
 
+## [Browser Demo](https://zhuyu1997.github.io/MEUI/)
+
 ## Features
 
 -   Support `React.js` to build UI
@@ -70,6 +72,8 @@ createRoot(300, 300).render(<App />)
 -   Support `canvas` api
 
 ## Getting Started
+
+### [Install Xmake](https://xmake.io/#/getting_started?id=installation)
 
 ### Windows
 
