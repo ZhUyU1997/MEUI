@@ -1,6 +1,9 @@
 option("backend")
     set_default("x11")
     set_values("x11", "sdl2", "sdl2-core", "sdl2-core-wasm")
+    if is_plat("windows", "macosx") then
+        set_default("sdl2-core")
+    end 
 
 target("meui")
     set_kind("binary")
