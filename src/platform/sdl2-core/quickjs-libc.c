@@ -31,7 +31,7 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <limits.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "cutils.h"
 #include "list.h"

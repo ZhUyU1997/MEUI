@@ -1,9 +1,13 @@
+add_requires("sdl2", {system=true,optional=true})
+add_requires("dl", {system=true,optional=true})
+add_requires("pthread", {system=true,optional=true})
+add_requires("x11", {system=true,optional=true})
+add_requires("xext", {system=true,optional=true})
+
 option("backend")
     set_default("x11")
     set_values("x11", "sdl2", "sdl2-core", "sdl2-core-wasm")
-    if is_plat("windows", "macosx") then
-        set_default("sdl2-core")
-    end 
+option_end()
 
 target("meui")
     set_kind("binary")
@@ -59,26 +63,26 @@ target("meui")
     add_includedirs("lib/pqueue")
     add_files("lib/pqueue/*.c")
 
-    add_links("m")
+    add_packages("m")
 
     if get_config("backend") == "x11" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/x11/*.c")
-        add_links("pthread", "dl", "X11", "Xext")
+        add_packages("pthread", "dl", "x11", "xext")
     end
     if get_config("backend") == "sdl2" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/sdl2/*.c")
-        add_links("pthread", "dl", "SDL2")
+        add_packages("pthread", "dl", "sdl2")
     end
     if get_config("backend") == "test" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/test/*.c")
-        add_links("pthread", "dl")
+        add_packages("pthread", "dl")
     end
     if get_config("backend") == "sdl2-core" then
         add_files("src/platform/sdl2-core/*.c")
-        add_links("SDL2")
+        add_packages("sdl2")
     end
     if get_config("backend") == "sdl2-core-wasm" then
         add_files("src/platform/sdl2-core-wasm/*.c")
