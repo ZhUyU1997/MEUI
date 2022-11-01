@@ -11,6 +11,7 @@
         "@meui-js/preact": "^0.0.1-alpha.1"
     },
     "devDependencies": {
+        "@meui-js/esbuild-plugin-meui": "^0.0.1-alpha.1",
         "esbuild": "^0.15.12",
         "rimraf": "^3.0.2",
         "cross-env": "^7.0.3"

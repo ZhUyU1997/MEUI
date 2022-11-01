@@ -1,4 +1,5 @@
 import { build } from "esbuild"
+import meuiPlugin from "@meui-js/esbuild-plugin-meui"
 import path from "path"
 
 const isDev = process.env.NODE_ENV === "development"
@@ -29,13 +30,11 @@ build({
     entryPoints: [process.argv[2] ?? "./src/index.tsx"],
     minify: !isDev,
     bundle: true,
-    external: ["meui-native", "os", "std"],
     target: "es2020",
     outfile: process.argv[3] ?? "dist/index.js",
     format: "esm",
-    inject: ["./polyfill.js"],
     watch: isDev,
     jsxImportSource: "@meui-js/preact",
     jsx: "transform",
-    plugins: [preactCompatPlugin()],
+    plugins: [meuiPlugin(), preactCompatPlugin()],
 })
