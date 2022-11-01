@@ -93,18 +93,9 @@ createRoot(300, 300).render(<App />)
     [path to SDL2]\x86_64-w64-mingw32 => [path to MinGW]\x86_64-w64-mingw32
     ```
 
--   #### Build & Run MEUI
-
-    ```shell
-    npm install
-    npm run dev
-    # Or specified entry
-    npm run dev examples/signin/index.tsx
-    ```
-
 ### Ubuntu/WSLg
 
--   #### Install `Node.js` & `NPM`
+-   #### Install `Node.js`
 
     ```sh
     cd ~
@@ -119,14 +110,23 @@ createRoot(300, 300).render(<App />)
     sudo apt install gcc make
     ```
 
--   #### Build & Run MEUI
+### Mac OS
 
+-   #### [Install NVM](https://github.com/nvm-sh/nvm)
+-   #### Install `Node.js`
     ```sh
-    npm install
-    npm run dev
-    # Or specified entry
-    npm run dev examples/signin/index.tsx
+    nvm install node
+    node -v
     ```
+
+### Build & Run MEUI
+
+```sh
+corepack enable
+pnpm install
+pnpm build:all
+pnpm run:examples
+```
 
 ## API References
 

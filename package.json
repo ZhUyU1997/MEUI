@@ -3,6 +3,7 @@
     "version": "0.0.1-alpha.1",
     "scripts": {
         "build": "xmake",
+        "build:all": "pnpm build && pnpm build:base && pnpm build:examples",
         "build:base": "pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components -F @meui-js/esbuild-plugin-meui run build",
         "build:examples": "pnpm -F @meui-js/examples run build",
         "run:examples": "xmake run meui packages/examples/dist/index.js",
