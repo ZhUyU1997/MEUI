@@ -6,9 +6,8 @@ name: Create MEUI
 
 on:
     push:
-        branches: ["**"]
-    pull_request:
-        branches: [master]
+        tags:
+            - "template"
 
 jobs:
     build:
