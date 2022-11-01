@@ -37,7 +37,7 @@ jobs:
                   sudo apt install gcc make libxkbcommon-dev
             - run: pnpm install
             - run: pnpm gen
-            - uses: ZhUyU1997/github-action-setup-xmake@v1
+            - uses: xmake-io/github-action-setup-xmake@v1
               with:
                   xmake-version: "2.7.2"
                   actions-cache-folder: ".xmake-cache"
