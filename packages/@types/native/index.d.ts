@@ -38,8 +38,9 @@ declare module "meui-native" {
         | MeuiWheelRawEvent
         | MeuiUnloadRawEvent
 
+    export type ColorFormat = "RGB565" | "ARGB8888"
     export class NativeMEUI {
-        constructor(width: number, height: number)
+        constructor(width: number, height: number, format?: ColorFormat)
         render(root: Box): void
         flush(): void
         update(): void

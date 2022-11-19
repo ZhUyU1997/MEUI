@@ -6,7 +6,7 @@
 
 import { MEUI, DivElement } from "@meui-js/core"
 
-const meui = new MEUI(100, 100)
+const meui = new MEUI(100, 100, "RGB565")
 
 const root = meui.getRoot()
 

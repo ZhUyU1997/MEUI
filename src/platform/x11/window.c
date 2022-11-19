@@ -32,10 +32,14 @@ struct window_t
     int shared_image;
     int x11_fd;
     Atom wmDeleteMessage;
+    plutovg_surface_t *surface;
 };
 
-struct window_t *window_create(const char *title, int width, int height)
+struct window_t *window_create(const char *title, int width, int height, plutovg_color_format_t format)
 {
+    if (format != plutovg_color_format_argb32)
+        return NULL;
+
     struct window_t *window = calloc(1, sizeof(struct window_t));
 
     /* use the information from the environment variable DISPLAY
@@ -124,12 +128,13 @@ struct window_t *window_create(const char *title, int width, int height)
     XSetWMProtocols(dis, win, &window->wmDeleteMessage, 1);
 
     window->x11_fd = ConnectionNumber(dis);
-
+    window->surface = plutovg_surface_create_for_formated_data((unsigned char *)window->ximage->data, width, height, sizeof(uint32_t) * width, format);
     return window;
 }
 
 void window_destory(struct window_t *window)
 {
+    plutovg_surface_destroy(window->surface);
     if (window->shared_image)
         destroy_xshm_image(window->dis, window->ximage, &window->shminfo);
     else
@@ -144,6 +149,11 @@ void window_destory(struct window_t *window)
 unsigned char *window_get_image_data(struct window_t *window)
 {
     return (unsigned char *)window->ximage->data;
+}
+
+plutovg_surface_t *window_get_surface(struct window_t *window)
+{
+    return window->surface;
 }
 
 int window_connect_number(struct window_t *window)

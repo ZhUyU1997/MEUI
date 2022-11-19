@@ -9,6 +9,8 @@
 #include "quickjs-libc.h"
 #include "meui.h"
 
+#include <string.h>
+
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
 static JSClassID js_meui_class_id;
@@ -191,7 +193,7 @@ static JSValue js_screenshot(JSContext *ctx, JSValueConst this_val,
     if (!meui)
         return JS_EXCEPTION;
 
-    if(argc != 1)
+    if (argc != 1)
         return JS_EXCEPTION;
 
     const char *path = JS_ToCString(ctx, argv[0]);
@@ -236,6 +238,31 @@ static JSValue js_meui_ctor(JSContext *ctx,
         goto fail;
     if (JS_ToInt32(ctx, &height, argv[1]))
         goto fail;
+
+    const char *s = JS_ToCString(ctx, argv[2]);
+    if (!s)
+        goto fail;
+
+    plutovg_color_format_t format = plutovg_color_format_argb32;
+    const static struct
+    {
+        const char *string_value;
+        plutovg_color_format_t enum_value;
+    } map[] = {
+        {"RGB565", plutovg_color_format_rgb565},
+        {"ARGB8888", plutovg_color_format_argb32},
+    };
+
+    for (int i = 0; i < countof(map); i++)
+    {
+        if (!strcmp(map[i].string_value, s))
+        {
+            format = map[i].enum_value;
+            break;
+        }
+    }
+    JS_FreeCString(ctx, s);
+
     /* using new_target to get the prototype is necessary when the
        class is extended. */
     proto = JS_GetPropertyStr(ctx, new_target, "prototype");
@@ -246,7 +273,7 @@ static JSValue js_meui_ctor(JSContext *ctx,
     if (JS_IsException(obj))
         goto fail;
 
-    struct meui_t *meui = meui_start(width, height);
+    struct meui_t *meui = meui_start(width, height, format);
 
     JS_SetOpaque(obj, meui);
     return obj;

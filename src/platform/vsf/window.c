@@ -50,6 +50,7 @@ struct window_t {
             vk_input_notifier_t notifier;
         };
     };
+    plutovg_surface_t *surface;
 };
 
 typedef struct window_evt_t {
@@ -76,8 +77,11 @@ static void __windows_on_event(vk_input_notifier_t *notifier, vk_input_type_t ty
     vsf_stream_write(priv_rx->stream_rx, (uint8_t *)&window_evt, sizeof(window_evt));
 }
 
-struct window_t *window_create(const char *title, int width, int height)
+struct window_t *window_create(const char *title, int width, int height, plutovg_color_format_t format)
 {
+    if (format != plutovg_color_format_argb32)
+        return NULL;
+
     vk_disp_t *disp = usrapp_ui_common.disp;
     if ((NULL == disp) || (width > disp->param.width) || (height > disp->param.height)) {
         vsf_trace_error("MEUI: display is not large enough to hold MEUI window\n");
@@ -112,19 +116,27 @@ struct window_t *window_create(const char *title, int width, int height)
                     | (1 << VSF_INPUT_TYPE_KEYBOARD) | (1 << VSF_INPUT_TYPE_MOUSE);
         window->event.notifier.on_evt = __windows_on_event;
         vk_input_notifier_register(&window->event.notifier);
+
+        window->surface = plutovg_surface_create_for_formated_data((unsigned char *)window->disp.buff, width, height, sizeof(uint32_t) * width, format);
     }
     return window;
 }
 
 void window_destory(struct window_t *window)
 {
+    plutovg_surface_destroy(window->surface);
     vk_input_notifier_unregister(&window->event.notifier);
     free(window);
 }
 
-char *window_get_image_data(struct window_t *window)
+unsigned char *window_get_image_data(struct window_t *window)
 {
-    return (char *)window->disp.buff;
+    return (unsigned char *)window->disp.buff;
+}
+
+plutovg_surface_t *window_get_surface(struct window_t *window)
+{
+    return window->surface;
 }
 
 int window_connect_number(struct window_t *window)

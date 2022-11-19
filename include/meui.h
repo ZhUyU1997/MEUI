@@ -46,7 +46,7 @@ struct meui_t
     meui_callback_t callback[MEUI_CB_MAX];
 };
 
-struct meui_t *meui_start(int width, int height);
+struct meui_t *meui_start(int width, int height, plutovg_color_format_t format);
 struct meui_t *meui_get_instance();
 void meui_register_callback(struct meui_t *, enum MEUI_CALLBACK, meui_callback_t);
 void meui_render(struct meui_t *meui, box_t box);

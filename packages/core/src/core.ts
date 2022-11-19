@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { NativeMEUI, BOX_STATE, MeuiMouseRawEvent } from "meui-native"
+import {
+    NativeMEUI,
+    BOX_STATE,
+    MeuiMouseRawEvent,
+    ColorFormat,
+} from "meui-native"
 import * as os from "os"
 import * as std from "std"
 import { KeyMap } from "./keymap"
@@ -41,8 +46,12 @@ export class MEUI {
     private width: number
     private height: number
     onunload: () => void
-    constructor(width: number, height: number) {
-        this.nativeMEUI = new NativeMEUI(width, height)
+    constructor(
+        width: number,
+        height: number,
+        format: ColorFormat = "ARGB8888"
+    ) {
+        this.nativeMEUI = new NativeMEUI(width, height, format)
         this.width = width
         this.height = height
 

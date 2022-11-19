@@ -37,10 +37,14 @@ struct window_t
         SDL_Window *window;
         SDL_Surface *surface;
     } sdl;
+    plutovg_surface_t *surface;
 };
 
-struct window_t *window_create(const char *title, int width, int height)
+struct window_t *window_create(const char *title, int width, int height, plutovg_color_format_t format)
 {
+    if (format != plutovg_color_format_argb32)
+        return NULL;
+
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS))
     {
         return NULL;
@@ -63,8 +67,14 @@ struct window_t *window_create(const char *title, int width, int height)
     {
         goto free_sdl_window_and_fail;
     }
-
+    window->surface = plutovg_surface_create_for_formated_data((unsigned char *)window->sdl.surface->pixels, width, height, sizeof(uint32_t) * width, format);
+    if (NULL == window->surface)
+    {
+        goto free_sdl_surface_and_fail;
+    }
     return window;
+free_sdl_surface_and_fail:
+    plutovg_surface_destroy(window->surface);
 free_sdl_window_and_fail:
     SDL_DestroyWindow(window->sdl.window);
 free_window_and_fail:
@@ -80,9 +90,14 @@ void window_destory(struct window_t *window)
     free(window);
 }
 
-char *window_get_image_data(struct window_t *window)
+unsigned char *window_get_image_data(struct window_t *window)
 {
-    return (char *)window->sdl.surface->pixels;
+    return (unsigned char *)window->sdl.surface->pixels;
+}
+
+plutovg_surface_t *window_get_surface(struct window_t *window)
+{
+    return window->surface;
 }
 
 int window_connect_number(struct window_t *window)

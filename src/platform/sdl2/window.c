@@ -49,6 +49,8 @@ struct window_t
     {
         int fd;
     } event;
+
+    plutovg_surface_t *surface;
 };
 
 static int window_event_watcher(void *userdata, SDL_Event *event)
@@ -75,8 +77,11 @@ static int EventThread(void *ptr)
     return 0;
 }
 
-struct window_t *window_create(const char *title, int width, int height)
+struct window_t *window_create(const char *title, int width, int height, plutovg_color_format_t format)
 {
+    if (format != plutovg_color_format_argb32)
+        return NULL;
+
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS))
     {
         return NULL;
@@ -99,10 +104,17 @@ struct window_t *window_create(const char *title, int width, int height)
     {
         goto free_sdl_window_and_fail;
     }
+
+    window->surface = plutovg_surface_create_for_formated_data((unsigned char *)window->sdl.surface->pixels, width, height, sizeof(uint32_t) * width, format);
+    if (NULL == window->surface)
+    {
+        goto free_sdl_surface_and_fail;
+    }
+
     window->event.fd = eventfd(0, EFD_NONBLOCK);
     if (window->event.fd < 0)
     {
-        goto free_sdl_surface_and_fail;
+        goto free_plutovg_surface_and_fail;
     }
     window->sdl.exit_flag = 0;
     window->sdl.lock = SDL_CreateMutex();
@@ -124,6 +136,8 @@ free_mutux_and_fail:
     SDL_DestroyMutex(window->sdl.lock);
 free_eventfd_and_fail:
     close(window->event.fd);
+free_plutovg_surface_and_fail:
+    plutovg_surface_destroy(window->surface);
 free_sdl_surface_and_fail:
     SDL_FreeSurface(window->sdl.surface);
 free_sdl_window_and_fail:
@@ -143,14 +157,15 @@ void window_destory(struct window_t *window)
 
     SDL_DestroyMutex(window->sdl.lock);
     close(window->event.fd);
+    plutovg_surface_destroy(window->surface);
     SDL_FreeSurface(window->sdl.surface);
     SDL_DestroyWindow(window->sdl.window);
     free(window);
 }
 
-char *window_get_image_data(struct window_t *window)
+unsigned char *window_get_image_data(struct window_t *window)
 {
-    return (char *)window->sdl.surface->pixels;
+    return (unsigned char *)window->sdl.surface->pixels;
 }
 
 int window_connect_number(struct window_t *window)

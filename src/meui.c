@@ -33,7 +33,7 @@ struct meui_platform_t
 
 static struct meui_t *meui_instance = NULL;
 
-struct meui_t *meui_start(int width, int height)
+struct meui_t *meui_start(int width, int height, plutovg_color_format_t format)
 {
     struct meui_platform_t *platform = calloc(1, sizeof(struct meui_platform_t));
 
@@ -46,14 +46,14 @@ struct meui_t *meui_start(int width, int height)
 
     LOGI("Create Window");
 
-    platform->window = window_create("MEUI", width, height);
+    platform->window = window_create("MEUI", width, height, format);
 
     if (!platform->window)
         goto exit2;
 
     LOGI("Get Window Surface");
 
-    meui->win_surface = plutovg_surface_create_for_data(window_get_image_data(platform->window), width, height, sizeof(int) * width);
+    meui->win_surface = plutovg_surface_reference(window_get_surface(platform->window));
     meui->render_context.surface = plutovg_surface_reference(meui->win_surface);
     meui->width = width;
     meui->height = height;
@@ -162,7 +162,7 @@ box_t meui_search_node(struct meui_t *meui, box_t node, void *data, plutovg_poin
     box_t target = NULL;
 
     plutovg_matrix_t m = box->result.to_screen_matrix;
-    if(plutovg_matrix_invert(&m) == 0)
+    if (plutovg_matrix_invert(&m) == 0)
         return NULL;
 
     plutovg_point_t dst;
@@ -223,7 +223,7 @@ static void meui_update_rect(struct meui_t *meui, plutovg_rect_t rect)
 {
     if (plutovg_rect_invalid(&rect))
         return;
-    
+
     struct meui_platform_t *platform = meui->platform_data;
     plutovg_rect_ext(&rect, 1);
     plutovg_rect_t screen_rect = (plutovg_rect_t){0, 0, meui->width, meui->height};

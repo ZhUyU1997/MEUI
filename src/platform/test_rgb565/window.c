@@ -6,30 +6,41 @@
 
 #include <stdlib.h>
 
+#include <plutovg.h>
 #include "meui.h"
 
 struct window_t
 {
-    char *pixels;
+    unsigned char *pixels;
+    plutovg_surface_t *surface;
 };
 
-struct window_t *window_create(const char *title, int width, int height)
+struct window_t *window_create(const char *title, int width, int height, plutovg_color_format_t format)
 {
+    if (format != plutovg_color_format_rgb565)
+        return NULL;
+
     struct window_t *window = calloc(1, sizeof(struct window_t));
     window->pixels = calloc(1, sizeof(uint16_t) * width * height);
-    printf("window_create %p\n", window->pixels);
+    window->surface = plutovg_surface_create_for_formated_data(window->pixels, width, height, sizeof(uint16_t) * width, format);
     return window;
 }
 
 void window_destory(struct window_t *window)
 {
+    plutovg_surface_destroy(window->surface);
     free(window->pixels);
     free(window);
 }
 
-char *window_get_image_data(struct window_t *window)
+unsigned char *window_get_image_data(struct window_t *window)
 {
-    return (char *)window->pixels;
+    return (unsigned char *)window->pixels;
+}
+
+plutovg_surface_t *window_get_surface(struct window_t *window)
+{
+    return window->surface;
 }
 
 int window_connect_number(struct window_t *window)
