@@ -356,4 +356,8 @@ export class MEUI {
         }
         return path.length > 0 ? target : null
     }
+
+    screenshot(path: string) {
+        this.nativeMEUI.screenshot(path)
+    }
 }

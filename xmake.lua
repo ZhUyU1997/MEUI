@@ -6,7 +6,7 @@ add_requires("xext", {system=true,optional=true})
 
 option("backend")
     set_default("x11")
-    set_values("x11", "sdl2", "sdl2-core", "sdl2-core-wasm")
+    set_values("x11", "sdl2", "sdl2-core", "sdl2-core-wasm", "test", "test_rgb565")
 option_end()
 
 target("meui")
@@ -21,6 +21,10 @@ target("meui")
             add_cxflags("-O3")
         end
         set_strip("all")
+    end
+    if is_mode("debug") then
+        set_symbols("debug")
+        set_optimize("none")
     end
 
     set_languages("gnu11")
@@ -78,6 +82,11 @@ target("meui")
     if get_config("backend") == "test" then
         add_files("lib/QuickJS/quickjs-libc.c")
         add_files("src/platform/test/*.c")
+        add_packages("pthread", "dl")
+    end
+    if get_config("backend") == "test_rgb565" then
+        add_files("lib/QuickJS/quickjs-libc.c")
+        add_files("src/platform/test_rgb565/*.c")
         add_packages("pthread", "dl")
     end
     if get_config("backend") == "sdl2-core" then

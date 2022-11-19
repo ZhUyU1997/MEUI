@@ -7,6 +7,7 @@
         "build:base": "pnpm -F @meui-js/core -F @meui-js/spring -F @meui-js/preact -F @meui-js/components -F @meui-js/esbuild-plugin-meui run build",
         "build:examples": "pnpm -F @meui-js/examples run build",
         "run:examples": "xmake run meui packages/examples/dist/index.js",
+        "debug:examples": "xmake run -d meui packages/examples/dist/index.js",
         "profile": "make -j16 && rollup -c && HEAPPROFILE=./heap_profile ./meui dist/index.js",
         "valgrind": "valgrind --tool=memcheck --leak-check=full --log-file=log.txt ./meui dist/index.js",
         "gen": "node ./style-gen.mjs",

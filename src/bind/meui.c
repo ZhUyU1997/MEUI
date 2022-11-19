@@ -184,6 +184,25 @@ static JSValue js_next_event(JSContext *ctx, JSValueConst this_val,
     return JS_EXCEPTION;
 }
 
+static JSValue js_screenshot(JSContext *ctx, JSValueConst this_val,
+                             int argc, JSValueConst *argv)
+{
+    struct meui_t *meui = JS_GetOpaque(this_val, js_meui_class_id);
+    if (!meui)
+        return JS_EXCEPTION;
+
+    if(argc != 1)
+        return JS_EXCEPTION;
+
+    const char *path = JS_ToCString(ctx, argv[0]);
+    if (!path)
+        return JS_EXCEPTION;
+
+    plutovg_surface_write_to_png(meui_get_surface(meui), path);
+    JS_FreeCString(ctx, path);
+    return JS_UNDEFINED;
+}
+
 struct js_cb_data
 {
     JSContext *ctx;
@@ -245,6 +264,7 @@ static const JSCFunctionListEntry js_meui_proto_funcs[] = {
     JS_CFUNC_DEF("getConnectNumber", 0, js_get_connect_number),
     JS_CFUNC_DEF("pending", 0, js_pending),
     JS_CFUNC_DEF("nextEvent", 0, js_next_event),
+    JS_CFUNC_DEF("screenshot", 1, js_screenshot),
 };
 
 static int js_meui_class_define(JSContext *ctx, JSModuleDef *m)

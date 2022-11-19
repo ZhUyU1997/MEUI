@@ -10,6 +10,12 @@ extern "C" {
  */
 typedef struct plutovg_surface plutovg_surface_t;
 
+typedef enum
+{
+    plutovg_color_format_rgb565,
+    plutovg_color_format_argb32,
+} plutovg_color_format_t;
+
 /**
  * @brief plutovg_surface_create
  * @param width
@@ -27,6 +33,17 @@ plutovg_surface_t* plutovg_surface_create(int width, int height);
  * @return
  */
 plutovg_surface_t* plutovg_surface_create_for_data(unsigned char* data, int width, int height, int stride);
+
+/**
+ * @brief plutovg_surface_create_for_formated_data
+ * @param data
+ * @param width
+ * @param height
+ * @param stride
+ * @param format
+ * @return
+ */
+plutovg_surface_t* plutovg_surface_create_for_formated_data(unsigned char* data, int width, int height, int stride, plutovg_color_format_t format);
 
 /**
  * @brief plutovg_surface_reference
@@ -75,6 +92,13 @@ int plutovg_surface_get_height(const plutovg_surface_t* surface);
  * @return
  */
 int plutovg_surface_get_stride(const plutovg_surface_t* surface);
+
+/**
+ * @brief plutovg_surface_get_stride
+ * @param surface
+ * @return
+ */
+plutovg_color_format_t plutovg_surface_get_format(const plutovg_surface_t* surface);
 
 /**
  * @brief plutovg_surface_write_to_png

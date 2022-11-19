@@ -48,6 +48,7 @@ declare module "meui-native" {
         getConnectNumber(): number
         pending(): number
         nextEvent(): MeuiRawEvent | null
+        screenshot(path: string): void
     }
     export class Box {
         constructor(type: string)

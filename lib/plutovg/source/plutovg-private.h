@@ -15,6 +15,8 @@ struct plutovg_surface {
     int width;
     int height;
     int stride;
+    plutovg_color_format_t format;
+    int color_bytes;
 };
 
 struct plutovg_path {

@@ -10,6 +10,8 @@ plutovg_surface_t* plutovg_surface_create(int width, int height)
     surface->width = width;
     surface->height = height;
     surface->stride = width * 4;
+    surface->format = plutovg_color_format_argb32;
+    surface->color_bytes = 4;
     return surface;
 }
 
@@ -22,6 +24,26 @@ plutovg_surface_t* plutovg_surface_create_for_data(unsigned char* data, int widt
     surface->width = width;
     surface->height = height;
     surface->stride = stride;
+    surface->format = plutovg_color_format_argb32;
+    surface->color_bytes = 4;
+    return surface;
+}
+
+plutovg_surface_t* plutovg_surface_create_for_formated_data(unsigned char* data, int width, int height, int stride, plutovg_color_format_t format)
+{
+    plutovg_surface_t* surface = malloc(sizeof(plutovg_surface_t));
+    surface->ref = 1;
+    surface->owndata = 0;
+    surface->data = data;
+    surface->width = width;
+    surface->height = height;
+    surface->stride = stride;
+    surface->format = format;
+
+    if(format == plutovg_color_format_argb32)
+        surface->color_bytes = 4;
+    else if(format == plutovg_color_format_rgb565)
+        surface->color_bytes = 2;
     return surface;
 }
 
@@ -75,32 +97,73 @@ int plutovg_surface_get_stride(const plutovg_surface_t* surface)
     return surface->stride;
 }
 
-void plutovg_surface_write_to_png(const plutovg_surface_t* surface, const char* filename)
+plutovg_color_format_t plutovg_surface_get_format(const plutovg_surface_t* surface)
 {
-    unsigned char* data = surface->data;
+    return surface->stride;
+}
+
+static inline uint32_t convert_rgb16_to_32(uint16_t c)
+{
+    return 0xff000000 | ((((c) << 3) & 0xf8) | (((c) >> 2) & 0x7)) | ((((c) << 5) & 0xfc00) | (((c) >> 1) & 0x300)) | ((((c) << 8) & 0xf80000) | (((c) << 3) & 0x70000));
+}
+
+void plutovg_surface_write_to_png(const plutovg_surface_t *surface, const char *filename)
+{
+    unsigned char *data = surface->data;
     int width = surface->width;
     int height = surface->height;
     int stride = surface->stride;
-    unsigned char* image = calloc(1, (size_t)(stride * height));
-    for(int y = 0;y < height;y++)
+    int out_stride = surface->width * sizeof(uint32_t);
+    unsigned char *image = calloc(1, (size_t)(out_stride * height));
+
+    if (surface->format == plutovg_color_format_argb32)
     {
-        const uint32_t* src = (uint32_t*)(data + stride * y);
-        uint32_t* dst = (uint32_t*)(image + stride * y);
-        for(int x = 0;x < width;x++)
+        for (int y = 0; y < height; y++)
         {
-            uint32_t a = src[x] >> 24;
-            if(a == 0)
-                continue;
+            const uint32_t *src = (uint32_t *)(data + stride * y);
+            uint32_t *dst = (uint32_t *)(image + out_stride * y);
+            for (int x = 0; x < width; x++)
+            {
+                uint32_t a = src[x] >> 24;
+                if (a == 0)
+                    continue;
 
-            uint32_t r = (((src[x] >> 16) & 0xff) * 255) / a;
-            uint32_t g = (((src[x] >> 8) & 0xff) * 255) / a;
-            uint32_t b = (((src[x] >> 0) & 0xff) * 255) / a;
+                uint32_t r = (((src[x] >> 16) & 0xff) * 255) / a;
+                uint32_t g = (((src[x] >> 8) & 0xff) * 255) / a;
+                uint32_t b = (((src[x] >> 0) & 0xff) * 255) / a;
 
-            dst[x] = (a << 24) | (b << 16) | (g << 8) | r;
+                dst[x] = (a << 24) | (b << 16) | (g << 8) | r;
+            }
         }
     }
+    else if (surface->format == plutovg_color_format_rgb565)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            const uint16_t *src = (uint16_t *)(data + stride * y);
+            uint32_t *dst = (uint32_t *)(image + out_stride * y);
+            for (int x = 0; x < width; x++)
+            {
+                uint32_t color = convert_rgb16_to_32(src[x]);
+                uint32_t a = color >> 24;
+                if (a == 0)
+                    continue;
 
-    stbi_write_png(filename, width, height, 4, image, stride);
+                uint32_t r = (((color >> 16) & 0xff) * 255) / a;
+                uint32_t g = (((color >> 8) & 0xff) * 255) / a;
+                uint32_t b = (((color >> 0) & 0xff) * 255) / a;
+
+                dst[x] = (a << 24) | (b << 16) | (g << 8) | r;
+            }
+        }
+    }
+    else
+    {
+        free(image);
+        return;
+    }
+
+    stbi_write_png(filename, width, height, 4, image, out_stride);
     free(image);
 }
 
