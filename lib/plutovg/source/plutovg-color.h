@@ -114,7 +114,7 @@ static inline plutovg_color16_t BYTE_MUL_16(plutovg_color16_t c, uint32_t a)
 }
 
 // https://github.com/qt/qtbase/blob/dev/src/gui/painting/qdrawhelper_p.h#L884
-static inline DIV_255(int x) { return (x + (x >> 8) + 0x80) >> 8; }
+static inline int DIV_255(int x) { return (x + (x >> 8) + 0x80) >> 8; }
 
 static inline uint32_t BYTE_ALPHA_MUL(uint32_t x, uint32_t a)
 {

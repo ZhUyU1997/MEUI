@@ -99,7 +99,7 @@ int plutovg_surface_get_stride(const plutovg_surface_t* surface)
 
 plutovg_color_format_t plutovg_surface_get_format(const plutovg_surface_t* surface)
 {
-    return surface->stride;
+    return surface->format;
 }
 
 static inline uint32_t convert_rgb16_to_32(uint16_t c)
