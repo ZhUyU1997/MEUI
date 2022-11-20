@@ -28,8 +28,8 @@ static JSValue js_get_style(JSContext *ctx, JSValueConst this_val,
     if (JS_ToUint32(ctx, &v, argv[0]))
         return JS_EXCEPTION;
 
-    box_style_t *style = box_get_style(box, v);
-    // TODO:
+    // TODO: 
+    //     box_style_t *style = box_get_style(box, v);
     return JS_NULL;
 }
 
