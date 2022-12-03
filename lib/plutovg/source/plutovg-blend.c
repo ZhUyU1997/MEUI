@@ -420,7 +420,7 @@ static void blend_transformed_argb(plutovg_surface_t *surface, plutovg_operator_
                 start += clip_length == 0;
             }
 
-            func(target + start, clip_length, buffer + start, coverage);
+            func(target + start * surface->color_bytes, clip_length, buffer + start, coverage);
             target += l * surface->color_bytes;
             length -= l;
         }
