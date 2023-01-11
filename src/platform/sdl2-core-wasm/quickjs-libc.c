@@ -367,6 +367,9 @@ static int js_os_poll(JSContext *ctx)
     int64_t cur_time, delay;
     struct list_head *el;
 
+    if (JS_IsNull(ts->os_event_handler) && list_empty(&ts->os_timers))
+        return -1; /* no more events */
+
     if (!list_empty(&ts->os_timers)) {
         cur_time = get_time_ms();
         min_delay = 10000;
