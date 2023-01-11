@@ -104,10 +104,10 @@ export class MEUI {
 
         std.gc()
 
-        // setTimeout(() => {
-        //     console.log("std.exit(1)")
-        //     std.exit(1)
-        // }, 1000)
+        setTimeout(() => {
+            // TODO: failed to exit on MACOS, must exit manually
+            std.exit(1)
+        }, 1000)
     }
 
     onEvent() {
