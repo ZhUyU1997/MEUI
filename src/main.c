@@ -96,6 +96,25 @@ static int eval_file(JSContext *ctx, const char *filename)
     return ret;
 }
 
+int qjs_run_buf(uint8_t *buf, size_t buf_len)
+{
+    JSRuntime *rt;
+    JSContext *ctx;
+    rt = JS_NewRuntime();
+    js_std_set_worker_new_context_func(JS_NewCustomContext);
+    js_std_init_handlers(rt);
+    JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
+    ctx = JS_NewCustomContext(rt);
+    js_std_add_helpers(ctx, 0, NULL);
+
+    eval_buf(ctx, buf, buf_len, "<<input>>", JS_EVAL_TYPE_MODULE);
+    js_std_loop(ctx);
+    js_std_free_handlers(rt);
+    JS_FreeContext(ctx);
+    JS_FreeRuntime(rt);
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
 #ifdef PROFILE

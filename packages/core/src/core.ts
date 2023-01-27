@@ -63,14 +63,14 @@ export class MEUI {
             height: "100%",
         })
 
-        this.addFontFace(
-            "Droid-Sans-Fallback",
-            "res/font/Droid-Sans-Fallback.ttf"
-        )
-        this.addFontFace(
-            "MaterialDesignIcons",
-            "res/font/MaterialDesignIconsDesktop.ttf"
-        )
+        // this.addFontFace(
+        //     "Droid-Sans-Fallback",
+        //     "res/font/Droid-Sans-Fallback.ttf"
+        // )
+        // this.addFontFace(
+        //     "MaterialDesignIcons",
+        //     "res/font/MaterialDesignIconsDesktop.ttf"
+        // )
 
         this.nativeMEUI.render(this.root.getNativeObject())
         this.mouseX = -1

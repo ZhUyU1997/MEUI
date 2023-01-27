@@ -1680,7 +1680,7 @@ static inline size_t js_def_malloc_usable_size(void *ptr)
     return malloc_size(ptr);
 #elif defined(_WIN32)
     return _msize(ptr);
-#elif defined(EMSCRIPTEN)
+#elif defined(EMSCRIPTEN) || defined(__ESP32__)
     return 0;
 #elif defined(__linux__)
     return malloc_usable_size(ptr);
@@ -1754,7 +1754,7 @@ static const JSMallocFunctions def_malloc_funcs = {
     malloc_size,
 #elif defined(_WIN32)
     (size_t (*)(const void *))_msize,
-#elif defined(EMSCRIPTEN)
+#elif defined(EMSCRIPTEN) || defined(__ESP32__)
     NULL,
 #elif defined(__linux__)
     (size_t (*)(const void *))malloc_usable_size,
@@ -41988,7 +41988,7 @@ static JSValue js___date_clock(JSContext *ctx, JSValueConst this_val,
 /* OS dependent. d = argv[0] is in ms from 1970. Return the difference
    between UTC time and local time 'd' in minutes */
 static int getTimezoneOffset(int64_t time) {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__ESP32__)
     /* XXX: TODO */
     return 0;
 #else
