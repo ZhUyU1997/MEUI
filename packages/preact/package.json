@@ -43,6 +43,7 @@
     },
     "dependencies": {
         "@meui-js/core": "workspace:*",
+        "@meui-js/native": "workspace:*",
         "preact": "^10.10.0"
     }
 }

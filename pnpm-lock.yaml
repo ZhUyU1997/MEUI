@@ -190,6 +190,7 @@ importers:
       '@meui-js/components': workspace:*
       '@meui-js/core': workspace:*
       '@meui-js/esbuild-plugin-meui': workspace:*
+      '@meui-js/native': workspace:*
       '@meui-js/os': workspace:*
       '@meui-js/path': workspace:*
       '@meui-js/preact': workspace:*
@@ -203,6 +204,7 @@ importers:
       2048-engine: 0.1.1
       '@meui-js/components': link:../components
       '@meui-js/core': link:../core
+      '@meui-js/native': link:../@types/native
       '@meui-js/os': link:../@types/os
       '@meui-js/path': link:../path
       '@meui-js/preact': link:../preact
@@ -224,9 +226,11 @@ importers:
   packages/preact:
     specifiers:
       '@meui-js/core': workspace:*
+      '@meui-js/native': workspace:*
       preact: ^10.10.0
     dependencies:
       '@meui-js/core': link:../core
+      '@meui-js/native': link:../@types/native
       preact: 10.11.2
 
   packages/spring:

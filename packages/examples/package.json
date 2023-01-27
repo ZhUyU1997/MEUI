@@ -15,6 +15,7 @@
         "@meui-js/components": "workspace:*",
         "@meui-js/core": "workspace:*",
         "@meui-js/os": "workspace:*",
+        "@meui-js/native": "workspace:*",
         "@meui-js/path": "workspace:*",
         "@meui-js/preact": "workspace:*",
         "@meui-js/spring": "workspace:*",
