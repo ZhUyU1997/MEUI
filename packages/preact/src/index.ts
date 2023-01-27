@@ -10,11 +10,16 @@ export const Canvas = "Canvas"
 export type { MeuiCanvasElementProps, MeuiElementProps } from "./props"
 
 import { MEUI } from "@meui-js/core"
+import { ColorFormat } from "meui-native"
 import { VNode } from "preact"
 import { render as _render } from "preact"
 
-export function createRoot(width: number, height: number) {
-    const meui = new MEUI(width, height)
+export function createRoot(
+    width: number,
+    height: number,
+    format: ColorFormat = "ARGB8888"
+) {
+    const meui = new MEUI(width, height, format)
 
     function unmount() {
         _render(null as any, meui.getRoot() as any)
