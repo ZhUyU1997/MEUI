@@ -129,6 +129,13 @@ pnpm build:all
 pnpm run:examples
 ```
 
+Run other examples
+
+```sh
+pnpm build:examples src/2048/index.tsx
+pnpm run:examples
+```
+
 ## API References
 
 ### CSS Style
