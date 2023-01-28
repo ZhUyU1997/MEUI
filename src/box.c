@@ -422,10 +422,15 @@ static void draw_box_background(Box *box, plutovg_t *pluto, plutovg_rect_t *rect
             float radius_other = radius[(max_index + 2) % 4];
             float radius_prev = radius[(max_index + 3) % 4];
 
-            float r1 = radius_next + radius_max > w ? w * radius_max / (radius_next + radius_max) : radius_max;
-            float r2 = radius_prev + radius_max > w ? w * radius_max / (radius_prev + radius_max) : radius_max;
+            float r1_next = radius_next + radius_max;
+            float r2_prev = radius_prev + radius_max;
+            float r1_max = max_index % 2 == 0 ? w : h;
+            float r2_max = max_index % 2 == 0 ? h : w;
 
-            r[max_index][0] = r[max_index][1] = fmaxf(r1, r2);
+            float r1 = r1_next > r1_max ? (r1_max * radius_max / r1_next) : radius_max;
+            float r2 = r2_prev > r2_max ? (r2_max * radius_max / r2_prev) : radius_max;
+
+            r[max_index][0] = r[max_index][1] = fminf(r1, r2);
             r[(max_index + 1) % 4][0] = r[(max_index + 1) % 4][1] = r[max_index][0] * radius_next / radius_max;
             r[(max_index + 2) % 4][0] = r[(max_index + 2) % 4][1] = r[max_index][0] * radius_other / radius_max;
             r[(max_index + 3) % 4][0] = r[(max_index + 3) % 4][1] = r[max_index][0] * radius_prev / radius_max;
