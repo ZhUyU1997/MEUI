@@ -124,6 +124,7 @@ createRoot(300, 300).render(<App />)
 ```sh
 corepack enable
 xmake f --backend=sdl2-core # Only for windows/macos
+pnpm add -g pnpm # install the latest pnpm
 pnpm install
 pnpm build:all
 pnpm run:examples
