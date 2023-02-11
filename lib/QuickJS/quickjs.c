@@ -30,7 +30,7 @@
 #include <assert.h>
 #include <sys/time.h>
 #include <time.h>
-#include <fenv.h>
+// #include <fenv.h>
 #include <math.h>
 #if defined(__APPLE__)
 #include <malloc/malloc.h>
@@ -64,7 +64,14 @@
 
 #if !defined(_WIN32)
 /* define it if printf uses the RNDN rounding mode instead of RNDNA */
-#define CONFIG_PRINTF_RNDN
+// #define CONFIG_PRINTF_RNDN
+
+#define FE_TONEAREST 0
+int fesetround(int r)
+{
+    return 0;
+}
+
 #endif
 
 /* define to include Atomics.* operations which depend on the OS
